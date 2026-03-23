@@ -1,0 +1,826 @@
+[
+  {
+    "exam": "Endsem Monsoon 2023",
+    "questions": [
+      {
+        "id": 1,
+        "question": "In the context of batch learning in neural networks, does the order in which input data is presented to the network influence the learning process?",
+        "options": {
+          "A": "Yes, the order significantly affects learning, leading to different models.",
+          "B": "No, the order of input data does not influence the learning outcome in batch learning.",
+          "C": "Yes, but only in networks with more than three layers.",
+          "D": "The order only matters in real-time data streaming, not in batch learning."
+        },
+        "answer": "(B) No, the order of input data does not influence the learning outcome in batch learning. In batch learning, the entire dataset is considered in one go, or in large batches, for the training process."
+      },
+      {
+        "id": 2,
+        "question": "What impact will increasing the number of nodes in a neural network's hidden layer have?",
+        "options": {
+          "A": "It will always improve the network's accuracy on both training and test sets.",
+          "B": "It may lead to underfitting, resulting in poor accuracy on both training and test sets.",
+          "C": "It may result in overfitting, leading to higher accuracy on the training set but poor accuracy on the test set, and increased training time.",
+          "D": "The number of nodes in the hidden layer has no impact on the network's performance."
+        },
+        "answer": "(C) It may result in overfitting, leading to higher accuracy on the training set but poor accuracy on the test set and increased training time."
+      },
+      {
+        "id": 3,
+        "question": "You are designing a deep learning system to detect driver fatigue in cars, where it is crucial to detect fatigue accurately to prevent accidents. Which of the following evaluation metrics would be the most appropriate for this system?",
+        "options": {
+          "1": "Precision",
+          "2": "Recall",
+          "3": "F1 score",
+          "4": "Loss value"
+        },
+        "answer": "(B) Recall. Recall is the most appropriate metric in this context because it measures the proportion of actual positive cases (fatigue detected) that were correctly identified."
+      },
+      {
+        "id": 4,
+        "question": "Assuming δL/δx3 is known, write the weight update for δL/δw1 (should be in the expanded form). Input x1 and all weights are positive. All neurons have ReLU Activation. Given ∂y1/∂z1 = ∂x2/∂z2 = ∂y2/∂z3 = ∂x3/∂z4 = 1.",
+        "options": null,
+        "answer": "∂L/∂w1 = ∂L/∂x3 (w7 + w4 w8 + w4 w3 w2) · x1"
+      },
+      {
+        "id": 5,
+        "question": "Consider an activation function ρ(x)=x·σ(x), where σ(x) is the sigmoid function. (a) Compute ρ'(x) in terms of σ(x). (b) For large x, compare ρ(x) and ρ'(x) with standard activation functions.",
+        "options": {
+          "a": "Compute ρ'(x) in terms of σ(x).",
+          "b": "For large x, compare ρ(x) and ρ'(x) with standard activation functions."
+        },
+        "answer": "(a) ρ'(x) = σ(x)[1 + x(1 − σ(x))]. (b) For large values of x, σ(x) ≈ 1, thus ρ(x) ≈ x (mimics ReLU) and ρ'(x) mimics Sigmoid activation."
+      },
+      {
+        "id": 6,
+        "question": "Consider an ensemble of 5 models which are trained on the same architecture but have different initializations for a handwritten digit classification task. Does the guarantee of better performance in expectation (in terms of cross-entropy loss) by averaging the predictions of all five networks hold if you instead average the weights and biases of the networks? Why or why not?",
+        "options": null,
+        "answer": "No, the guarantee does not hold because the loss is not convex with respect to the weights and biases. Networks starting from different initializations might learn different hidden representations."
+      },
+      {
+        "id": 7,
+        "question": "Prove that approximately 63% of the entire original dataset (total training set) is present in any of the sampled bootstrap datasets using the Bagging method.",
+        "options": null,
+        "answer": "Probability of an observation not being chosen in one draw is 1 − 1/n. For n draws, it is (1 − 1/n)^n. As n → ∞, this limit is e^−1 ≈ 0.368. Probability of appearing is 1 − 0.368 = 0.632 (approx 63%)."
+      },
+      {
+        "id": 8,
+        "question": "Enumerate and explain the desirable properties of a distance metric. Evaluate the Canberra distance d(x,y) = Σ |x_i − y_i| / |x_i + y_i| against these properties.",
+        "options": null,
+        "answer": "Properties: Symmetry (D(A,B)=D(B,A)), Positivity (D(A,B) ≥ 0, 0 iff A=B), and Triangle Inequality. Canberra distance exhibits symmetry and positivity but fails the triangle inequality."
+      },
+      {
+        "id": 9,
+        "question": "For a CNN-based classifier, calculate the number of weights, number of biases, and the size of the associated feature maps for each layer: INPUT (128x128x3), CONV-5-32, POOL-2, CONV-5-64, POOL-2, CONV-5-40, POOL-2, FC-3.",
+        "options": null,
+        "answer": "Layer 1 (CONV-5-32): 124 × 124 × 32 map, 32 × (5 × 5 × 3 + 1) params. Layer 2 (POOL-2): 62 × 62 × 32 map, 0 params... Final FC-3: 3 neurons, 3 × (prev_flat_size + 1) params."
+      },
+      {
+        "id": 10,
+        "question": "Discuss the role of activation functions in mitigating exploding and vanishing gradient problems. Provide examples.",
+        "options": null,
+        "answer": "Sigmoid and tanh are prone to vanishing gradients because their derivatives are small. ReLU, Leaky ReLU, and ELU alleviate vanishing gradients by having a constant gradient for positive inputs."
+      },
+      {
+        "id": 11,
+        "question": "Express the derivative of a sigmoid in terms of the sigmoid itself for (a) φ(v) = 1/(1+e^(−av)) and (b) φ(v) = a tanh(bv).",
+        "options": {
+          "a": "φ(v) = 1/(1+e^(−av))",
+          "b": "φ(v) = a tanh(bv)"
+        },
+        "answer": "(a) f'(v) = a · f(v) · (1 − f(v)). (b) f'(v) = ab · (1 − f(v)^2 / a^2)."
+      },
+      {
+        "id": 12,
+        "question": "Identify the root node feature for a binary classification tree for provided patterns (w1, w2) with binary attributes so leaf nodes have lowest impurity.",
+        "options": null,
+        "answer": "a2 is chosen because it leads to the greatest weighted reduction in impurity (entropy is 0 for one branch)."
+      },
+      {
+        "id": 13,
+        "question": "Discuss the implications of the observed performance gap between LCBM and large content-only models like GPT-3.5 and GPT-4 in behavior simulation tasks.",
+        "options": null,
+        "answer": "LCBM (10x smaller) performs better on behavior tasks, indicating that large models are not specifically trained on behavior tokens and that in-context learning is less effective for the behavior modality."
+      },
+      {
+        "id": 14,
+        "question": "Outline considerations for a mental health chatbot: Controlled Generation vs. Free Flow QA and Industry-Specific Approvals (HIPAA, GDPR).",
+        "options": null,
+        "answer": "Controlled generation ensures safety and precision but lacks empathy/flexibility. Free flow is natural but risky for harmful content. Compliance (HIPAA/GDPR) ensures data protection and user privacy."
+      }
+    ]
+  },
+  {
+    "exam": "Endsem Monsoon 2024",
+    "questions": [
+      {
+        "id": 1,
+        "question": "You clustered n data points using k-means and Gaussian Mixtures, obtaining 5 clusters with identical centers. Three points assigned to different clusters by k-means belong to the same cluster in GMM. Why?",
+        "options": {
+          "a": "K-means is deterministic/closest-center, GMM is probabilistic.",
+          "b": "Computational error.",
+          "c": "Different objectives only matter with different initialization.",
+          "d": "GMM can have high variances."
+        },
+        "answer": "Both A and D are correct. Gaussian Mixtures allow probabilistic overlaps and high variances can lead to shared assignments near boundaries."
+      },
+      {
+        "id": 2,
+        "question": "In EM for GMMs, which convergence statement is accurate?",
+        "options": {
+          "a": "Always global maximum.",
+          "b": "Saddle point or local maximum.",
+          "c": "No guarantee of improvement.",
+          "d": "Guaranteed only if covariance fixed."
+        },
+        "answer": "B. EM for GMMs can converge to a saddle point or a local maximum depending on initialization."
+      },
+      {
+        "id": 3,
+        "question": "Compare support vectors S1, S2 and weights w1, w2 for hard and soft margin linear SVMs.",
+        "options": {
+          "A": "S1 is always a subset of S2.",
+          "B": "w1 always equals w2.",
+          "C": "S1 may not be a subset of S2.",
+          "D": "w1 may not equal w2."
+        },
+        "answer": "C and D. S1 may not be a subset of S2 because margin violations change critical points. w1 may not equal w2 as objective functions differ."
+      },
+      {
+        "id": 4,
+        "question": "If AI models are generated by biased datasets, which steps help ensure fairness?",
+        "options": {
+          "a": "Equal representativeness.",
+          "b": "Sufficient samples (even irrelevant).",
+          "c": "Timeliness.",
+          "d": "Domain knowledge for relevance.",
+          "e": "All of the above."
+        },
+        "answer": "e. All of the above."
+      },
+      {
+        "id": 5,
+        "question": "True about CONV layer?",
+        "options": {
+          "a": "Weights depend on input depth.",
+          "b": "Biases equal number of filters.",
+          "c": "Params depend on stride.",
+          "d": "Params depend on padding."
+        },
+        "answer": "A and B. Weights account for input depth; each filter has one bias."
+      },
+      {
+        "id": 6,
+        "question": "If you forget to divide activations by keep-probability p in dropout during training, how to fix at test time?",
+        "options": null,
+        "answer": "At test time, multiply outputs of each layer by p. Since dropout was off, expected activation is larger by factor 1/p; scaling by p restores the expected value."
+      },
+      {
+        "id": 7,
+        "question": "Given 1D points x1=0, y1=−1 and x2=√2, y2=1 mapped to 3D by φ(x)=[1, √2 x, x^2]^T. (a) Vector parallel to optimal w? (b) Margin value? (c) Solve for w, w0 and find f(x).",
+        "options": null,
+        "answer": "(a) w is parallel to φ(x2)−φ(x1) = [0, 2, 2]^T. (b) Margin is √2. (c) w = [0, 1/2, 1/2]^T, w0 = −1. f(x) = −1 + (√2 x)/2 + (1/2)x^2."
+      },
+      {
+        "id": 8,
+        "question": "Derive the M-step update for the covariance matrix Σ_k in GMM in two forms.",
+        "options": null,
+        "answer": "Form 1: Σ_k = (Σ_i r_ik (x_i − μ_k)(x_i − μ_k)^T) / r_k. Form 2: Σ_k = (Σ_i r_ik x_i x_i^T) / r_k − μ_k μ_k^T."
+      },
+      {
+        "id": 9,
+        "question": "Partition features into 'Should Use' and 'Must Avoid' for job recruitment fairness: Education, Race, Gender, Skills, Age, religion, etc.",
+        "options": null,
+        "answer": "Should Use: Education, Skills, Interview performance, Certifications. Must Avoid: Race, Gender, Age, Religion, Sexual orientation, Disability."
+      },
+      {
+        "id": 10,
+        "question": "Implement K-means. Predict y for (a) x=1, (b) x=3, (c) x=5 based on the provided dataset plot.",
+        "options": {
+          "a": "Prediction for x = 1",
+          "b": "Prediction for x = 3",
+          "c": "Prediction for x = 5"
+        },
+        "answer": "(a) 4, (b) 4.3 (equidistant), (c) 4.5."
+      },
+      {
+        "id": 11,
+        "question": "Compare standard SVM (w^T x + b ≥ 1) with SVM2 (w^T x + b ≥ 0).",
+        "options": null,
+        "answer": "The margin decreases. Setting the threshold at 0 eliminates the functional margin requirement, thus the margin collapses."
+      },
+      {
+        "id": 12,
+        "question": "For input size 24x24, calculate feature map size and params for: CONV (64 filters, 3x3, stride 1, no padding) and Max Pool (3x3, stride 2, no padding).",
+        "options": null,
+        "answer": "CONV: 22x22x64 map, 640 params (3 × 3 × 1 × 64 + 64). POOL: 10x10x64 map, 0 params."
+      },
+      {
+        "id": 13,
+        "question": "Show that K-means is guaranteed to converge to a local optimum.",
+        "options": null,
+        "answer": "Loss function decreases monotonically in both the assignment step (nearest cluster) and the refitting step (mean minimizes variance). Since loss is non-negative, it must converge."
+      },
+      {
+        "id": 14,
+        "question": "Perform back-propagation updates for training tuple (1, 1, 0) for a 2-2-1 MLP with sigmoid activation and MSE loss.",
+        "options": null,
+        "answer": "Forward pass: O3=0.69, O4=0.57, O5=0.7391. Backward pass updates weights and biases using η=0.5 and local gradients (e.g., w13 becomes 0.4847)."
+      }
+    ]
+  },
+  {
+    "exam": "Midsem Monsoon 2023",
+    "questions": [
+      {
+        "id": 1,
+        "question": "What does the term 'naive' in Naive Bayes refer to?",
+        "options": {
+          "A": "The assumption that all features are independent, given the class.",
+          "B": "The assumption that classes are balanced.",
+          "C": "The assumption that features are normally distributed.",
+          "D": "The assumption that data is noise-free."
+        },
+        "answer": "(B) The assumption that all features are independent, given the class."
+      },
+      {
+        "id": 2,
+        "question": "Best way to pick final model and estimate error using 5-fold CV?",
+        "options": {
+          "A": "Train a new model on the full data set using the best θ found; use the average CV error as its error estimate.",
+          "B": "Select the model with the lowest training error.",
+          "C": "Use a single validation split.",
+          "D": "Train on one fold, test on the rest."
+        },
+        "answer": "(B) Train a new model on the full data set using the best θ found; use the average CV error as its error estimate."
+      },
+      {
+        "id": 3,
+        "question": "True statement about Lasso and Ridge regularization?",
+        "options": {
+          "A": "Lasso regularization can produce sparse weights and can perform automated feature selection.",
+          "B": "Ridge always yields sparse weights.",
+          "C": "Both always yield identical solutions.",
+          "D": "Neither affects feature selection."
+        },
+        "answer": "(A) Lasso regularization can produce sparse weights and can perform automated feature selection."
+      },
+      {
+        "id": 4,
+        "question": "Is it a good idea to use mean cubed error (power 3) instead of MSE to penalize outliers?",
+        "options": null,
+        "answer": "No. Cubed errors can be negative and cancel out; also higher degrees over-penalize single bad points, compromising the fit."
+      },
+      {
+        "id": 5,
+        "question": "Find distance and projection of x=[6,7] from hyperplane w^T x + b = 0 where w=[2,5], b=1.",
+        "options": null,
+        "answer": "Distance = 48/√29. Projection = [78/29, −37/29]."
+      },
+      {
+        "id": 6,
+        "question": "Derive the inverse logit function.",
+        "options": null,
+        "answer": "x = e^y / (1 + e^y) where y = log(x/(1−x))."
+      },
+      {
+        "id": 7,
+        "question": "Maximum Likelihood Estimator for λ in exponential distribution f(x_i) = λ e^(−λ x_i) given data 2, 3, 1, 3, 4.",
+        "options": null,
+        "answer": "λ_MLE = n / Σ x_i = 5/13."
+      },
+      {
+        "id": 8,
+        "question": "Compute Euclidean distance in feature space |φ(x) − φ(y)| using only kernel k(x,y).",
+        "options": null,
+        "answer": "√(k(x,x) + k(y,y) − 2k(x,y))."
+      }
+    ]
+  },
+  {
+    "exam": "Midsem Monsoon 2024",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Correct decision tree representation for boolean function A ∧ ¬B.",
+        "options": {
+          "a": "Root A (T -> B, F -> N), Node B (T -> N, F -> Y).",
+          "b": "Alternative structure",
+          "c": "Alternative structure",
+          "d": "Alternative structure"
+        },
+        "answer": "Option (a). Root A (T -> B, F -> N), Node B (T -> N, F -> Y)."
+      },
+      {
+        "id": 2,
+        "question": "Which class will Naive Bayes assign to 'I always like foreign films'?",
+        "options": null,
+        "answer": "Negative class. Likelihood(pos) ≈ 2.91 × 10^−7 < Likelihood(neg) ≈ 4.75 × 10^−5."
+      },
+      {
+        "id": 3,
+        "question": "Calculate total trainable parameters in an MLP: 5 inputs, 10 hidden, 3 outputs (with biases).",
+        "options": null,
+        "answer": "93 parameters (60 from input-hidden + 33 from hidden-output)."
+      },
+      {
+        "id": 4,
+        "question": "Show that tanh(a) = 2σ(2a) − 1.",
+        "options": null,
+        "answer": "Substitute σ(2a) = 1/(1+e^(−2a)) into RHS to get (1−e^(−2a))/(1+e^(−2a)), which equals tanh(a)."
+      },
+      {
+        "id": 5,
+        "question": "Analyze behavior in diagram (B) regarding the 'interpolation threshold'.",
+        "options": null,
+        "answer": "Diagram (B) shows the double-descent curve. Beyond the interpolation threshold (zero training error), test risk decreases again as model complexity increases, challenging the classical notion of overfitting."
+      },
+      {
+        "id": 6,
+        "question": "Derive MLE for linear regression y_i = w0 + w1 x_i + ε_i.",
+        "options": null,
+        "answer": "Maximizing log-likelihood is equivalent to minimizing sum of squared errors S(w0, w1), leading to standard normal equations for w0 and w1."
+      },
+      {
+        "id": 7,
+        "question": "Prove that the variance of an ensemble is strictly smaller than the variance of an individual model (identically distributed but not independent).",
+        "options": null,
+        "answer": "Var(f_ens) = (1/n^2)[nσ^2 + (n^2−n)Cov]. Since Cov < σ^2, the term simplifies to something less than σ^2."
+      }
+    ]
+  },
+  {
+    "exam": "Quiz 2 Rubric Machine Learning (CSE543/ECE543)",
+    "questions": [
+      {
+        "id": 1,
+        "question": "In SVM, the objective is to find the hyperplane that has the following:",
+        "options": {
+          "A": "Highest margin",
+          "B": "Lowest margin"
+        },
+        "answer": ""
+      },
+      {
+        "id": 2,
+        "question": "The term \"kernel\" in SVM refers to:",
+        "options": {
+          "A": "Transformation function",
+          "B": "Hyperparameter",
+          "C": "Highest accuracy",
+          "D": "Lowest accuracy",
+          "E": "Cost function",
+          "F": "Regularization"
+        },
+        "answer": ""
+      },
+      {
+        "id": 3,
+        "question": "Which of the following is a common use case of unsupervised learning?",
+        "options": {
+          "A": "Image Segmentation",
+          "B": "Object detection",
+          "C": "Predicting image intensity",
+          "D": "Image denoising"
+        },
+        "answer": ""
+      },
+      {
+        "id": 4,
+        "question": "The goal of Principal Component Analysis (PCA) is to:",
+        "options": {
+          "A": "Reduce the dimensionality of data",
+          "B": "Minimize classification error",
+          "C": "Maximize variance in each dimension",
+          "D": "Compute Eigen vectors of data"
+        },
+        "answer": ""
+      },
+      {
+        "id": 5,
+        "question": "In the K-Means clustering algorithm, the number of clusters (K) is:",
+        "options": {
+          "A": "Specified by the user before training",
+          "B": "Determined automatically by the algorithm",
+          "C": "Always set to 1",
+          "D": "Dynamically changed during training"
+        },
+        "answer": ""
+      },
+      {
+        "id": 6,
+        "question": "You are given a labeled binary classification data set with N data points and D features. Suppose that N < D. In training an SVM on this data set, which of the following kernels is likely to be most appropriate?",
+        "options": {
+          "A": "Polynomial",
+          "B": "Linear",
+          "C": "Quadratic",
+          "D": "RBF"
+        },
+        "answer": ""
+      },
+      {
+        "id": 7,
+        "question": "In SVM, what does the \"kernel trick\" allow us to do?",
+        "options": {
+          "A": "Increase the number of features linearly",
+          "B": "Apply non-linear transformations to the data",
+          "C": "Reduce the Size of the dataset",
+          "D": "Simplify the model by removing features"
+        },
+        "answer": ""
+      },
+      {
+        "id": 8,
+        "question": "What is the role of the parameter C in SVM?",
+        "options": {
+          "A": "It controls the complexity of the model",
+          "B": "It adjusts the kernel function",
+          "C": "It determines the margin size",
+          "D": "It specifies the number of support vectors"
+        },
+        "answer": ""
+      },
+      {
+        "id": 9,
+        "question": "What happens when you set the C parameter to a very high value in SVM?",
+        "options": {
+          "A": "The model becomes more flexible and may overfit",
+          "B": "The decision boundary will be smoother",
+          "C": "The margin between classes becomes larger",
+          "D": "The model becomes more rigid and underfits"
+        },
+        "answer": ""
+      },
+      {
+        "id": 10,
+        "question": "Which of the following is true with respect to the primal problem in SVM?",
+        "options": {
+          "A": "It can only be solved when the primal problem is infeasible",
+          "B": "It provides a way to find the separating hyperplane",
+          "C": "It provides a way to find the support vectors",
+          "D": "It guarantees a unique solution regardless of the primal problem's solution"
+        },
+        "answer": ""
+      },
+      {
+        "id": 11,
+        "question": "If the dual formulation yields a solution with negative Lagrange multipliers, what does this indicate?",
+        "options": {
+          "A": "The corresponding data points are not support vectors.",
+          "B": "The primal problem has no solution.",
+          "C": "The corresponding data points are support vectors.",
+          "D": "None of the above."
+        },
+        "answer": ""
+      },
+      {
+        "id": 12,
+        "question": "Which of these methods is not used in hierarchical clustering?",
+        "options": {
+          "A": "Ward's method",
+          "B": "Centroid method",
+          "C": "Average linkage",
+          "D": "Double linkage"
+        },
+        "answer": ""
+      },
+      {
+        "id": 13,
+        "question": "Which of these is a supervised dimensionality reduction method?",
+        "options": {
+          "A": "Principal component analysis",
+          "B": "Independent Component Analysis",
+          "C": "Generalized Discriminant Analysis",
+          "D": "None of these"
+        },
+        "answer": ""
+      },
+      {
+        "id": 14,
+        "question": "Which of the following statements is true regarding kernels?",
+        "options": {
+          "A": "Kernels can only be used with linear models.",
+          "B": "Kernels must be differentiable.",
+          "C": "Kernels cannot be used for density estimation.",
+          "D": "None of these."
+        },
+        "answer": ""
+      },
+      {
+        "id": 15,
+        "question": "If the functional margin of a support vector is 1, what can be inferred about its geometric margin?",
+        "options": {
+          "A": "The geometric margin is equal to 1/||w||",
+          "B": "The geometric margin is equal to 1/2 ||w||^2",
+          "C": "The geometric margin is also 1",
+          "D": "The geometric margin is always less than 1"
+        },
+        "answer": ""
+      }
+    ]
+  },
+  {
+    "exam": "Quiz 3 Winter 2025",
+    "questions": [
+      {
+        "id": 1,
+        "question": "(a) Consider we have cluster points P1(1,3), P2(2,2), P3(5,8), P4(8,5), P5(3,9), P6(10,7), P7(3,8), P8(9,4), P9(3,7). Take initial K value as 3, Initial cluster centers are P7(3,3) [Typo in source, likely P7 is (3,8) or C1 is new point], P9(3,7), P8(9,4) as C1, C2, C3. Find out new Centroids after 2 iterations for above points. (b) Discuss a potential modification or extension to the K-means algorithm that could make it more robust to outliers, and briefly explain the rationale behind your proposed approach.",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 2,
+        "question": "You are working on a project to predict whether a customer will respond positively to a particular marketing campaign based on their demographic information and purchasing behavior. Using the information gain criterion, generate a decision tree for the provided Marketing Campaign Data (Table 1: Features include Day, Age, Gender, Income, Previous Buyer).",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 3,
+        "question": "State True and False for the following statements and justify your answers. (a) The aim of the Unnormalized Laplacian Matrix approach is to approximate the minimization of normalized cut. (b) In AdaBoost, After a weak learner is trained, the weights associated with the training points it misclassifies are decreased. (c) A random forest increases the variance compared to a single decision tree. (d) A Decision Tree model is giving 100% training accuracy and 70% validation accuracy, increasing the depth of the tree will reduce this overfitting and will lead to a best fit model.",
+        "options": null,
+        "answer": ""
+      }
+    ]
+  },
+  {
+    "exam": "Machine Learning Quiz-1 Rubric",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Logistic Regression is used for classification, while Linear Regression is used for approximation. What do we mean by Regression here, though both the models are doing a different task?",
+        "options": null,
+        "answer": "The commonality lies in the fact that both models involve estimating relationships based on input features using some form of linear combination of these features: • Linear regression estimates a continuous value directly from the input. • Logistic regression estimates the probability of an event occurring, such as True or False."
+      },
+      {
+        "id": 2,
+        "question": "What is the difference between a model and an algorithm? Give one example.",
+        "options": null,
+        "answer": "A model is the output of the training process. It represents the learned patterns or relationships in terms of parameters from the data. A model is what you use to make predictions or inferences on new data after training... An algorithm, on the other hand, is the procedure or set of rules used to optimize and train the model. Example: Model is y=wx+b, Algorithm is Gradient Descent."
+      },
+      {
+        "id": 3,
+        "question": "The logistic S-curve is non-linear. Why do we still call the Logistic Regression a Linear model?",
+        "options": null,
+        "answer": "The term \"linear\" refers to the fact that the model's prediction is based on a linear combination of input features (b1x1 + ... + b0). The logistic function maps this linear combination to a probability, but the underlying decision boundary is linear in the feature space."
+      },
+      {
+        "id": 4,
+        "question": "What is the difference between simple and multiple regression?",
+        "options": null,
+        "answer": "Simple regression involves a single independent variable (feature) to predict the dependent variable. Multiple regression involves two or more independent variables."
+      },
+      {
+        "id": 5,
+        "question": "What is the difference between knowledge-based learning (KBL) and feedback-based learning (FBL)? Give an example of an FBL model that is also a KBL model.",
+        "options": null,
+        "answer": "Knowledge-Based Learning involves systems learning from established knowledge/rules. Feedback-Based Learning improves through feedback (supervised/reinforcement). Decision Tree and Bayesian Networks are both FBL and KBL models."
+      },
+      {
+        "id": 6,
+        "question": "What is PET in the context of ML?",
+        "options": null,
+        "answer": "P: Performance, E: Experience, T: Task. It is study of algorithms that improve their performance P, with experience E at some task T."
+      },
+      {
+        "id": 7,
+        "question": "In the context of multivariate linear regression, prove that OLS is an unbiased Estimator.",
+        "options": null,
+        "answer": "See derivation in source file proving E[beta_hat] = beta."
+      },
+      {
+        "id": 8,
+        "question": "Raju is working on a linear regression task with OLS where a number of predictors (p > n) a number of observations, and he is not getting results. Comment on why this setting will not work.",
+        "options": null,
+        "answer": "Overfitting: When p > n, the model can fit the training data perfectly (capturing noise). Model Complexity: Complexity increases with more predictors, leading to high variance and poor predictive performance."
+      },
+      {
+        "id": 9,
+        "question": "What are the two broad ways to reduce/avoid overfitting (Hint: Think about function approx. in ERM framework)?",
+        "options": null,
+        "answer": "1. Reducing the function space (simple models, fewer parameters). 2. Making the choice of f* less dependent on data (regularization, margin maximization, ensembles)."
+      },
+      {
+        "id": 10,
+        "question": "What are the two important factors determining the generalization ability of an ML model? Graphically show when a model will fail to generalize.",
+        "options": null,
+        "answer": "Model complexity and the quality/quantity of training data. (Graph in source shows Underfitting vs Overfitting)."
+      },
+      {
+        "id": 11,
+        "question": "Explain in detail the difference between MLE, MCLE and MAP methods.",
+        "options": null,
+        "answer": "MLE maximizes likelihood P(X|b) without prior. MCLE focuses on conditional likelihood P(Y|X,b). MAP maximizes posterior P(b|X) combining likelihood and prior."
+      },
+      {
+        "id": 12,
+        "question": "Consider a linear regression model where the errors are not independent but rather follow a correlation structure. Derive the generalized least squares (GLS) estimator for this model.",
+        "options": null,
+        "answer": "beta_GLS = (X^T Sigma^-1 X)^-1 X^T Sigma^-1 Y, where Sigma is the covariance matrix of errors."
+      },
+      {
+        "id": 13,
+        "question": "Find the MAP estimate of X given Y=3, where X has PDF f(x)=2x (0<x<1) and P(Y|x) is Geometric.",
+        "options": null,
+        "answer": "The MAP estimate is derived to be x_MAP = 1/2."
+      },
+      {
+        "id": 14,
+        "question": "Derive logistic regression when the assumption is made that the target variable originates from a Gaussian distribution.",
+        "options": null,
+        "answer": "Derivation provided in source showing the result simplifies to the sigmoid function form 1 / (1 + e^(-beta x + gamma))."
+      },
+      {
+        "id": 15,
+        "question": "Show that an unbiased estimator is not always consistent. Further, show that the OLS estimator is always consistent.",
+        "options": null,
+        "answer": "Example X1 is unbiased but not consistent. OLS estimator is shown to be consistent as Var(beta_hat) -> 0 as N -> infinity."
+      }
+    ]
+  },
+  {
+    "exam": "Machine Learning Practice Questions",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Given a classification problem with input features as shown in the graph. Can we use logistic regression to classify this dataset? Explain why/why not. If yes, draw the decision boundary.",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 2,
+        "question": "With learning rate eta=0.003 and W_old=0.897 derive and write new updated weight W_new using this loss function equation L(x,theta) = (1 / (Y_actual - Y_predicted)).",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 3,
+        "question": "Consider the provided ROC curves for datasets with different numbers of negative examples. Which model would you prefer and why, considering the points on the curves with the same value of specificity 0.84 and sensitivity 0.57?",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 4,
+        "question": "Write one example each of parametric and non-parametric algorithm.",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 5,
+        "question": "You are analyzing data related to the sales of two products, Product A and Product B. Select all the statements below that are true based on the provided stats (Covariance -15,000, etc.).",
+        "options": {
+          "A": "Product A and Product B have a positive relationship in sales...",
+          "B": "Product A consistently has higher sales than Product B...",
+          "C": "The standard deviation of Product A's sales is higher...",
+          "D": "The correlation between the monthly sales of Product A and Product B is -0.65."
+        },
+        "answer": ""
+      },
+      {
+        "id": 6,
+        "question": "For what value of K in K-means clustering algorithm, the error will be zero? Justify your answer in 1 line.",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 7,
+        "question": "For the given data fit the linear regression model, find W0, W1 and predict the missing value.",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 8,
+        "question": "Which of the given below parameters best fit the given data distribution for logistic classifier (Circular distribution shown)?",
+        "options": {
+          "A": "theta1=0, theta2=1, theta3=0",
+          "B": "theta1=-6, theta2=2, theta3=0",
+          "C": "theta1=1, theta2=1, theta3=1",
+          "D": "theta1=-1, theta2=0, theta3=4"
+        },
+        "answer": ""
+      },
+      {
+        "id": 9,
+        "question": "Given a classification problem with input features as shown in the graph (Concentric circles). Can we use logistic regression to classify this dataset? Explain why/why not. If yes, draw the decision boundary.",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 10,
+        "question": "Shyam read about Generalized linear model (GLM) and made some assumptions, help shyam by commenting True/False on each statement. (a) Target variable are independently distributed. (b) Target Variable must normally distributed. (c) Non linear relationship between link function and explanatory variables. (d) Errors must be normally distributed.",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 11,
+        "question": "Given the prediction data of a machine learning model, find (i) Precision (ii) Recall (iii) True Positive Rate (iv) F1 Score.",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 12,
+        "question": "Calculate Pearson correlation coefficient for Raju's data and tell in which model x and y has strong positive linear relationship (Shyam reported +1.73).",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 13,
+        "question": "Derive weight update equation for linear regression using mean square error (MSE) loss function.",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 14,
+        "question": "Plot an approximate transformation how the given data (Inner circle is class 1) is transformed in higher domain using gaussian kernel. Justify your answer.",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 15,
+        "question": "Derive OLS parameters for multiple linear regression.",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 16,
+        "question": "Shyam selected some link functions to use in generalized linear model (GLM). help shyam by commenting on all functions whether to use or not: (a) log(xi/(1-xi)) (b) log log[1] (c) x^2 (d) sinx.",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 17,
+        "question": "Select which method has best Equal error rate based on the ROC graph provided. Justify your answer.",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 18,
+        "question": "A student has access to some data where features and targets are given, he applied principal component analysis (PCA) and claims he is using supervised learning. Is he correct, justify your answer?",
+        "options": null,
+        "answer": ""
+      }
+    ]
+  },
+  {
+    "exam": "Quiz 2 Winter 2025",
+    "questions": [
+      {
+        "id": 1,
+        "question": "You have to construct a decision tree using information gain as the splitting criteria for the given dataset (Table 1: Weather conditions and decision to play).",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 2,
+        "question": "What is the necessary condition for a valid kernel function? Let K1 and K2 be valid kernel functions. Prove that the following kernels will be valid kernels, or give a counter-argument to contradict: (a) K = K1 + K2, (b) K = K1 - K2.",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 3,
+        "question": "Suppose we have a dataset about whether a person buys a computer. Predict whether a Young person with Medium income will Buy a Computer, using the Naive Bayes classifier.",
+        "options": null,
+        "answer": ""
+      }
+    ]
+  },
+  {
+    "exam": "Quiz 1 Winter 2025",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Consider highly imbalanced data for the problem of binary classification. (a) Discuss how class imbalance may influence the performance of a KNN classifier. (b) What techniques can be used to address potential biases arising from this imbalance?",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 2,
+        "question": "Given the following options: High/Low Bias, Underfitting, Overfitting, Good Fit, fill the table with the correct matching options. (Table provided with Train/Val Error percentages).",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 3,
+        "question": "Given an RGB image of size 224x300, a Convolutional Neural Network (CNN) is applied with two convolutional layers (Layer 1: 16 kernels 5x5, stride 1, pad 0; Layer 2: 32 kernels 3x3, stride 2, pad 0). Compute the output feature map size after each convolutional layer and determine the total number of trainable parameters.",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 4,
+        "question": "With learning rate eta=0.003 and W_old=0.897 derive and write new updated weight W_new using this loss function equation L(x,theta) = (1/(Y_actual - Y_predicted))^2.",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 5,
+        "question": "Mention which statements are True about Ridge Regression and justify your answer also. (a) A way to perform feature selection, as ridge regression encourages weights to be exactly zero. (b) In ridge regression, increasing the regularization parameter, increases the reliance of the model on the data and vice versa.",
+        "options": null,
+        "answer": ""
+      },
+      {
+        "id": 6,
+        "question": "Consider the below CNN architecture. In the first layer, we have a one-dimensional convolution with a single filter of size 3... The second layer is fully connected... Perform gradient descent on the loss function R = (y-z)^2.",
+        "options": null,
+        "answer": ""
+      }
+    ]
+  }
+]

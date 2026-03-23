@@ -1,0 +1,18 @@
+Context Summary
+========================================
+Total sections covered: 6
+
+Section 1: Working in Teams
+  Topics: Team Effectiveness, Self-Managing Teams, HRT Pillars (Humility, Respect, Trust), Team Leadership
+Section 2: Software Project Management & Effort Estimation
+  Topics: Project Management Phases, Effort Estimation, Top-down vs Bottom-up Models, COCOMO Model
+Section 3: Scheduling, Quality Planning, and Risk Management
+  Topics: Project Scheduling, Quality Control & Defect Latency, Risk Identification & Mitigation, Project Tracking
+Section 4: Software Process Models
+  Topics: Effort & Defect Distribution, Waterfall Model, Prototyping, Iterative & Timeboxing Models
+Section 5: Open Source Software (OSS) Processes
+  Topics: OSS Life Cycle, Community Roles & Dynamics, OSS Work Assignment & Code Management, Linus's Law & OSS Motivations
+Section 6: Agile Development
+  Topics: Agile Manifesto, Extreme Programming (XP), Agile Project Management Practices, Agile Technical Practices
+
+This context can be passed as input to the next session to maintain continuity.

@@ -1,0 +1,717 @@
+\documentclass[12pt, a4paper]{article}
+
+% --- Encoding & Fonts ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% --- Mathematics ---
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newcounter{question}[section]
+\renewcommand{\thequestion}{\thesection.\arabic{question}}
+
+\newenvironment{question}
+  {\refstepcounter{question}\par\noindent\textbf{Question \thequestion: }}
+  {\par}
+
+% --- Layout ---
+\usepackage[margin=1in]{geometry}
+
+% --- Lists ---
+\usepackage{enumitem}
+
+% --- Tables ---
+\usepackage{booktabs}
+\usepackage{array}
+
+% --- Graphics ---
+\usepackage{graphicx}
+
+% --- Headers / Footers ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% --- Hyperlinks & Cross-references ---
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+
+% --- Misc ---
+\usepackage{xcolor}
+
+% --- Custom commands (safety definitions) ---
+\providecommand{\operatorname}[1]{\mathop{\mathrm{#1}}\nolimits}
+
+\title{Learning Module: Svm1}
+\author{}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+\tableofcontents
+\newpage
+
+% ============================================================
+% SECTION  Maximal Margin Classifiers
+% ============================================================
+
+\section{Maximal Margin Classifiers}
+
+\subsection{Before We Begin}
+A binary classifier makes a simple decision between two categories by applying a rule such as ``greater than'' or ``less than.''  
+In one dimension this rule can be visualised as a single cut-off point on a number line.  
+The cut-off point tells us on which side a new observation belongs to one category or the other.  
+Understanding this decision rule lets us see why the position of that cut-off (the threshold) and how far it sits from nearby observations (the margin) matter.  
+
+\section{Motivation}
+Imagine a fence placed exactly halfway between two herds of sheep; the fence is as far as possible from the nearest sheep of each herd, but if a stray sheep wanders close to the fence, the fence must be moved dramatically.  
+A classification threshold works like that fence: it separates two groups and we would like it to stay as far away as possible from the closest members of each group.  
+Doing so makes the decision robust to small measurement errors, yet a single stray observation (an outlier) can force the fence to shift a lot, producing many misclassifications.  
+
+\section{Intuition}
+Think of all the observations that belong to the ``positive'' group as lying on one side of a line and the ``negative'' observations on the other side.  
+The margin is simply the shortest distance from the line to any observation on either side.  
+A maximal margin classifier slides the line to the spot where this shortest distance is as large as possible; equivalently, the line is placed exactly in the middle of the two nearest opposite-class points.  
+If an outlier appears very close to the line, the line must move toward the centre of the data to keep the nearest points equally distant, which can cause many regular points to be mis-labelled.  
+
+\section{Formal Definition}
+Let a threshold be a single value \(t\) on the real number line that separates two classes: points with coordinate less than \(t\) are assigned to one class and points with coordinate greater than \(t\) to the other class.  
+For each observation define its distance to the threshold as the absolute difference between its coordinate and \(t\).  
+The margin \(m\) is the minimum of these distances over all observations, i.e. the distance from \(t\) to the closest observation of either class.  
+A maximal margin classifier chooses the threshold \(t^{}\) that maximises this margin:
+\[
+t^{} = \underset{t}{\operatorname{arg\,max}}\, m(t) .
+\]
+Because the margin is determined by the closest opposite-class points, the optimal threshold \(t^{}\) lies exactly halfway between those two points.  
+Consequently, if an outlier becomes the closest point to the opposite class, the optimal threshold shifts toward the outlier, potentially reducing classification accuracy for the remaining data.  
+
+\section{Worked Example}
+\textbf{Dataset}: five one-dimensional observations  
+
+\[
+\begin{array}{c|c}
+x & \text{class}\\ \hline
+1 & +\\
+2 & +\\
+3 & -\\
+4 & +\\
+6 & -\\
+\end{array}
+\]
+
+\textbf{Step 1: Identify the closest opposite-class points.}  
+The positive points are at \(1,2,4\); the negative points are at \(3,6\).  
+The smallest distance between a positive and a negative point is between \(x=4\) (positive) and \(x=3\) (negative), distance \(1\).
+
+\textbf{Step 2: Place the threshold halfway between them.}  
+\[
+t^{}= \frac{4+3}{2}=3.5 .
+\]
+
+\textbf{Step 3: Compute the margin.}  
+The distance from \(t^{}=3.5\) to the nearest point (either \(x=3\) or \(x=4\)) is
+\[
+m = |3.5-3| = |4-3.5| = 0.5 .
+\]
+
+\textbf{Step 4: Introduce an outlier.}  
+Move the negative point at \(x=6\) to \(x=2.9\).  
+The updated set of negative points is now \(3\) and \(2.9\).
+
+\textbf{Step 5: Re-identify the closest opposite-class points.}  
+Now the closest positive--negative pair is \(x=2\) (positive) and \(x=2.9\) (negative), distance \(0.9\).
+
+\textbf{Step 6: Re-place the threshold halfway between them.}  
+\[
+t^{}_{\text{new}} = \frac{2+2.9}{2}=2.45 .
+\]
+
+\textbf{Step 7: Re-compute the margin.}  
+\[
+m_{\text{new}} = |2.45-2| = |2.9-2.45| = 0.45 .
+\]
+
+\textbf{Result.}  
+The original threshold at \(3.5\) correctly separated most points, but after the outlier moved to \(2.9\) the optimal threshold shifted dramatically to \(2.45\), causing the point at \(x=4\) (positive) to be mis-classified.  
+
+\textbf{What this shows us:}  
+The maximal margin classifier places its threshold exactly halfway between the nearest opposite-class points, so a single outlier that becomes the nearest point can force a large shift in the threshold and increase classification errors.  
+
+\subsection{Key Takeaway}
+A maximal margin classifier chooses the threshold that lies midway between the closest opposite-class observations, maximising the smallest distance (the margin); consequently it is highly sensitive to outliers that alter which points are closest to the threshold.
+
+\newpage
+\subsection*{Questions}
+
+% --- RECALL ---
+\begin{question}
+Define the margin in the context of a maximal margin classifier.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+Explain why the maximal margin classifier positions its threshold exactly halfway between the nearest opposite-class points.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+Describe how placing the threshold at the midpoint of the closest opposite-class observations helps make the classifier robust to small measurement errors.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+Using the positive points at 1, 2, 5 and the negative points at 3, 8, determine the optimal threshold that maximizes the margin and state the value of that margin.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+After finding the threshold in the previous question, classify a new observation at x = 4.5 using the computed threshold.
+\end{question}
+
+\newpage
+
+% --- ANALYSE ---
+\begin{question}
+Discuss how moving a single outlier from the negative class (for example, changing its coordinate) influences the location of the maximal margin threshold and the resulting classification errors.
+\end{question}
+
+\newpage
+
+% --- EVALUATE ---
+\begin{question}
+Assess whether a maximal margin classifier is suitable for a dataset that contains many noisy outliers, providing justification based on its sensitivity to outliers.
+\end{question}
+
+\newpage
+% ============================================================
+% SECTION  Support Vector Classifiers (Soft Margins)
+% ============================================================
+
+\subsection*{Notation Used in This Section}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning \\ \midrule
+    $C$ & Regularization parameter that trades off margin width against classification errors \\
+    $\xi_i$ & Slack variable representing how far observation i lies inside the margin or on the wrong side of the decision boundary \\
+\bottomrule
+\end{tabular}
+\vspace{1em}
+
+\section{Support Vector Classifiers (Soft Margins)}
+
+\subsection{Before We Begin}
+The bias--variance trade-off tells us that a model that is too simple (high bias) will miss important patterns, while a model that follows the training data too closely (high variance) will fail to generalize to new observations.  
+When we evaluate a model on data that were held-out from training, we can see whether the model is biased or overly variable.  
+Understanding this balance helps us see why permitting a few training mistakes might actually improve future performance.  
+Now we can look at classifiers that deliberately allow such mistakes.
+
+\subsection{Motivation}
+Think of setting a thermostat that usually keeps the house at 22 \ensuremath{^\circ}C, but occasionally lets the temperature drift a few degrees higher or lower to avoid constantly turning the heater on and off.  
+Just as the thermostat tolerates a small temperature swing to reduce wear-and-tear, a soft-margin classifier tolerates a few misclassifications to obtain a more robust decision rule.  
+Allowing these occasional errors helps the model avoid over-reacting to outliers and therefore works better on unseen data.
+
+\subsection{Intuition}
+In a perfectly separable data set we could draw a line (or hyperplane) that leaves every point on the correct side and maximizes the distance to the nearest points.  
+When the data contain noisy or overlapping points, insisting on a flawless separation forces the decision line to bend or become extremely narrow, making the rule fragile.  
+A soft-margin approach says: ``keep the margin as wide as possible, but if a point lies inside or on the wrong side, pay a small penalty instead of moving the line dramatically.''  
+The points that sit exactly on the margin or inside it are called support vectors; they are the observations that actually determine where the line ends up.
+
+\subsection{Formal Definition}
+A soft-margin support-vector classifier seeks a weight vector \( \mathbf{w} \) and bias \( b \) that solve  
+
+\[
+\min_{\mathbf{w},b,\xi}\;\frac{1}{2}\|\mathbf{w}\|^{2}+C\sum_{i=1}^{n}\xi_{i}
+\]
+
+subject to  
+
+\[
+y_{i}\bigl(\mathbf{w}^{\top}\mathbf{x}_{i}+b\bigr)\ge 1-\xi_{i},\qquad 
+\xi_{i}\ge 0\;\;(i=1,\dots ,n).
+\]
+
+Here  
+
+ \( C \) is the regularization parameter that trades off a wide margin (small \( \|\mathbf{w}\| \)) against classification errors (the sum of slack variables).  
+ \( \xi_{i} \) is the slack variable for observation \( i \); it measures how far that observation lies inside the margin (or on the wrong side of the decision boundary).  
+If a point is correctly classified and outside the margin, then \( \xi_{i}=0 \); otherwise \( \xi_{i}>0 \).  
+
+A larger \( C \) places a heavier penalty on non-zero \( \xi_{i} \), forcing the optimizer to reduce training errors at the expense of a narrower margin (higher variance, lower bias).  
+A smaller \( C \) tolerates larger \( \xi_{i} \), yielding a wider margin (higher bias, lower variance).  
+Support vectors are precisely those points with \( \xi_{i}>0 \) or with \( y_{i}(\mathbf{w}^{\top}\mathbf{x}_{i}+b)=1 \); they lie on or inside the soft margin and determine the final hyperplane.
+
+\subsection{Worked Example}
+Problem statement.  
+We have a two-dimensional data set consisting of  
+
+\[
+\begin{array}{c|c|c}
+\mathbf{x}_{i}=(x_{1},x_{2}) & y_{i} & \text{label}\\ \hline
+(1,1)   & + & \text{positive}\\
+(2,2)   & + & \text{positive}\\
+(-1,-1) & - & \text{negative}\\
+(-2,-2) & - & \text{negative}\\
+(0,0.5) & + & \text{outlier positive}
+\end{array}
+\]
+
+First draw the hard-margin line, then introduce a soft margin with \( C=0.5 \), compute the slack for the outlier, and indicate the new decision boundary.
+
+Step 1 -- Hard-margin classifier.  
+Because the positive points lie in the right-upper quadrant and the negative points in the left-lower quadrant, a vertical line through the origin, \( x_{1}=0 \), cleanly separates the two classes.  
+The nearest points to the line are at \( x_{1}= \pm 1 \); therefore the geometric margin is \( \gamma = 1 \).  
+All training points satisfy \( y_{i}(\mathbf{w}^{\top}\mathbf{x}_{i}+b)\ge 1 \) with \( \mathbf{w}=(1,0) \) and \( b=0 \).
+
+Step 2 -- Introduce a soft margin ( \( C = 0.5 \) ).  
+The outlier \( \mathbf{x}_{5}=(0,0.5) \) belongs to the positive class but lies exactly on the hard-margin line, so for the hard-margin solution  
+
+\[
+y_{5}\bigl(\mathbf{w}^{\top}\mathbf{x}_{5}+b\bigr)=+1\cdot 0 =0<1 .
+\]
+
+Hence its slack variable is  
+
+\[
+\xi_{5}=1 - y_{5}\bigl(\mathbf{w}^{\top}\mathbf{x}_{5}+b\bigr)=1-0=1 .
+\]
+
+All other points have \( \xi_{i}=0 \) because they are correctly classified and outside the margin.
+
+Step 3 -- Optimize with \( C=0.5 \).  
+The objective becomes  
+
+\[
+\frac{1}{2}\|\mathbf{w}\|^{2}+0.5\,\xi_{5}= \frac{1}{2}\|\mathbf{w}\|^{2}+0.5 .
+\]
+
+To reduce the penalty \(0.5\,\xi_{5}\) the optimizer shifts the line slightly to the left, decreasing the distance of the outlier from the boundary.  
+Solving the constrained problem (the algebra is straightforward for this symmetric case) yields the new decision function  
+
+\[
+\mathbf{w}^{\top}\mathbf{x}+b = x_{1}+0.25 =0,
+\]
+
+i.e. the line \( x_{1} = -0.25 \).  
+Now the outlier lies at a distance \(0.25\) inside the margin, giving a reduced slack  
+
+\[
+\xi_{5}=1- y_{5}( -0.25 ) =1- (+1)(-0.25)=1+0.25=1.25,
+\]
+
+but because the penalty weight \( C \) is small, the increase in the margin width (from \( \gamma =1 \) to \( \gamma =0.75 \)) is preferred.
+
+Final answer.  
+ Hard-margin line: \( x_{1}=0 \) (margin width \(=2\)).  
+ Soft-margin line with \( C=0.5 \): \( x_{1} = -0.25 \) (margin width \(=1.5\)).  
+ Slack for the outlier: \( \xi_{5}=1 \) under the hard-margin solution; the optimizer accepts this slack because the modest penalty \( C=0.5 \) favours a wider margin.
+
+What this shows us:  
+Allowing a controlled amount of error (the slack) lets the classifier keep a larger margin, which generally improves performance on new data even though a single training point is mis-classified or lies inside the margin.
+
+\subsection{Key Takeaway}
+A soft-margin classifier balances margin width against training errors using the parameter \( C \); tolerating a few misclassifications (measured by slack variables \( \xi_i \)) often yields a model that generalizes better.
+
+\newpage
+\subsection{Questions}
+
+% --- RECALL ---
+\begin{question}
+Define a slack variable \(\xi_i\) in a soft-margin support-vector machine and describe what it represents for an observation.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+Describe what happens to the margin width when the regularization parameter \(C\) is increased, and explain why this occurs.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+Explain how increasing \(C\) influences the number of training errors (or slack) that the model permits.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+For the data set in the worked example, with the hard-margin line \(x_1=0\) (weight \(w=(1,0)\) and bias \(b=0\)), calculate the slack \(\xi_5\) for the point \((0,0.5)\) that lies inside the margin.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+If the regularization parameter is set to \(C=0.5\) and the decision boundary is shifted to \(x_1 = -0.25\), recompute the slack for the same outlier point \((0,0.5)\).
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+Given a new positive point \((0.2,0)\) and a soft-margin classifier with \(w=(1,0)\) and \(b=-0.25\) (so the decision rule is \(x_1+0.25=0\)), compute its slack \(\xi\) when \(C=0.5\).
+\end{question}
+
+\newpage
+
+% --- ANALYSE ---
+\begin{question}
+Compare a model trained with a large \(C\) (hard-margin behavior) to one trained with a small \(C\) (soft-margin) on the same data set. Discuss the expected bias and variance of each model.
+\end{question}
+
+\newpage
+
+% --- EVALUATE ---
+\begin{question}
+Critically assess the statement: ``Because a soft-margin SVM tolerates errors, it is always preferable to a hard-margin SVM.'' Consider scenarios where a hard-margin approach might be advantageous.
+\end{question}
+
+\newpage
+% ============================================================
+% SECTION  Support Vector Machines and Dimensional Expansion
+% ============================================================
+
+\subsection*{Notation Used in This Section}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning \\ \midrule
+    $\phi(x)$ & Feature-mapping function that projects the original input x into a higher-dimensional space \\
+    $K(x, x')$ & Kernel function that computes the inner product \(\phi(x)\cdot\phi(x')\) without explicit mapping \\
+\bottomrule
+\end{tabular}
+\vspace{1em}
+
+\section{Support Vector Machines and Dimensional Expansion}
+
+\subsection{Before We Begin}
+Linear separability means that a straight line (in two dimensions) or a flat hyperplane (in higher dimensions) can be drawn so that all points from one class lie on one side of the line while all points from the other class lie on the opposite side. When such a line exists, a simple linear classifier can perfectly separate the two groups. If no such line exists, the classes are said to be not linearly separable. Understanding this idea is essential for seeing why moving the data into a different space can help. In the next section we will see how adding a new dimension makes an otherwise tangled picture become separable.
+
+\subsection{Motivation}
+When two roads cross on a flat map, they appear to intersect, but if you build a bridge (adding a third dimension) they no longer touch.  In many classification problems the data points of different classes overlap when viewed in their original space, so a linear classifier cannot separate them. By projecting the data into a higher-dimensional space we can often untangle the overlap and obtain a clear linear dividing line. This technique lets us keep the powerful geometry of linear SVMs while handling problems that are not linearly separable in the original representation.
+
+\subsection{Intuition}
+Imagine the original data points lie on a straight line, but points from opposite classes are interleaved. If we attach a second coordinate that records the square of the original value, each point is lifted off the line onto a parabola. Points that were previously mixed now appear at different heights along the new vertical axis, making it possible to draw a simple line that separates the two groups. The key idea is that by enriching each observation with extra features, the geometry of the data changes in a way that can reveal a hidden linear structure.
+
+\subsection{Formal Definition}
+Let \\(x\\) denote an original input (for instance, a measured drug dosage).  
+Define the feature-mapping function \\(\phi(x)\\) as a rule that creates a new vector of features from \\(x\\). In this section we use the specific mapping  
+
+\[
+\phi(x) = (\,x,\;x^{2}\,),
+\]
+
+which takes the scalar \\(x\\) and produces a two-dimensional point whose first component is the original value and whose second component is its square.  
+
+A kernel function \\(K(x,x')\\) computes the inner product of two mapped points without ever forming the vectors explicitly:
+
+\[
+K(x,x') = \phi(x) \cdot \phi(x') = x\,x' + x^{2}{x'}^{2}.
+\]
+
+When the mapped points become linearly separable, a linear Support Vector Classifier can be trained in the \\(\phi\\)-space. This linear separator corresponds, after reversing the mapping, to a nonlinear decision rule in the original space. It is important to note that adding dimensions does not guarantee better performance; it merely offers the possibility of separability. The kernel trick avoids the computational cost of the explicit mapping, but it does not change the underlying meaning of the original features -- the extra coordinates are derived systematically from the original measurement.
+
+\subsection{Worked Example}
+\textbf{Problem statement.}  
+Four one-dimensional points are given with their class labels:
+
+\[
+\begin{array}{c|c}
+x & \text{class} \\hline
+-2 & - \\
+-1 & + \\
+\;1 & + \\
+\;2 & -
+\end{array}
+\]
+
+Map each point using \\(\phi(x) = (x, x^{2})\\), plot the transformed points, find a separating line in the two-dimensional space, and express that line as a quadratic decision boundary in the original one-dimensional space.
+
+\textbf{Step 1: Apply the mapping.}  
+\[
+\begin{aligned}
+\phi(-2) &= (-2,\,(-2)^{2}) = (-2,\,4) &&\text{label } - \\\\
+\phi(-1) &= (-1,\,(-1)^{2}) = (-1,\,1) &&\text{label } + \\\\
+\phi(1)  &= (1,\,1^{2})   = (1,\,1)  &&\text{label } + \\\\
+\phi(2)  &= (2,\,2^{2})   = (2,\,4)  &&\text{label } -
+\end{aligned}
+\]
+
+\textbf{Step 2: Visualise the points.}  
+In the \\((x, y)\\) plane (where \\(y\\) is the second coordinate), the two ``+'' points lie at height \\(y=1\\) and the two ``-'' points lie at height \\(y=4\\). The points are therefore stacked vertically with a clear gap between the heights.
+
+\textbf{Step 3: Find a linear separator.}  
+A horizontal line that lies between the two heights separates the classes. Choose the line
+
+\[
+y = 2.5 .
+\]
+
+All points with \\(y < 2.5\\) are classified as ``+'', and all points with \\(y > 2.5\\) are classified as ``-''. This line is a valid maximum-margin separator because it is equidistant from the nearest ``+'' points at \\(y=1\\) and the nearest ``-'' points at \\(y=4\\).
+
+\textbf{Step 4: Translate back to the original space.}  
+Since in the mapped space \\(y = x^{2}\\), the separating line \\(y = 2.5\\) becomes the equation
+
+\[
+x^{2} = 2.5 .
+\]
+
+Thus the decision rule in the original one-dimensional space is
+
+\[
+\begin{cases}
+\text{predict } + & \text{if } x^{2} < 2.5, \\\\
+\text{predict } - & \text{if } x^{2} > 2.5 .
+\end{cases}
+\]
+
+Equivalently, the boundary consists of the two points \\(x = \pm\sqrt{2.5}\approx \pm 1.58\\); values of \\(x\\) between these two numbers are assigned to the ``+'' class, and values outside are assigned to the ``-'' class.
+
+\textbf{Final answer.}  
+The transformed points are \\((-2,4)_{-}, (-1,1)_{+}, (1,1)_{+}, (2,4)_{-}\\). The separating line \\(y=2.5\\) cleanly divides the ``+'' and ``-'' points, and in the original space this corresponds to the quadratic boundary \\(x^{2}=2.5\\).
+
+\textbf{What this shows us:}  
+By augmenting each observation with its square, a data set that is inseparable on a line becomes perfectly separable with a simple linear classifier in the higher-dimensional space, and that linear classifier translates back into a non-linear (quadratic) rule for the original problem.
+
+\subsection{Key Takeaway}
+Mapping data to a higher-dimensional feature space can turn a non-linearly separable problem into one that a linear SVM can separate, and the resulting linear decision surface corresponds to a nonlinear decision rule in the original space.
+
+\newpage
+\subsection*{Questions}
+
+% --- RECALL ---
+\begin{question}
+Define the feature-mapping function \ensuremath{\phi}(x) used in this section and state what it does to a one-dimensional input.
+\end{question}
+
+\newpage
+
+% --- RECALL ---
+\begin{question}
+Write the formula for the kernel function K(x,x') that corresponds to the mapping \ensuremath{\phi}(x) = (x, x^2).
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+In your own words, describe why a straight line that separates the points in the (x, x^2) space translates into a quadratic decision boundary in the original one-dimensional space.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+Using the worked example, explain how the horizontal line y = 2.5 separates the classes after mapping and what this means for the classification of the original x values.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+For the three points x = -1, 0, 1 with labels +, --, +, compute their \ensuremath{\phi}-mapped coordinates and state whether a linear separator exists in the (x, x^2) space.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+Based on the mapped coordinates from the previous question, propose a linear decision rule (for example, a threshold on y) that would separate the classes, and write the equivalent decision rule as an inequality involving x in the original space.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+Compute the kernel value K(-1,1) and verify that it equals the dot product of the mapped vectors \ensuremath{\phi}(-1) and \ensuremath{\phi}(1).
+\end{question}
+
+\newpage
+
+% --- ANALYSE ---
+\begin{question}
+Compare the computational effort required to classify a new point by (a) explicitly computing \ensuremath{\phi}(x) and then the dot product with a weight vector in two dimensions, versus (b) using the kernel function K(x,x') directly without forming \ensuremath{\phi}(x).
+\end{question}
+
+\newpage
+
+% --- EVALUATE ---
+\begin{question}
+Discuss situations where mapping data to a higher-dimensional feature space could be disadvantageous for classification, considering factors such as over-fitting, computational cost, and interpretability.
+\end{question}
+
+\newpage
+% ============================================================
+% SECTION  Kernel Functions and The Kernel Trick
+% ============================================================
+
+\subsection*{Notation Used in This Section}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning \\ \midrule
+    $K(x, x')$ & Kernel function computing the inner product in the (implicit) feature space \\
+    $d$ & Degree of the polynomial kernel \\
+    $\gamma$ & Bandwidth parameter for the RBF kernel controlling the width of the Gaussian \\
+\bottomrule
+\end{tabular}
+\vspace{1em}
+
+\section{Kernel Functions and The Kernel Trick}
+
+\subsection{Before We Begin}
+The inner product, also called the dot product, takes two vectors and returns a single number that reflects how much the vectors point in the same direction.  
+If the vectors are similar, the inner product is large; if they are orthogonal, the inner product is zero.  
+This simple similarity measure forms the basis for many algorithms that compare data points.  
+Understanding the inner product lets us see how more complex similarity calculations are built.  
+Now we can explore how kernels extend this idea to richer, higher-dimensional relationships.
+
+\subsection{Motivation}
+Using a secret handshake: two people can verify they share a secret without ever revealing the whole secret to each other.  
+Kernel functions give SVMs a way to compare data points in a hidden high-dimensional space without actually constructing that space.  
+They let us keep the computation cheap while still capturing complex patterns that a plain linear SVM would miss.  
+
+\subsection{Intuition}
+Imagine you want to separate points that look tangled in the original plane.  
+Instead of drawing a straight line directly, you picture lifting the points onto a higher-dimensional surface where they spread out and become linearly separable.  
+A kernel function tells you how similar any two points are as if they had already been lifted, even though you never see the lifted coordinates.  
+Thus the algorithm can work with these ``virtual'' higher-dimensional relationships while staying in the original, low-dimensional world.
+
+\subsection{Formal Definition}
+A kernel function is a function \(K(\mathbf{x},\mathbf{x}')\) that computes the inner product of two inputs \(\mathbf{x}\) and \(\mathbf{x}'\) after they have been mapped implicitly into a (possibly very high-dimensional) feature space \(\Phi\):
+\[
+K(\mathbf{x},\mathbf{x}') = \langle \Phi(\mathbf{x}), \Phi(\mathbf{x}') \rangle .
+\]
+Because the mapping \(\Phi\) never needs to be written out explicitly, the computation is often far cheaper than constructing the feature vectors directly.
+
+Two common kernels used with support vector machines are:
+
+ Polynomial kernel with degree \(d\):
+  \[
+  K_{\text{poly}}(\mathbf{x},\mathbf{x}') = (1 + \mathbf{x}\!\cdot\!\mathbf{x}')^{d},
+  \]
+  where \(\mathbf{x}\!\cdot\!\mathbf{x}'\) denotes the ordinary inner product of the original vectors and \(d\) (the degree) controls how many polynomial terms are implicitly created.  The kernel creates all monomials up to degree \(d\), giving a finite-dimensional feature space.
+
+ Radial basis function (RBF) kernel with bandwidth parameter \(\gamma\):
+  \[
+  K_{\text{RBF}}(\mathbf{x},\mathbf{x}') = \exp\!\bigl(-\gamma \,\|\mathbf{x}-\mathbf{x}'\|^{2}\bigr),
+  \]
+  where \(\|\mathbf{x}-\mathbf{x}'\|\) is the Euclidean distance between the two points.  This kernel corresponds to an inner product in an infinite-dimensional space; it behaves like a weighted nearest-neighbor rule, giving larger similarity to points that are close together.
+
+Common misconceptions are cleared up by this definition: the kernel does not build the new features explicitly, it merely supplies their inner products; the polynomial degree \(d\) can be any positive integer (it does not have to be limited by the data), and the RBF kernel is a similarity measure---not just a raw distance---because the exponential transformation turns distances into values between 0 and 1 that act like inner products.
+
+\subsection{Worked Example}
+\textbf{Problem statement.}  
+Given \(\mathbf{x} = (1,2)\) and \(\mathbf{x}' = (2,1)\):
+
+1. Compute the polynomial kernel of degree \(d = 2\):  
+   \(K_{\text{poly}} = (1 + \mathbf{x}\!\cdot\!\mathbf{x}')^{2}\).
+
+2. Compute the RBF kernel with \(\gamma = 0.5\):  
+   \(K_{\text{RBF}} = \exp\!\bigl(-\gamma \,\|\mathbf{x}-\mathbf{x}'\|^{2}\bigr)\).
+
+\textbf{Step 1: Dot product.}  
+\[
+\mathbf{x}\!\cdot\!\mathbf{x}' = 1\cdot 2 + 2\cdot 1 = 2 + 2 = 4 .
+\]
+
+\textbf{Step 2: Polynomial kernel.}  
+\[
+K_{\text{poly}} = (1 + 4)^{2} = 5^{2} = 25 .
+\]
+
+\textbf{Step 3: Difference vector.}  
+\[
+\mathbf{x} - \mathbf{x}' = (1-2,\; 2-1) = (-1,\,1) .
+\]
+
+\textbf{Step 4: Squared Euclidean norm.}  
+\[
+\|\mathbf{x}-\mathbf{x}'\|^{2} = (-1)^{2} + 1^{2} = 1 + 1 = 2 .
+\]
+
+\textbf{Step 5: RBF kernel.}  
+\[
+K_{\text{RBF}} = \exp\!\bigl(-0.5 \times 2\bigr) = \exp(-1) \approx 0.3679 .
+\]
+
+\textbf{Final answers.}  
+\[
+K_{\text{poly}} = 25 , \qquad K_{\text{RBF}} \approx 0.37 .
+\]
+
+\textbf{What this shows us:}  
+The polynomial kernel of degree 2 implicitly works in a finite space that captures all products up to second order (for two original features this space has six dimensions).  
+The RBF kernel, even though its value is a single number, corresponds to an inner product in an infinite-dimensional space; the similarity decays smoothly with distance, giving a much richer representation without any explicit feature construction.
+
+\subsection{Key Takeaway}
+Kernel functions let support vector machines compare data as if they were mapped into high-dimensional spaces, while the ``kernel trick'' avoids ever constructing those spaces explicitly.
+
+\newpage
+\subsection*{Questions}
+
+% --- RECALL ---
+\begin{question}
+Write the formal definition of a kernel function as used in support vector machines.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+Explain why a polynomial kernel of degree d creates an implicit feature space that contains all monomials up to degree d.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+Describe how the kernel trick lets us compute inner products in that high-dimensional feature space without explicitly forming the mapped vectors.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+Given the vectors x = (1,0) and x' = (0,1), first compute their dot product and then use it to calculate the polynomial kernel K(x,x') = (1 + xx')^3.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+Using x = (1,0) and x' = (0,1), evaluate the polynomial kernel K(x,x') = (1 + xx')^3 and show the intermediate calculation steps.
+\end{question}
+
+\newpage
+
+% --- ANALYSE ---
+\begin{question}
+Discuss how changing the RBF parameter gamma influences the shape of the decision boundary and the number of effective support vectors in an SVM.
+\end{question}
+
+\newpage
+
+% --- EVALUATE ---
+\begin{question}
+Argue situations in which it would be better to choose a polynomial kernel rather than an RBF kernel for a given dataset.
+\end{question}
+
+\end{document}

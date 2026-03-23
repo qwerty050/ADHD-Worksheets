@@ -1,0 +1,122 @@
+{
+    "cleaned_content": "# Software Requirements Analysis and Specification\n\n## 1. Background and Need for Requirements\nAll systems and software products are built to achieve specific higher-level business or societal goals (e.g., improve efficiency, satisfaction, reduce costs). Requirements are derived from these overall goals and state what the software should do to help achieve them. Goals and requirements are distinct: goals represent the end impact on business/society, while requirements are specific to the software's functionality.\n\n### Context for Solution Development (Diagram Description)\n* **Biz/Social Goals** lead to the identification of a **Problem**.\n* A **Development Process** is undertaken to create a **Software Solution**.\n* The Software Solution **Solves** the Problem.\n* The Software Solution ultimately creates an **Impact on Biz/Society**.\n\n### Need for Software Requirements Specification (SRS)\n* Problem of scale is a key issue; requirements understanding is hard for large projects.\n* Requirement (IEEE definition): A condition or capability that must be possessed by a system.\n* The requirements phase ends with an SRS document, specifying what the proposed system should do.\n* Helps clarify users' needs (users do not always know what they want initially).\n* Establishes the basis of agreement between the user and the supplier.\n* Provides a reference for validation of the final product.\n* High-quality SRS is essential for high-quality software. Requirement errors (defects) often manifest in the final software and are expensive to fix later. Extra effort during requirements saves multiple times that effort later.\n\n## 2. Requirements Process\nThe sequence of steps to convert user needs into an SRS. It is not linear; it is iterative and parallel. Basic activities include:\n* **Elicitation and Analysis:** Understanding goals, needs, constraints. Involves interviewing clients, reading manuals, studying current systems, brainstorming, and organizing information. This is often the hardest part.\n* **Specification:** Documenting the requirements precisely in the SRS.\n* **Validation:** Checking the SRS for errors (omission, inconsistency, incorrect facts, ambiguity) through reviews involving authors, clients, users, and developers.\n\n*Structured vs. Informal Approaches:*\n* Structured approaches include Data Flow Analysis, E-R diagrams, Object-Oriented Analysis, Use Cases, User Stories, and formal modeling.\n* Informal approaches (widely used alongside Use Cases) rely on analyst experience, discussions, diagrams as needed, and iterative feedback.\n\n## 3. Components and Characteristics of an SRS\nAn SRS must specify requirements on:\n* **Functionality:** What the system should do (inputs, operations, outputs, handling invalid inputs). Forms the bulk of the SRS.\n* **Performance:** Dynamic constraints (response time, throughput) and static constraints (capacity). Must be measurable.\n* **Design Constraints:** Restrictions like technology choices, standard compliance, hardware limitations, reliability, fault tolerance, security.\n* **External Interfaces:** Interactions with people (UI), hardware, and other software.\n\n*Desired Characteristics of an SRS:*\n* **Correctness:** Accurately represents desired features.\n* **Completeness:** All desired features are specified (hardest to satisfy).\n* **Unambiguous:** Each requirement has exactly one meaning.\n* **Verifiability:** Cost-effective way to check if the software meets the requirement.\n* **Consistent:** Requirements do not contradict each other.\n* **Traceable:** Origin and relation to software elements can be determined.\n* **Ranked:** Prioritized for importance/stability.\n\n## 4. Specifying Functional Requirements\nFunctional requirements specify the intended behavior of the system. Common methods include:\n* **List of Software Features/Commands:** Grouped by user category.\n* **Use Cases:** Describes the interaction of the system with actors (external entities). Captures who (actor), does what (interaction sequence), for what purpose (goal), and when (entry condition). Treats the system as a black box. Can include alternative/exceptional sequences. A Use Case can 'include' or 'extend' other Use Cases.\n* **User Stories:** Lightweight method used in Agile. Format: \"As a [type of user], I want [some action] so that [some reason/benefit].\"\n\n## 5. Minimum Viable Product (MVP)\n* **Challenges:** Requirements bloating (asking for unused features) and Requirements creep.\n* **MVP Concept:** A product with just sufficient features to solve the main problem for users, attracting early adopters, and validating the product idea and assumptions with real data.\n* **Viability:** Must provide value, be reliable, usable, and architected for extensibility.\n* **MVP and SRS:** Prioritize SRS requirements (Essential, Desirable, Deferable). The collection of \"Essential/Must-haves\" forms the starting point of an MVP. Include features that provide data/insight for future releases (e.g., search logs, user feedback mechanisms).\n* **Benefits:** Fast market release, validates ideas, reduces waste, allows \"fail-fast\". Example: Airbnb started with minimal features to validate the idea of renting personal spaces.\n\n## 6. Project SRS Development Process & Structure\n* **Process:** Meet sponsor -> Develop initial SRS (can use LLMs) -> Review/refine -> Final line-by-line review with sponsor.\n* **Structure:** Title, Sponsor info, Development Team, Introduction (Purpose, User types, constraints), Functional Requirements Overview (table of use cases with priority), Non-Functional Requirements (UI, Performance, Design), Further Details.",
+    "prerequisite_gaps": [
+        "Software Engineering Lifecycle (SDLC) context",
+        "Agile methodologies (mentioned as the framework for User Stories and MVP)",
+        "Data Flow Analysis, E-R Diagrams, and Object-Oriented Analysis (mentioned briefly as structured analysis approaches without detailed explanation)",
+        "Lean Startup principles (mentioned in relation to MVP)",
+        "LLM (Large Language Model) usage for document drafting"
+    ],
+    "section_map": [
+        {
+            "section_title": "1. Background and Need for Requirements",
+            "section_content": "All systems and software products are built to achieve higher-level business or societal goals (e.g., improve efficiency, satisfaction, reduce costs). From these goals, specific requirements are created. Goals represent the end business impact, while requirements state specifically what the software should do to help achieve those goals.\n\nContext for Solution Development:\nBiz/Social Goals -> identify a Problem -> triggers a Development Process -> yields a Software Solution -> Solves the Problem -> creates Impact on Biz/Society.\n\nThe process starts with requirement analysis. A requirement (IEEE) is a condition or capability that must be possessed by a system. Understanding requirements is easy for small scales but very hard and error-prone for large systems. The phase ends with a Software Requirements Specification (SRS) document.\n\nNeed for SRS:\n- Helps clarify user needs (as users don't always know what they want).\n- Establishes a basis of agreement between user and supplier.\n- Provides a reference for validation of the final product.\n- High-quality SRS is essential for high-quality software. Requirement errors manifest later in development, where they are incredibly expensive to fix. A good SRS reduces development cost and effort significantly.",
+            "topics": [
+                "Business Goals vs. Software Requirements",
+                "Solution Development Context",
+                "Importance of SRS",
+                "Cost of Requirement Defects"
+            ],
+            "subtopics": [
+                "IEEE definition of Requirement",
+                "Impact of errors"
+            ],
+            "dependency_order": 1
+        },
+        {
+            "section_title": "2. The Requirements Process",
+            "section_content": "The Requirements Process is the sequence of steps to convert user needs into an SRS. It is iterative and parallel, not strictly linear. It involves overlapping phases where validation can expose gaps leading to further analysis.\n\nBasic Activities:\n1. Problem or Requirement Analysis (Elicitation and Analysis): Understanding application goals, user needs, and constraints. Involves interviewing users, studying manuals/systems, brainstorming, organizing collected info, and ensuring completeness. The analyst acts like a consultant, requiring strong interpersonal skills. This is the hardest part.\n2. Requirement Specification: Documenting the gathered knowledge into the SRS.\n3. Validation: Catching errors early.\n\nApproaches to Analysis:\n- Structured: Data flow analysis, E-R diagrams, Object-oriented analysis, Use cases, User stories, Formal modeling.\n- Informal: Utilizing diagrams as needed for understanding, relying on analyst experience, client reviews, and iterative refinement. Commonly used in conjunction with Use cases.",
+            "topics": [
+                "Requirements Elicitation",
+                "Iterative Process",
+                "Analysis Approaches"
+            ],
+            "subtopics": [
+                "Problem Analysis techniques",
+                "Structured vs. Informal Analysis"
+            ],
+            "dependency_order": 2
+        },
+        {
+            "section_title": "3. Software Requirements Specification (SRS) Document",
+            "section_content": "The SRS is the final output of the requirements task. It must clearly specify:\n1. Functionality: The heart of the document. Defines inputs, outputs, operations, and behavior for invalid inputs for all user categories.\n2. Performance Requirements: Dynamic constraints (response time, throughput) and static constraints (capacity). Must be measurable (e.g., 'response time xx 90% of the time').\n3. Design Constraints: Restrictions such as technology stack, hardware limitations, standard compliance, reliability, and security.\n4. External Interfaces: User interfaces (most important), and interactions with hardware/other software.\n\nDesired Characteristics of an SRS:\n- Correctness: Accurately represents a desired feature.\n- Completeness: Contains all desired features (hardest to satisfy).\n- Unambiguous: Each requirement has exactly one meaning.\n- Verifiability: Exists a cost-effective way to check if the software satisfies it.\n- Consistent: Requirements do not contradict.\n- Traceable: Origin and software relation are identifiable.\n- Ranked: Prioritized for importance and stability.\n\nRequirements Validation:\nErrors in SRS (Omission 30%, Inconsistency 10-30%, Incorrect fact 10-30%, Ambiguity 5-20%) are expensive to fix later. Validation is done via formal reviews involving authors, clients, users, and developers. Line-by-line inspection can catch 40-80% of errors.",
+            "topics": [
+                "Components of SRS",
+                "Desired Characteristics of SRS",
+                "Requirements Validation"
+            ],
+            "subtopics": [
+                "Functional vs Non-Functional Requirements",
+                "Performance Constraints",
+                "SRS Reviews"
+            ],
+            "dependency_order": 3
+        },
+        {
+            "section_title": "4. Specifying Functional Requirements (Use Cases & User Stories)",
+            "section_content": "Functional requirements define what the system should do for users. Common specification methods:\n\n1. Software features/commands: Identifying user categories and listing specific features/commands needed for each.\n\n2. Use Cases: Describes the interaction between the system (black box) and actors (external entities/users). A single Use Case captures:\n- Name/Goal: Uniquely identifies it.\n- Actor: Who is interacting.\n- Brief Description: Purpose.\n- Entry Condition: When it can be performed.\n- Interaction sequence: Main flow of events and exceptional/alternative sequences.\nExample: Start a quiz (Actor: Instructor, Goal: start a timed quiz, Flow: choose type, duration, specify answers, start).\nUse cases can be linked: 'Include' (uses another use case as a step) or 'Extend' (modifies/adds to an existing use case).\n\n3. User Stories: A lightweight agile method to capture who, what, and why. Format: \"As a [type of user], I want [some action] so that [some reason/benefit].\"\nExample: \"As a customer, I want a shopping cart, so I can combine all my proposed purchases.\"",
+            "topics": [
+                "Functional Requirements",
+                "Use Cases",
+                "User Stories"
+            ],
+            "subtopics": [
+                "Actors and Goals",
+                "Use Case Diagrams",
+                "Include and Extend relations",
+                "Agile requirement tracking"
+            ],
+            "dependency_order": 4
+        },
+        {
+            "section_title": "5. Minimum Viable Product (MVP) & Prioritization",
+            "section_content": "Challenges in software requirements include 'Requirements bloating' (users asking for unnecessary features) and 'Requirements creep' (features added mid-project). To handle this, all requirements in an SRS must be prioritized: Essential (Must-have), Desirable, Deferable.\n\nMinimum Viable Product (MVP):\nA concept popular in lean startups and agile development. Instead of building every envisioned feature (which is risky and unproven), developers build a product with just enough features (the 'Essential' requirements) to solve the main problem and attract early adopters. \n\nAn MVP must be viable: It should provide value, be reliable, have a good interface, and be architected to allow future extensions. The goal is to release fast, validate product assumptions with actual user data, and guide the next release based on real feedback (e.g., search patterns, usage frequency). This prevents wasted effort ('fail-fast'). Airbnb is a classic example of starting with an MVP.",
+            "topics": [
+                "Requirements Bloat and Creep",
+                "Minimum Viable Product (MVP)",
+                "Requirement Prioritization"
+            ],
+            "subtopics": [
+                "Lean Startup Methodology",
+                "Validating Assumptions",
+                "MVP Viability criteria"
+            ],
+            "dependency_order": 5
+        },
+        {
+            "section_title": "6. Project SRS Development Process & Document Structure",
+            "section_content": "Suggested Process for creating a Project SRS:\n1. Analyze: Meet the sponsor to understand the business goal, user types, and scope.\n2. Draft: Develop an initial SRS, potentially utilizing LLMs (Large Language Models) to outline features, then manually refine and correct missing requirements.\n3. Finalize: Conduct a thorough, line-by-line review meeting with the project sponsor.\n\nStandard Structure of an SRS (for course projects):\n- Title of the project\n- Sponsor details (organization, contacts)\n- Development Team details\n- Introduction (Purpose, system objectives, user types, constraints)\n- Functional requirements overview (Use case table per user category with descriptions and priority rankings)\n- Non-Functional requirements (UI, Performance, Design/Tech stack)\n- Further Details (Detailed expansions of use cases)",
+            "topics": [
+                "SRS Drafting Process",
+                "Standard SRS Structure"
+            ],
+            "subtopics": [
+                "LLM assistance in drafting",
+                "Sponsor review"
+            ],
+            "dependency_order": 6
+        }
+    ],
+    "extracted_pyqs": [
+        {
+            "question": "How does having a good SRS help in delivering a high quality software application?",
+            "context": "Discussion / Exercise on the need for SRS."
+        },
+        {
+            "question": "How does a good SRS reduce project cost / effort (when requirements themselves consume effort)?",
+            "context": "Discussion / Exercise on the cost-saving benefits of catching errors early via SRS."
+        },
+        {
+            "question": "What strategies you can use for doing better requirement elicitation?",
+            "context": "Discussion on Requirement Process and Analysis approaches."
+        },
+        {
+            "question": "For your project, write down one functional and one non-functional requirements (based on your current understanding). Enter them in the shared doc.",
+            "context": "Exercise during the specification of Functional vs Non-Functional constraints."
+        },
+        {
+            "question": "In your group - write one use case for ERP you use (e.g. for registration, add a course, drop, ...). Paste your use case in this shared doc.",
+            "context": "Exercise practicing the creation of Use Cases (Actor, Goal, Interaction sequence)."
+        }
+    ]
+}

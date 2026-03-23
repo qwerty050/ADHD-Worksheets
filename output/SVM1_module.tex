@@ -1,0 +1,505 @@
+\documentclass[12pt, a4paper]{article}
+
+% --- Encoding & Fonts ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% --- Mathematics ---
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newcounter{question}[section]
+\renewcommand{\thequestion}{\thesection.\arabic{question}}
+
+\newenvironment{question}
+  {\refstepcounter{question}\par\noindent\textbf{Question \thequestion:}}
+  {\par}
+
+% --- Layout ---
+\usepackage[margin=1in]{geometry}
+
+% --- Lists ---
+\usepackage{enumitem}
+
+% --- Tables ---
+\usepackage{booktabs}
+\usepackage{array}
+
+% --- Graphics ---
+\usepackage{graphicx}
+
+% --- Headers / Footers ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% --- Hyperlinks & Cross-references ---
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+
+% --- Misc ---
+\usepackage{xcolor}
+
+% --- Custom commands (safety definitions) ---
+\providecommand{\operatorname}[1]{\mathop{\mathrm{#1}}\nolimits}
+
+\title{Learning Module: Svm1}
+\author{}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+\tableofcontents
+\newpage
+
+% ============================================================
+% SECTION  Maximal Margin Classifiers
+% ============================================================
+
+\section{Maximal Margin Classifiers}
+
+\subsection{Motivation}
+Understanding how to separate groups of data points is a fundamental step in building a simple decision rule.  When measurements such as the body mass of mice are used to decide whether a mouse is ``obese'' or ``not obese,'' we need a clear way to draw a line that tells us which side each mouse belongs to.
+
+\subsection{Intuition}
+Imagine the measurements as points placed on a straight line.  If the ``obese'' points cluster together on one side and the ``not obese'' points cluster on the other, we can draw a dividing line somewhere between the two groups.  The best place for this line is the spot that is as far away as possible from the nearest points of each group.  By keeping the line as far as possible from the closest points, we give ourselves a safety buffer---called the margin---so that small changes in the data are less likely to cause a mistake.
+
+\subsection{Formal Definition}
+Let the set of observed masses be represented on a one-dimensional number line.  Define a \textbf{threshold} \(t\) as a numerical value that separates the line into two regions: observations with mass less than \(t\) are classified into one class (e.g., ``not obese'') and observations with mass greater than \(t\) are classified into the other class (e.g., ``obese'').  
+
+The \textbf{margin} \(m\) is the shortest distance from the threshold \(t\) to any observation.  Formally, if \(x_{\text{closest}}^{\text{obese}}\) is the obese observation nearest to \(t\) and \(x_{\text{closest}}^{\text{not}}\) is the not-obese observation nearest to \(t\), then  
+
+\[
+m=\min\!\bigl(\,|t-x_{\text{closest}}^{\text{obese}}|,\;|t-x_{\text{closest}}^{\text{not}}|\,\bigr).
+\]
+
+The \textbf{Maximal Margin Classifier} chooses the threshold \(t^{}\) that maximizes this margin.  In one dimension this means placing \(t^{}\) exactly halfway between the two closest points belonging to different classes:
+
+\[
+t^{}= \frac{x_{\text{closest}}^{\text{obese}} + x_{\text{closest}}^{\text{not}}}{2}.
+\]
+
+Because the margin is defined as the distance to the nearest observation, the classifier automatically avoids placing the threshold too close to any data point, preventing easy misclassification due to tiny measurement errors.  However, if an observation lies far from its own cluster (an outlier), it becomes one of the ``closest'' points of the opposite class, forcing the threshold to shift dramatically.  This sensitivity to outliers leads to high variance (the rule changes a lot with different data) even though the rule itself is simple (low bias).
+
+\subsection{Key Takeaway}
+The Maximal Margin Classifier places the decision threshold halfway between the nearest opposing observations, maximizing the safety buffer (margin) but becoming extremely sensitive to outliers.
+
+\newpage
+\subsection{Questions}
+
+% --- RECALL ---
+\begin{question}
+(RECALL) What is the definition of a threshold $t$ in a one-dimensional maximal margin classifier?
+\end{question}
+
+\newpage
+
+% --- RECALL ---
+\begin{question}
+(RECALL) Write the formula for the margin $m$ as defined in the theory.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+(UNDERSTAND) In your own words, explain why placing the threshold halfway between the nearest opposing observations creates a safety buffer.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+(UNDERSTAND) How does an outlier that lies far from its own cluster affect the position of the maximal margin threshold?
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) Given obese observations at $30\,\text{g},\;32\,\text{g},\;35\,\text{g}$ and not-obese observations at $20\,\text{g},\;22\,\text{g},\;24\,\text{g}$, determine the maximal-margin threshold $t^{}$ and the resulting margin $m$.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) If the obese class contains an outlier at $90\,\text{g}$ in addition to $30\,\text{g}$ and $32\,\text{g}$, while the not-obese class remains $20\,\text{g},\;22\,\text{g},\;24\,\text{g}$, calculate the new maximal-margin threshold $t^{}$ and margin $m$.
+\end{question}
+
+\newpage
+
+% --- ANALYSE ---
+\begin{question}
+(ANALYSE) Compare the maximal margin classifier with a classifier that chooses the midpoint between the mean mass of the obese class and the mean mass of the not-obese class. Which classifier is more robust to small measurement errors and why?
+\end{question}
+
+\newpage
+
+% --- ANALYSE ---
+\begin{question}
+(ANALYSE) Explain how the presence of an extreme outlier changes the margin and discuss the impact on the classifier's variance.
+\end{question}
+
+\newpage
+
+% --- EVALUATE ---
+\begin{question}
+(EVALUATE) Propose a modification to the maximal margin classifier that reduces its sensitivity to outliers (e.g., using a soft margin). Briefly describe how this modification would operate in the one-dimensional setting.
+\end{question}
+
+\newpage
+% ============================================================
+% SECTION  Support Vector Classifiers (Soft Margins)
+% ============================================================
+
+\section{Support Vector Classifiers (Soft Margins)}
+
+\subsection{Motivation}
+Imagine a training set that contains a few mislabeled points or outliers.  Insisting on a perfectly clean separation would force the decision boundary to contort around these troublesome observations, often hurting performance on future data.  By deliberately allowing a limited number of misclassifications---known as a \emph{soft margin}---the model gains robustness and typically generalizes better.  Cross-validation is used to decide exactly how much leeway to grant, balancing the need for a wide margin against the cost of occasional errors.
+
+\subsection{Intuition}
+A soft-margin classifier says, ``I will tolerate a few mistakes if it lets me draw a straighter, more stable boundary.''  Instead of hugging every point, the algorithm draws the decision surface a comfortable distance away from most data, while permitting a few points to fall inside this safety zone (the \emph{soft margin}).  Those points that sit right on the edge or within the margin become the \emph{support vectors}---they alone determine the final position of the boundary.  This tolerance reduces the model's sensitivity to noise (lower variance) at the price of a slightly biased fit, which usually improves performance on unseen examples.
+
+\subsection{Formal Definition}
+Consider a training set \(\{(\mathbf{x}_i, y_i)\}_{i=1}^{n}\) where each input \(\mathbf{x}_i\in\mathbb{R}^p\) is paired with a class label \(y_i\in\{-1,+1\}\).  
+A linear decision function is written as  
+\[
+f(\mathbf{x}) = \mathbf{w}\!\cdot\!\mathbf{x} + b,
+\]
+where \(\mathbf{w}\in\mathbb{R}^p\) is the weight vector and \(b\in\mathbb{R}\) is the bias term.  
+
+To allow controlled misclassifications we introduce a non-negative \emph{slack variable} \(\xi_i\ge 0\) for each observation.  The soft-margin constraints become  
+
+\[
+y_i\bigl(\mathbf{w}\!\cdot\!\mathbf{x}_i + b\bigr) \;\ge\; 1 - \xi_i \qquad (i=1,\dots,n).
+\]
+
+The total amount of slack is penalized by a user-chosen parameter \(C>0\).  The optimization problem is  
+
+\[
+\begin{aligned}
+\min_{\mathbf{w},\,b,\,\boldsymbol{\xi}} \quad & \frac{1}{2}\|\mathbf{w}\|^{2} \;+\; C\sum_{i=1}^{n}\xi_i \\[4pt]
+\text{s.t.}\quad & y_i\bigl(\mathbf{w}\!\cdot\!\mathbf{x}_i + b\bigr) \;\ge\; 1 - \xi_i,\\
+                 & \xi_i \ge 0 \quad (i=1,\dots,n).
+\end{aligned}
+\]
+
+The first term \(\tfrac{1}{2}\|\mathbf{w}\|^{2}\) tries to maximise the geometric margin (making \(\mathbf{w}\) as short as possible), while the second term \(C\sum\xi_i\) discourages excessive slack.  A large \(C\) heavily penalises misclassifications, pushing the solution toward a hard margin; a small \(C\) permits more slack, yielding a wider margin.  
+
+\emph{Support vectors} are precisely those training points for which either \(y_i(\mathbf{w}\!\cdot\!\mathbf{x}_i + b)=1\) (lying on the margin) or \(\xi_i>0\) (lying inside the soft margin).  Points farther away from the boundary (strictly satisfying \(y_i(\mathbf{w}\!\cdot\!\mathbf{x}_i + b) > 1\)) do not influence the final classifier.
+
+Because the optimal solution depends on \(C\), practitioners typically use \emph{cross-validation}---repeatedly training on subsets of the data and testing on held-out portions---to choose the value of \(C\) (and thus the tolerated number of misclassifications) that yields the best predictive performance.
+
+\subsection{Key Takeaway}
+A soft-margin classifier intentionally permits a limited number of training errors, trading a bit of bias for substantially lower variance, and thereby achieving better generalization on new data.
+
+\newpage
+\subsection*{Questions}
+
+% --- RECALL ---
+\begin{question}
+(RECALL) Define a soft margin in the context of support vector machines.
+\end{question}
+
+\newpage
+
+% --- RECALL ---
+\begin{question}
+(RECALL) What is the role of the slack variable $\xi_i$ and the parameter $C$ in the soft-margin optimization problem?
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+(UNDERSTAND) Explain in your own words how allowing misclassifications (via a soft margin) affects the bias-variance tradeoff of a classifier.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+(UNDERSTAND) Why is cross-validation used when choosing the value of $C$ for a soft-margin SVM?
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) Given a linear classifier $f(\mathbf{x}) = \mathbf{w}\cdot\mathbf{x}+b$ with $\mathbf{w} = \begin{bmatrix}2\\-1\end{bmatrix}$ and $b = 0.5$, and a training point $\mathbf{x}_1 = (1,2)$ with label $y_1 = +1$, compute $y_1\bigl(\mathbf{w}\cdot\mathbf{x}_1 + b\bigr)$. Based on the soft-margin constraint $\ge 1 - \xi_1$, determine the minimum slack $\xi_1$ required for this point.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) For the same classifier as above and $C = 0.8$, suppose the slack variables for three training points are $\xi_1=0$, $\xi_2=0.3$, $\xi_3=0.5$. Compute the value of the objective function $\frac12\|\mathbf{w}\|^{2} + C\sum_{i}\xi_i$.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) Consider a dataset with two points: $\mathbf{x}_A = (0,0)$, $y_A = -1$ and $\mathbf{x}_B = (3,4)$, $y_B = +1$. Using $C=1$, explain whether a hard-margin solution (no slack) is feasible. If not, indicate which point would become a support vector inside the soft margin.
+\end{question}
+
+\newpage
+
+% --- ANALYSE ---
+\begin{question}
+(ANALYSE) Compare the expected decision boundary when $C$ is set to a very large value versus when $C$ is set to a very small value. How does each choice influence the margin width and the number of support vectors?
+\end{question}
+
+\newpage
+
+% --- ANALYSE ---
+\begin{question}
+(ANALYSE) Describe a scenario where a soft-margin SVM would still fail to produce a useful classifier, referencing the limitation of overlapping classes.
+\end{question}
+
+\newpage
+
+% --- EVALUATE ---
+\begin{question}
+(EVALUATE) Design a simple 5-fold cross-validation experiment to select an appropriate $C$ for a soft-margin SVM given a small training set. Outline the steps and the criterion you would use to pick the best $C$.
+\end{question}
+
+\newpage
+% ============================================================
+% SECTION  Support Vector Machines and Dimensional Expansion
+% ============================================================
+
+\section{Support Vector Machines and Dimensional Expansion}
+
+\section{Mapping Data to a Higher Dimension for Linear Separation}
+
+\subsection{Motivation}
+Imagine you have two groups of patients whose drug dosages overlap when plotted on a single line, making it impossible for a straight line to separate them. By moving the data into a space that has an extra dimension, those overlapping groups can become visually distinct, allowing a simple linear classifier to achieve perfect separation. This idea underlies the technique of transforming data before applying a Support Vector Classifier.
+
+\subsection{Intuition}
+Start with observations that lie on a one-dimensional axis (for example, the amount of drug given). If the points from different classes are intermingled, a straight line cannot separate them. By creating a new axis whose coordinate is a function of the original one---specifically the square of the dosage---we lift each point onto a curve (a parabola) in a two-dimensional plane. On this plane the same classes that once overlapped are now spread apart along the vertical direction, so a single straight line (the decision boundary of a linear Support Vector Classifier) can cleanly divide the two groups.
+
+\subsection{Formal Definition}
+Let \(x\in\mathbb{R}\) denote an observed drug dosage for a patient.  
+Define a mapping \(\phi : \mathbb{R}\rightarrow\mathbb{R}^2\) by  
+\[
+\phi(x)=\bigl( x,\; x^{2}\bigr),
+\] 
+where the first component is the original dosage and the second component is its square.  
+The transformed data points \(\phi(x)\) reside in a two-dimensional space with coordinates \((x, y)\) where we write \(y = x^{2}\) for brevity.
+
+A Support Vector Classifier in this space seeks a linear decision function
+\[
+f(\mathbf{z}) = \mathbf{w}^{\top}\mathbf{z}+b,
+\]
+where \(\mathbf{z} = (x, y)^{\top}\) is a transformed point, \(\mathbf{w}\in\mathbb{R}^2\) is a weight vector, and \(b\in\mathbb{R}\) is a bias term.  
+The classifier assigns a label \(+1\) when \(f(\mathbf{z})>0\) and \(-1\) when \(f(\mathbf{z})<0\).  
+
+The optimal \(\mathbf{w}\) and \(b\) are obtained by maximizing the margin, i.e., the minimal distance from the decision line to any transformed training point, while requiring that all points satisfy
+\[
+y_i \bigl(\mathbf{w}^{\top}\phi(x_i)+b\bigr)\ge 1,
+\]
+where \(y_i\in\{+1,-1\}\) is the true class label of the original dosage \(x_i\).  
+Only the points that lie exactly on the margin---called support vectors---determine the values of \(\mathbf{w}\) and \(b\). Because the transformation \(\phi\) is explicit (squaring the dosage), the classifier remains linear in the higher-dimensional space, even though the separation appears non-linear when viewed in the original one-dimensional axis.
+
+\subsection{Key Takeaway}
+By mapping low-dimensional data into a higher dimension with a simple transformation, we can turn an inseparable problem into one that a linear Support Vector Classifier separates perfectly.
+
+\newpage
+\subsection{Questions}
+
+% --- RECALL ---
+\begin{question}
+(RECALL) Write the explicit formula for the mapping \(\phi\) that transforms a one-dimensional dosage \(x\) into a two-dimensional point.
+\end{question}
+
+\newpage
+
+% --- RECALL ---
+\begin{question}
+(RECALL) State the decision rule of a linear Support Vector Classifier in the transformed space \(\mathbf{z}=\phi(x)\).
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+(UNDERSTAND) In your own words, explain why mapping the data to a higher-dimensional space can turn overlapping classes into linearly separable ones.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+(UNDERSTAND) Describe how support vectors determine the weight vector \(\mathbf{w}\) and bias \(b\) after the data have been transformed by \(\phi\).
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) Transform the following dosage values using \(\phi(x) = (x, x^{2})\): \(x = -2, -1, 0, 1, 2\). List the resulting points \((x, y)\) in the 2-D space.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) Using the transformed points from the previous question, evaluate the decision function \(f(\mathbf{z}) = \mathbf{w}^{\top}\mathbf{z}+b\) with \(\mathbf{w} = (0,\;1)\) and \(b = -0.5\). For each point compute \(f(\mathbf{z})\) and indicate the predicted class (+1 or -1).
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) Check whether the margin constraints \(y_i\bigl(\mathbf{w}^{\top}\phi(x_i)+b\bigr) \ge 1\) hold for all points using the same \(\mathbf{w}\) and \(b\) as above. Identify any points that violate the constraint and therefore act as support vectors.
+\end{question}
+
+\newpage
+
+% --- ANALYSE ---
+\begin{question}
+(ANALYSE) Compare the transformation \(\phi_{1}(x) = (x, x^{2})\) with \(\phi_{2}(x) = (x, |x|)\) for the same dosage data. Which mapping is more likely to produce a linearly separable set in the transformed space and why?
+\end{question}
+
+\newpage
+
+% --- ANALYSE ---
+\begin{question}
+(ANALYSE) Suppose every original dosage is scaled by a factor of 2 (i.e., \(x' = 2x\)). How do the transformed coordinates \(\phi(x')\) change, and what effect could this scaling have on the position or orientation of the optimal decision line?
+\end{question}
+
+\newpage
+
+% --- EVALUATE ---
+\begin{question}
+(EVALUATE) Propose a degree-3 polynomial mapping \(\phi_{3}(x) = (x, x^{2}, x^{3})\). Discuss how adding the third dimension might influence the margin and model complexity of a linear Support Vector Classifier, and outline the trade-offs involved.
+\end{question}
+
+\newpage
+% ============================================================
+% SECTION  Kernel Functions and The Kernel Trick
+% ============================================================
+
+\section{Kernel Functions and The Kernel Trick}
+
+\section{Motivation}
+Support Vector Machines become much more powerful when we allow them to look for separating surfaces that are not straight lines in the original feature space.  To capture curved decision boundaries we need to measure similarity between points in a transformed space that can have many, even infinitely many, dimensions.  Kernel functions give us a systematic way to do this without the cost of handling the high-dimensional data directly, making non-linear SVMs computationally feasible.
+
+\section{Intuition}
+Imagine you have a set of points that cannot be separated by a straight line, but if you could stretch the space---like pulling a rubber sheet---those points would fall on opposite sides of a flat sheet.  A kernel function tells us how ``close'' any two points would be after such a stretch, even though we never actually perform the stretch.  By plugging these similarity values into the SVM optimization, the algorithm automatically builds a non-linear boundary in the original space.
+
+\section{Formal Definition}
+Let \(\mathbf{x}_i\) and \(\mathbf{x}_j\) denote two input vectors in the original feature space.  A kernel function \(K(\mathbf{x}_i,\mathbf{x}_j)\) returns the inner product of the vectors after an (implicit) mapping \(\phi(\cdot)\) into a higher-dimensional feature space:
+
+\[
+K(\mathbf{x}_i,\mathbf{x}_j)=\langle \phi(\mathbf{x}_i),\phi(\mathbf{x}_j)\rangle .
+\]
+
+Because the SVM dual problem depends only on inner products, we may replace every inner product with a kernel value and never compute \(\phi(\cdot)\) explicitly.
+
+\paragraph{Polynomial Kernel.}  
+The polynomial kernel of degree \(d\) (a positive integer) is defined by
+
+\[
+K_{\text{poly}}(\mathbf{x}_i,\mathbf{x}_j)=\bigl(\mathbf{x}_i^{\!\top}\mathbf{x}_j + c\bigr)^{d},
+\]
+
+where \(\mathbf{x}_i^{\!\top}\mathbf{x}_j\) is the ordinary dot product in the original space and \(c\ge 0\) is a constant (often set to \(1\)).  The exponent \(d\) determines how many dimensions the implicit feature space has; for \(d=2\) the kernel captures all pairwise products of original features, effectively modeling quadratic relationships such as ``dosage squared''.  The appropriate value of \(d\) is typically chosen by cross-validation.
+
+\paragraph{Radial Basis Function (RBF) Kernel.}  
+The radial (or Gaussian) kernel is
+
+\[
+K_{\text{RBF}}(\mathbf{x}_i,\mathbf{x}_j)=\exp\!\bigl(-\gamma \,\|\mathbf{x}_i-\mathbf{x}_j\|^{2}\bigr),
+\]
+
+where \(\|\mathbf{x}_i-\mathbf{x}_j\|\) is the Euclidean distance between the two points, and \(\gamma>0\) controls how quickly similarity decays with distance.  This kernel corresponds to an implicit mapping into an infinite-dimensional space; nevertheless, the kernel value is obtained by a simple exponential calculation.  Because similarity drops sharply for distant points, the RBF kernel behaves like a weighted nearest-neighbor model: points that are close to the query exert the strongest influence on its classification.
+
+\paragraph{The Kernel Trick.}  
+Instead of explicitly forming the high- or infinite-dimensional vectors \(\phi(\mathbf{x})\), we compute the kernel matrix \(K\) whose \((i,j)\)-entry is \(K(\mathbf{x}_i,\mathbf{x}_j)\).  All operations required by the SVM dual problem involve only these pairwise kernel values, so the algorithm runs with the same computational cost as in the linear case while implicitly exploiting the richer feature space.  This ``trick'' avoids the otherwise prohibitive cost of handling very high dimensions and makes kernels such as the RBF mathematically tractable.
+
+\section{Key Takeaway}
+Kernel functions let an SVM operate as if its data lived in a much higher (even infinite) dimensional space, while actually performing only simple similarity calculations; the polynomial kernel captures fixed-degree interactions, and the RBF kernel provides a flexible, distance-based similarity that mimics weighted nearest-neighbors.
+
+\newpage
+\subsection*{Questions}
+
+% --- RECALL ---
+\begin{question}
+(RECALL) State the formal definition of a kernel function $K(\mathbf{x}_i,\mathbf{x}_j)$ in terms of the implicit mapping $\phi(\cdot)$.
+\end{question}
+
+\newpage
+
+% --- RECALL ---
+\begin{question}
+(RECALL) Write the formula for the polynomial kernel of degree $d$ with constant $c$, and the formula for the radial basis function (RBF) kernel with parameter $\gamma$.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+(UNDERSTAND) Explain in your own words what the ``kernel trick'' enables when training a support vector machine.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+(UNDERSTAND) Describe why the RBF kernel can be interpreted as a weighted nearest-neighbor model.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) Given $\mathbf{x}_1 = \begin{bmatrix}1 \\ 2\end{bmatrix}$, $\mathbf{x}_2 = \begin{bmatrix}3 \\ 0\end{bmatrix}$, $c = 1$ and $d = 2$, compute $K_{\text{poly}}(\mathbf{x}_1,\mathbf{x}_2)$.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) Using the same vectors and $\gamma = 0.5$, compute $K_{\text{RBF}}(\mathbf{x}_1,\mathbf{x}_2)$.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) For the three points $\mathbf{x}_1 = \begin{bmatrix}0\\0\end{bmatrix}$, $\mathbf{x}_2 = \begin{bmatrix}1\\0\end{bmatrix}$, $\mathbf{x}_3 = \begin{bmatrix}0\\1\end{bmatrix}$, calculate the $3\times3$ kernel matrix with the polynomial kernel of degree $d=2$ and $c=0$.
+\end{question}
+
+\newpage
+
+% --- ANALYSE ---
+\begin{question}
+(ANALYSE) Discuss how increasing the degree $d$ of the polynomial kernel changes the dimensionality of the implicit feature space and how this influences the risk of over-fitting.
+\end{question}
+
+\newpage
+
+% --- ANALYSE ---
+\begin{question}
+(ANALYSE) Explain the effect on kernel similarity values when the RBF parameter $\gamma$ is set to a very large number versus a very small number.
+\end{question}
+
+\newpage
+
+% --- EVALUATE ---
+\begin{question}
+(EVALUATE) You have a small, noisy training set and suspect the true decision boundary is roughly quadratic. Which kernel (polynomial or RBF) would you select and why? Consider model flexibility, computational cost, and the need for parameter tuning in your answer.
+\end{question}
+
+\end{document}

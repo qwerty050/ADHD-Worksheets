@@ -1,0 +1,124 @@
+{
+    "cleaned_content": "The lecture introduces Support Vector Machines (SVM) by building up sequentially from fundamental concepts. It begins with Maximal Margin Classifiers, which establish a threshold halfway between classifications to maximize the margin but suffer from high variance and sensitivity to outliers. To resolve this, Support Vector Classifiers (Soft Margin Classifiers) are introduced. These allow misclassifications to improve generalization to new data (an application of the bias-variance tradeoff), using Cross-validation to find the optimal soft margin. The specific observations located on the edge or within the soft margin are termed 'Support Vectors'. Geometrically, classifiers scale based on data dimensionality: a point in 1D, a line in 2D, a plane in 3D, and a hyperplane in 4D+ (mathematically described as flat affine subspaces). When data features heavy overlap and cannot be linearly separated, Support Vector Machines are utilized. SVMs map data into higher dimensions (e.g., adding a y-axis where y = x^2) to make the dataset linearly separable by a Support Vector Classifier. This transformation is executed efficiently using Kernel Functions (like Polynomial or Radial/RBF Kernels) via the 'Kernel Trick'. The Kernel Trick calculates high-dimensional relationships between data points without explicitly transforming the data into those dimensions, drastically reducing computational overhead and enabling the use of infinite-dimensional spaces.",
+    "prerequisite_gaps": [
+        "Bias-variance tradeoff",
+        "Cross-validation"
+    ],
+    "section_map": [
+        {
+            "section_title": "Maximal Margin Classifiers",
+            "section_content": "Concepts:\n- A threshold is used to classify observations based on numerical boundaries (e.g., mass).\n- Margin: The shortest distance between the observations and the threshold.\n- Maximal Margin Classifier: A threshold placed exactly halfway between the edges of two clusters, maximizing the margin.\n\nDiagram Description: A 1D number line displaying observations of 'obese' (green dots) and 'not obese' (red dots) mice. A threshold line is placed squarely between the two closest points of the differing clusters.\n\nLimitations:\n- Super sensitive to outliers in the training data.\n- An outlier completely shifts the threshold, causing misclassifications of standard data (high variance, low bias).",
+            "topics": [
+                "Classification Models",
+                "Margins"
+            ],
+            "subtopics": [
+                "Thresholds",
+                "Outlier Sensitivity"
+            ],
+            "dependency_order": 1
+        },
+        {
+            "section_title": "Support Vector Classifiers (Soft Margins)",
+            "section_content": "Concepts:\n- Soft Margin: A threshold that deliberately allows misclassifications in the training data to create a more generalized model that is less sensitive to outliers.\n- Bias-Variance Tradeoff: Allowing misclassifications increases bias but lowers variance, making the model perform better on new data.\n- Cross-validation: Used to determine exactly how many misclassifications and observations to allow inside the soft margin.\n- Support Vectors: The observations located directly on the edge of and within the soft margin.\n\nDimensional Geometry (Flat Affine Subspaces):\n- 1D Data: Classifier is a single Point (0-D subspace).\n- 2D Data: Classifier is a Line (1-D subspace).\n- 3D Data: Classifier is a Plane (2-D subspace).\n- 4D+ Data: Classifier is a Hyperplane.\n\nLimitations:\n- Fails when there is heavy overlapping of classifications (e.g., a drug dosage where both extremely high and low values fail, and only a medium dose works).",
+            "topics": [
+                "Soft Margins",
+                "Support Vectors",
+                "Dimensionality"
+            ],
+            "subtopics": [
+                "Bias-Variance Tradeoff",
+                "Cross-validation",
+                "Hyperplanes",
+                "Flat Affine Subspaces"
+            ],
+            "dependency_order": 2
+        },
+        {
+            "section_title": "Support Vector Machines and Dimensional Expansion",
+            "section_content": "Concepts:\n- Main Idea 1: Start with data in a relatively low dimension.\n- Main Idea 2: Move the data into a higher dimension to expose separability.\n- Main Idea 3: Find a Support Vector Classifier that separates the higher-dimensional data into two groups.\n\nMathematical Example & Diagram:\n- 1D Data mapping: x-axis = observed drug dosages.\n- Transformation to 2D: Create a y-axis where y = dosage^2 (y = x^2).\n- Diagram Description: 1D overlapping points are mapped onto a 2D parabola. The previously overlapping groups are now separated visually on the vertical axis, allowing a standard 1D linear Support Vector Classifier (a line) to perfectly divide the groups.",
+            "topics": [
+                "Support Vector Machines",
+                "Data Transformation"
+            ],
+            "subtopics": [
+                "Non-linear separation",
+                "Higher Dimensions"
+            ],
+            "dependency_order": 3
+        },
+        {
+            "section_title": "Kernel Functions and The Kernel Trick",
+            "section_content": "Concepts:\n- Kernel Functions systematically find Support Vector Classifiers in higher dimensions to make the mathematics tractable.\n- Polynomial Kernel: Uses parameter 'd' (degree of the polynomial). Calculates relationships in 'd' dimensions (e.g., d=2 calculates 2D relationships based on dosage squared). 'd' is found via cross-validation.\n- Radial Kernel (Radial Basis Function RBF): Finds Support Vector Classifiers in infinite dimensions. It behaves like a weighted nearest neighbor model, where the closest observations have the most influence on new classifications.\n- The Kernel Trick: Calculating high-dimensional relationships between every pair of points without actually transforming the data. This heavily reduces the required computation and makes the infinite-dimensional calculations of the Radial Kernel mathematically possible.",
+            "topics": [
+                "Kernels",
+                "Computational Efficiency"
+            ],
+            "subtopics": [
+                "Polynomial Kernel",
+                "Radial Kernel",
+                "The Kernel Trick"
+            ],
+            "dependency_order": 4
+        }
+    ],
+    "extracted_pyqs": [
+        {
+            "source": "Quiz 2 (2023)",
+            "question": "For SVM, which options are correct?",
+            "options": {
+                "A": "Support vectors are data points that are closer to the hyperplane and influence the position and orientation of the hyperplane",
+                "B": "Support vectors are data points that are far away from the hyperplane and influence the position and orientation of the hyperplane",
+                "C": "Deleting the support vectors will change the position of the hyperplane",
+                "D": "Deleting the support vectors won't change the position of the hyperplane"
+            },
+            "answer": "a) A and C, support vectors are used to find the optimal hyperplane and hence they directly affect the orientation of the hyperplane."
+        },
+        {
+            "source": "Quiz 2 (2023)",
+            "question": "Suppose you are using a Linear SVM classifier. Will the decision boundary change if we: (A) Remove (2,2) [Support Vector] (B) Remove (5,1) [Non-SV] (C) Add (3,2) point to plus class (D) Add (1.5,1.5) to plus class.",
+            "options": null,
+            "answer": "b) A and C. Removing (2,2) changes the support vector, hence the boundary changes. Adding (3,2) to the plus class has a similar effect."
+        },
+        {
+            "source": "Winter 2025 Mid-Semester Examination",
+            "question": "In a linear hard margin SVM, if you slightly move (perturb) a training sample that is not a support vector, does it affect the learned decision boundary or not? Justify your answer.",
+            "options": null,
+            "answer": "No, it does not affect the decision boundary. The decision boundary in a hard-margin SVM is determined exclusively by the support vectors (the points closest to the hyperplane). Any point that is not a support vector lies beyond the margin and has no influence on the optimization objective or the position of the hyperplane, as long as it is not moved inside the margin."
+        },
+        {
+            "source": "Quiz 3 (2024)",
+            "question": "Explain how regularization parameter C affects margin and errors.",
+            "options": null,
+            "answer": "High C: Prioritizes correct classification, leads to narrower margin, higher overfitting risk. Low C: Prioritizes margin maximization, allows some misclassification, higher underfitting risk."
+        },
+        {
+            "source": "Endsem Monsoon 2024",
+            "question": "Compare support vectors S1, S2 and weights w1, w2 for hard and soft margin linear SVMs.",
+            "options": {
+                "A": "S1 is always a subset of S2.",
+                "B": "w1 always equals w2.",
+                "C": "S1 may not be a subset of S2.",
+                "D": "w1 may not equal w2."
+            },
+            "answer": "C and D. S1 may not be a subset of S2 because margin violations change critical points. w1 may not equal w2 as objective functions differ."
+        },
+        {
+            "source": "Quiz 2 Rubric Machine Learning",
+            "question": "In SVM, what does the \"kernel trick\" allow us to do?",
+            "options": {
+                "A": "Increase the number of features linearly",
+                "B": "Apply non-linear transformations to the data",
+                "C": "Reduce the Size of the dataset",
+                "D": "Simplify the model by removing features"
+            },
+            "answer": "(B) Apply non-linear transformations to the data"
+        },
+        {
+            "source": "Quiz 3 (2024)",
+            "question": "Why use the Kernel Trick?",
+            "options": null,
+            "answer": "Allows operating in original feature space without computing coordinates in high-dimensional space; efficient for non-linearly separable data."
+        }
+    ]
+}

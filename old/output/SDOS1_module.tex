@@ -1,0 +1,946 @@
+\documentclass[12pt, a4paper]{article}
+
+% --- Encoding & Fonts ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% --- Mathematics ---
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+
+% --- Layout ---
+\usepackage[margin=1in]{geometry}
+
+% --- Lists ---
+\usepackage{enumitem}
+
+% --- Tables ---
+\usepackage{booktabs}
+\usepackage{array}
+
+% --- Graphics ---
+\usepackage{graphicx}
+
+% --- Headers / Footers ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% --- Hyperlinks & Cross-references ---
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+
+% --- Misc ---
+\usepackage{xcolor}
+
+% --- Custom commands (safety definitions) ---
+\providecommand{\operatorname}[1]{\mathop{\mathrm{#1}}\nolimits}
+
+\title{Learning Module: Sdos1}
+\author{}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+\tableofcontents
+\newpage
+
+% ============================================================
+% SECTION  1. Industry-Strength Software vs. Student Software
+% ============================================================
+
+% !!!  REVIEW FLAG: 1. Industry-Strength Software vs. Student Software  !!!
+% [undefined_term] Add a brief definition (e.g., one personday = eight hours of developer effort) in the theory or footnote.
+% [undefined_term] Define KLOC as `thousand lines of code' when first used in the formal definition.
+% [undefined_term] Clarify what constitutes a functional unit (e.g., a distinct feature or module) in the context of effort estimation.
+% !!! END REVIEW FLAGS !!!
+\section{Industry-Strength Software vs. Student Software}
+
+\subsection{Theory Content}
+\subsection{Before We Begin}
+Software is a collection of programs, the data they manipulate, documentation that explains how they work, and procedures that describe how to use them. A program is a set of instructions that a computer can execute. Data are the pieces of information the program processes, such as numbers or text. Documentation tells users and developers what the software does and how to operate it. Procedures are the step--by--step instructions for activities like installing, configuring, or maintaining the software. Understanding these parts lets us see why different kinds of software are built in very different ways.  
+
+\section{Motivation}
+Like a restaurantgrade meal prepared by a professional chef (industry software) versus a homecooked dish made by a hobbyist (student software). Industrystrength software is created to serve many external users who rely on it for critical business tasks, so it must be reliable, welldocumented, and easy to use. Student or demo software is usually written for personal learning or a small demo audience, so it can tolerate bugs, have minimal documentation, and ignore polished user interfaces. Recognising the gap helps developers choose the right development practices for the problem they are solving.  
+
+\section{Intuition}
+Think of industrystrength software as a public service that many people depend on every day; it must work correctly all the time, look professional, and provide clear instructions for anyone who uses or maintains it. By contrast, student software is like a personal sketch: it demonstrates an idea, may contain errors, and is intended mainly for the creator's own use or for a brief demonstration. The larger the audience and the higher the stakes, the more rigorous the development process must be.  
+
+\section{Formal Definition}
+\textbf{Industrystrength software} is a software system that is built for external users, tolerates no bugs, places high priority on user interface and user experience (UI/UX), includes extensive documentation, and is intended to operate at a large scale (from hundreds of thousands to millions of lines of code).  Its essential characteristics are:  
+
+\begin{itemize}
+  \item \emph{External user focus}: the software is delivered to customers or clients rather than the developer alone.
+  \item \emph{Zerotolerance for bugs}: failures can cause serious business or safety problems; rigorous testing and quality assurance are mandatory.
+  \item \emph{UI/UX emphasis}: the interface must be intuitive and aesthetically pleasing because many different users will interact with it.
+  \item \emph{Extensive documentation}: manuals, API references, and maintenance guides are provided so that others can understand, operate, and evolve the system.
+  \item \emph{Large scale}: the code base typically ranges from hundreds of thousands to millions of lines of code (KLOC), reflecting complex functionality and longterm evolution.
+\end{itemize}
+
+In contrast, \textbf{student/demo software} is written primarily for the developer's own learning or a shortterm showcase.  It usually tolerates bugs, has little or no documentation, offers a minimal or absent UI, and remains small (thousands of lines of code).  Brooks' thumbrule observes that an industrialstrength system costs roughly ten times as much effort as a comparable studentlevel program, reflecting the additional work required for reliability, documentation, UI design, and largescale architecture.  This rule highlights that simply adding more code does not automatically raise quality; the systematic processes and team effort are what drive the cost increase.  
+
+\section{Worked Example}
+\textbf{Problem statement:} Compare a simple Python script that prints ``Hello'' (\approx 10 lines of code) with an enterprise inventorymanagement system of about 150 KLOC.  Show how they differ in documentation, UI/UX, testing, and estimated development cost using Brooks' thumbrule.  
+
+\textbf{Step 1: Identify the scale.}  
+\begin{itemize}
+  \item Simple script: roughly 10 lines of code (\approx 0.01 KLOC).  
+  \item Enterprise system: about 150 000 lines of code (\approx 150 KLOC).  
+\end{itemize}
+
+\textbf{Step 2: Compare documentation.}  
+\begin{itemize}
+  \item Simple script: typically no external documentation; comments may be present only for the author's reference.  
+  \item Enterprise system: requires user manuals, API documentation, design specifications, and maintenance guides---often hundreds of pages.  
+\end{itemize}
+
+\textbf{Step 3: Compare UI/UX.}  
+\begin{itemize}
+  \item Simple script: runs in a console, no graphical interface, minimal or no consideration of usability.  
+  \item Enterprise system: provides a polished graphical interface, workflow design, accessibility features, and consistent visual branding.  
+\end{itemize}
+
+\textbf{Step 4: Compare testing and bug tolerance.}  
+\begin{itemize}
+  \item Simple script: may be run a few times by the developer; bugs are acceptable as long as the demonstration works.  
+  \item Enterprise system: undergoes unit testing, integration testing, system testing, and possibly certification; defects must be found and fixed before release.  
+\end{itemize}
+
+\textbf{Step 5: Estimate effort using Brooks' thumbrule.}  
+Brooks' rule states that industrialstrength software costs about ten times the effort of student software of comparable functionality.  
+
+\[
+\text{Effort}_{\text{enterprise}} \approx 10 \times \text{Effort}_{\text{simple script}}
+\]
+
+If the simple script required 1 personday of work, the enterprise system would require roughly 10 persondays \emph{per comparable functional unit}.  Because the enterprise system is about 15 000 times larger in code size, the actual effort grows far beyond a linear factor, reinforcing the need for systematic team development.  
+
+\textbf{Final answer:} The two pieces of software differ dramatically: the simple script is tiny, undocumented, lacks UI, tolerates bugs, and can be built by one person in a day; the enterprise inventory system is massive, heavily documented, UIcentric, rigorously tested, and costs at least ten times the effort per functional unit, typically requiring a coordinated team over many months.  
+
+\textbf{What this shows us:} Scale, documentation, UI/UX, and testing are not optional extras in industrystrength software; they are integral requirements that drive up development effort as captured by Brooks' thumbrule.  
+
+\subsection{Key Takeaway}
+Industrystrength software is built for external users, demands high reliability, comprehensive documentation, and polished UI/UX, and consequently requires about ten times the development effort of comparable studentlevel code.
+
+\subsection{Questions}
+\newpage
+\subsubsection{1. (Easy)  \hfill \textbf{Industry vs. Student Software}}
+Which of the following characteristics is most likely not a requirement for industrystrength software?
+\begin{enumerate}[label=\alph.]
+  \item Extensive user documentation
+  \item Minimal check for bugs during development
+  \item Intuitive and aesthetically pleasing UI
+  \item Rigorous unit and integration testing
+\end{enumerate}
+
+\newpage
+\subsubsection{2. (Medium)  \hfill \textbf{Brooks' ThumbRule Application}}
+Assume a student writes a 15line script that performs a small calculation. Estimating that the student spent 0.5 persondays on the project, use Brooks' thumbrule to estimate the effort required (in persondays) by an industry team to build a functionally equivalent module that is 120 KLOC in size.  Show your calculation and explain any assumptions.
+
+\newpage
+\subsubsection{3. (Hard)  \hfill \textbf{Designing for Scale and Reliability}}
+You are tasked with converting a prototype opensource application (10 KLOC) into an industrystrength product.  
+\begin{enumerate}[label=(\arabic*)]
+  \item Identify at least four new development practices (beyond code size) that must be introduced to meet industry standards.
+  \item For each practice, specify one concrete activity or artifact that should be produced during the software life cycle.
+  \item Explain how each activity or artifact contributes to reducing risk in the final product.
+\end{enumerate}
+---
+
+\newpage
+% ============================================================
+% SECTION  2. Software Business Models and Value
+% ============================================================
+
+% !!!  REVIEW FLAG: 2. Software Business Models and Value  !!!
+% [undefined_term] Define SaaS (Software as a Service) explicitly, e.g.,: "SaaS is a subscription-based model in which the vendor hosts the software on its own servers and provides continuous access and updates."
+% [knowledge_assumption] Add a brief discussion of the primary risks associated with license sales (high upfront cost, slow revenue) versus SaaS (ongoing support, churn).
+% !!! END REVIEW FLAGS !!!
+\section{2. Software Business Models and Value}
+
+\subsection{Before We Begin}
+A software \emph{license} is a legal permission that tells a user what they are allowed to do with a piece of software. It can limit how many computers the software may be installed on, or whether the user may modify the code. When a license is sold, the buyer pays for the right to use the program under those conditions. Understanding this idea makes it easier to see why buying a program once (a license) differs from paying repeatedly for access (a subscription). With that distinction clear, we can explore the main kinds of software and the ways companies earn money from them.
+
+\section{Motivation}
+Buying a car outright (license) versus using a carsharing service that charges per ride (subscription/SaaS).  Just as these two approaches give people different ways to enjoy transportation, software can be delivered in several business models that suit varied user needs and company goals. Recognizing the strengths of each model helps us understand why a single product might be sold in more than one way.
+
+\subsection{Intuition}
+Think of software as a tool that can be packaged and offered to users in distinct flavors.  The first flavor is the type of software itself---whether it runs the computer (system software), helps you accomplish tasks (application software), or assists developers in building other programs (programming software). The second flavor is how the maker decides to get paid: some charge once for a permanent right to use, others ask for a regular fee, some give a free version and charge for extra features, and still others rely on support or consulting around freely available code. By separating \emph{what the software does} from \emph{how the software is monetised}, we can compare the benefits and challenges of each approach.
+
+\subsection{Formal Definition}
+\begin{description}
+  \item[System Software] Software that manages computer hardware and provides foundational services.  Examples include operating systems, device drivers, and utility programs.
+  \item[Application Software] Software that enables users to perform specific tasks.  It may be generalpurpose (e.g., web browsers) or tailored for a particular domain (e.g., airline reservation systems).
+  \item[Programming Software] Software that supports the creation, testing, and maintenance of other software.  Examples are integrated development environments (IDEs) and debuggers.
+\end{description}
+
+\begin{description}
+  \item[Licensebased Model] The vendor sells a permanent right (a license) to install and use the software.  The buyer typically pays a onetime fee, such as the \$29.99 charge for a desktop photoediting program.
+  \item[Subscription / SaaS Model] The vendor retains the software on its own servers (or provides regular updates) and charges the user a recurring fee for continued access, similar to a carsharing service that bills per ride.
+  \item[Freemium Model] The vendor offers a basic version at no cost and charges for premium features or services.  The free tier provides enough value to attract users, while a subset of users chooses to pay for added capabilities.
+  \item[Opensource Model] The source code is publicly available, but the vendor may generate revenue through consulting, support contracts, or managed services.  Opensource software is not necessarily free for the enduser; costs can arise from the ancillary services.
+  \item[Custom Development / Consulting Model] The vendor works on a projectbyproject basis, delivering software that meets a specific client's requirements in exchange for a contract fee.
+\end{description}
+
+Other revenue streams that may accompany any of the above models include advertising displayed within the software, platform fees charged to thirdparty developers, and selling dataanalytics services.  It is important to note that opensource products can still charge for valueadded services, that freemium premium versions contain additional functionality rather than hidden copies of the free features, and that subscription models are widely used for enterprisegrade applications as well as consumer apps.
+
+\subsection{Worked Example}
+\textbf{Problem statement:}  
+A hypothetical mobile app provides basic photo editing for free. It offers premium filters for \$4.99 per month under a freemium model. Compare the projected annual revenue of this freemium app with a similar app that is sold once for a \$29.99 license. Assume there are 100 000 free users, and that 5 % of them convert to the premium plan.
+
+\textbf{Step 1: Compute the number of premium users.}  
+\(100\,000 \times 0.05 = 5\,000\) users convert to the premium plan.
+
+\textbf{Step 2: Calculate monthly revenue from premium users.}  
+\(5\,000 \times \$4.99 = \$24\,950\) per month.
+
+\textbf{Step 3: Calculate annual revenue from the freemium model.}  
+\(\$24\,950 \times 12 = \$299\,400\).
+
+\textbf{Step 4: Compute revenue for the licensebased app.}  
+Assume the same total market of 100 000 users each purchases the onetime license.  
+\(100\,000 \times \$29.99 = \$2\,999\,000\) in a single year (if all purchase within the year).
+
+\textbf{Final answer:}  
+The freemium app would earn approximately \(\$299,400\) per year, whereas the licensebased app could generate about \(\$2,999,000\) in the same period if all users buy the license.
+
+\textbf{What this shows us:}  
+A freemium model can produce substantial recurring revenue even when only a small fraction of users upgrade, but a pure license sale can yield much larger onetime income if the product attracts a comparable user base.  The choice between models depends on factors such as expected conversion rates, market size, and the desire for ongoing cash flow.
+
+\subsection{Key Takeaway}
+Software can be grouped into system, application, and programming categories, and companies earn money through diverse models---license, subscription, freemium, opensource services, and custom contracts---each shaping how value is captured from users.
+
+\subsection*{Questions}
+None
+
+\newpage
+
+---
+
+\newpage
+% ============================================================
+% SECTION  3. Software Productivity and Quality
+% ============================================================
+
+\subsection*{Notation Used in This Section}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning \\ \midrule
+    $KLOC$ & thousand lines of code \\
+    $PM$ & personmonth of effort \\
+    $D$ & defect count \\
+    $MTTF$ & Mean Time To Failure \\
+\bottomrule
+\end{tabular}
+\vspace{1em}
+
+\section{Software Productivity and Quality}
+
+A line of source code (LOC) is a single textual instruction written by a programmer.  
+When many LOC are counted, they are often grouped by thousands and called KLOC (thousand lines of code).  
+A PersonMonth (PM) measures one person working for one month and is used to capture effort.  
+Productivity in software is commonly expressed as KLOC per PM, linking the amount of code produced to the effort spent.  
+Understanding these units lets us discuss how much work is done in a project and why simply counting LOC can be misleading.  
+
+\section{Motivation}
+\emph{Analogy first.}  Building a house: labor hours per square foot (coding productivity) versus using prefabricated walls and modules (delivered productivity).  
+Software teams need a way to gauge how efficiently they turn effort into functional systems, but counting raw code ignores reuse, generated components, and quality concerns.  By looking at both coding and delivered productivity, teams can see where real value is being added and where shortcuts might harm the product.  
+
+\section{Intuition}
+Coding productivity asks, ``How many lines of code does each person write in a month?''  This treats every line as equally valuable, which is rarely true.  
+Delivered productivity asks, ``How much usable functionality does the team deliver for each month of effort?''  By counting reused libraries, generated code, and prebuilt modules, the measurement captures the true output that matters to users.  
+Higher productivity is only good if the resulting software remains highquality across many dimensions; otherwise the apparent efficiency hides future problems.  
+
+\section{Formal Definition}
+\begin{itemize}
+  \item \textbf{Productivity (coding)} is defined as 
+  \[
+    \text{Prod}_{\text{coding}} \;=\; \frac{\text{KLOC}}{\text{PM}}
+  \]
+  where \(\text{KLOC}\) = thousand lines of code produced and \(\text{PM}\) = personmonths of effort expended.
+  \item \textbf{Delivered productivity} expands the numerator to include code that was not written from scratch but was integrated (e.g., opensource libraries, AIgenerated snippets).  The same denominator \(\text{PM}\) is used, so the ratio can be substantially larger than the coding value.
+  \item \textbf{Defect density} measures reliability and is 
+  \[
+    \text{Defect density} \;=\; \frac{D}{\text{KLOC}}
+  \]
+  where \(D\) is the defect count found after release.
+  \item \textbf{Mean Time To Failure} (\(\text{MTTF}\)) quantifies how long the system runs before a failure occurs; it is another reliability metric but is not a ratio of code.
+\end{itemize}
+
+\medskip
+\noindent\textbf{Software quality attributes (six of them).}
+\begin{enumerate}
+  \item \emph{Functionality}: the software performs the tasks it is intended to do.
+  \item \emph{User Experience (UX)}: the interface is intuitive and pleasant for users.
+  \item \emph{Reliability}: measured by defect density and \(\text{MTTF}\); the system runs correctly over time.
+  \item \emph{Performance}: the software meets speed and resourceuse expectations.
+  \item \emph{Security/Privacy}: it protects data and resists unauthorized access.
+  \item \emph{Maintainability}: it is easy to modify, fix, and extend; this matters because maintenance costs dominate the total cost of ownership over the software's life.
+\end{enumerate}
+
+\section{Worked Example}
+\textbf{Problem statement:}  
+A project delivered \(250\;\text{KLOC}\) using \(125\) PM of effort and later was found to contain \(125\) defects. Compute (a) coding productivity, (b) defect density, and (c) comment on the results.
+
+\medskip
+\textbf{Step 1: Compute coding productivity}\\
+\[
+\text{Prod}_{\text{coding}} \;=\; \frac{250\;\text{KLOC}}{125\;\text{PM}} \;=\; 2.0\;\frac{\text{KLOC}}{\text{PM}}
+\]
+
+\textbf{Step 2: Compute defect density}\\
+\[
+\text{Defect density} \;=\; \frac{125\;D}{250\;\text{KLOC}} \;=\; 0.5\;\frac{D}{\text{KLOC}}
+\]
+
+\textbf{Step 3: Interpretation}\\
+A productivity of \(2.0\;\text{KLOC/PM}\) is higher than the typical industry benchmark of less than \(1.0\;\text{KLOC/PM}\), suggesting the team wrote code quickly.  
+However, a defect density of \(0.5\;D/\text{KLOC}\) is relatively high; many bugs were introduced per thousand lines.  The numbers together illustrate that high coding productivity alone does not guarantee a quality product.
+
+\medskip
+\textbf{What this shows us:}  
+Fast code production can mask reliability problems.  Delivered productivity---by reusing proven components---helps raise output while keeping defect density low, which is essential for longterm quality.
+
+\subsection{Questions}
+\begin{enumerate}
+  \item \textbf{Easy.}  A software team writes 500 KLOC in 50 PM.  What is the coding productivity expressed in \(\text{KLOC}/\text{PM}\)?
+  \newpage
+  \item \textbf{Easy.}  The same team later finds 200 defects in the same code base.  Compute the defect density.
+  \newpage
+  \item \textbf{Medium.}  A project incorporates 200 KLOC of opensource components and writes 300 KLOC from scratch.  The delivered effort is still 50 PM.  What is the delivered productivity?  Compare it to the coding productivity and discuss the implications for perceived effort.
+  \newpage
+  \item \textbf{Medium.}  An organization reports a defect density of 0.3 \(D/\text{KLOC}\) but a coding productivity of 1.5 \(\text{KLOC}/\text{PM}\).  Assuming the same product size (\(600\;\text{KLOC}\)), estimate the number of defects and total effort in PM.  Reflect on the balance between speed and quality.
+  \newpage
+  \item \textbf{Hard.}  Suppose a project uses a hybrid approach where 60\% of the delivered functionality comes from reused libraries and 40\% from new code.  If the defect density for reused code is 0.1 \(D/\text{KLOC}\) and for new code is 0.6 \(D/\text{KLOC}\), formulate an expression for the overall defect density in terms of the total delivered KLOC.  Use it to determine the overall defect density when delivered KLOC is 800.  Discuss how reuse can affect reliability metrics.
+\end{enumerate}
+
+\newpage
+\subsection{Key Takeaway}
+Delivered productivity measures the real value a team provides per effort, and maintaining high quality---especially maintainability---is crucial because most costs arise after the product ships.
+
+\newpage
+% ============================================================
+% SECTION  4. Open Source Software (OSS) Ecosystem
+% ============================================================
+
+% !!!  REVIEW FLAG: 4. Open Source Software (OSS) Ecosystem  !!!
+% [knowledge_assumption] Add a section summarizing the Linux kernel governance structure, key roles, and examples of sponsorship influence.
+% [knowledge_assumption] Include a concise guide or checklist for GPL integration, covering documentation, licensing, and risk mitigation.
+% !!! END REVIEW FLAGS !!!
+\section{4. Open Source Software (OSS) Ecosystem}
+
+\subsection{Before We Begin}
+Copyright gives the creator of a work the right to decide how that work may be copied or altered.  Because a software program is a kind of literary work, its author can attach a licence that spells out the rules for sharing, studying, or modifying the code.  Licences therefore make it possible for many people to use the same program while still respecting the author's wishes.  Understanding that a licence is a legal tool for controlled sharing helps explain why the Free Software Foundation introduced the GNU General Public License.  With that picture in mind we can look at how the opensource movement grew.
+
+\subsection{Motivation}
+A community garden where anyone can plant, tend, and harvest, versus a private backyard owned by one family.  Just as a shared garden encourages many hands to improve the plot, the opensource model invites programmers worldwide to contribute, adapt, and redistribute software.  This approach solves the problem of isolated development---by pooling effort, bugs are found faster and features evolve more rapidly---while still giving creators a way to keep control over how their work is used.
+
+\subsection{Intuition}
+The opensource story is a timeline of people who decided that software should be a shared resource rather than a secret product.  Early researchers in the 1950s and 1960s freely exchanged code, a habit that continued when the Unix operating system was released from Bell Labs.  In the 1980s, a group led by Richard Stallman formalised this spirit with the GNU Project and the GPL, which guarantees four essential freedoms for every user.  Later, Linus Torvalds released the Linux kernel, showing that a large, usable system could be built entirely in the open.  The term ``Open Source'' was coined in 1998 to emphasise pragmatic licences that businesses could adopt without moral debate.  Today, repositories such as GitHub host millions of projects, and even the biggest technology firms contribute code, sponsor development, or acquire opensource companies.
+
+\subsection{Formal Definition}
+\begin{itemize}
+  \item \textbf{Major historical milestones}\\
+    \begin{enumerate}
+      \item 1950s--1960s: Researchers freely share source code in academic and industrial labs. 
+      \item 1970s: Creation of the Unix operating system at Bell Labs spreads a culture of code exchange. 
+      \item 1983: Richard Stallman launches the Free Software Foundation (FSF) and the GNU Project. 
+      \item 1989: The GNU General Public License (GPL) is published, introducing the concept of \emph{copyleft}. 
+      \item 1991: Linus Torvalds releases the Linux kernel, which quickly gains worldwide contributors. 
+      \item 1998: The term ``Open Source'' is introduced by the Open Source Initiative (OSI), shifting focus to businessfriendly licensing. 
+      \item 2000s--present: Major corporations (e.g., IBM, Microsoft, Google) join the ecosystem by contributing code, sponsoring foundations, and acquiring opensource businesses such as Red Hat and GitHub. 
+    \end{enumerate}
+  \item \textbf{Four software freedoms defined by the GPL}\\
+    \begin{enumerate}
+      \item Freedom 0: the freedom to run the program for any purpose. 
+      \item Freedom 1: the freedom to study how the program works and change it, which requires access to the source code. 
+      \item Freedom 2: the freedom to redistribute copies so others can benefit. 
+      \item Freedom 3: the freedom to distribute modified versions under the same licence, ensuring the same rights downstream. 
+    \end{enumerate}
+  \item \textbf{Difference between ``Free Software'' and ``Open Source''}\\
+    \begin{itemize}
+      \item \textit{Free Software} (as advocated by the FSF) stresses the ethical claim that software users should have the four freedoms above; the word ``free'' refers to liberty, not price. 
+      \item \textit{Open Source} (as promoted by the OSI) highlights practical advantages---such as faster development, higher quality, and reduced cost---while accepting the same licences that grant the four freedoms.  Thus the two terms describe the same set of licences but from different motivational angles. 
+    \end{itemize}
+  \item \textbf{Three common ways corporations participate in the modern OSS ecosystem}\\
+    \begin{enumerate}
+      \item \textit{Direct contribution}: engineers employed by the company submit code, bug fixes, or documentation to public repositories. 
+      \item \textit{Sponsorship and funding}: firms provide monetary support to foundations (e.g., the Linux Foundation) or pay developers to work on critical opensource projects. 
+      \item \textit{Strategic acquisition}: companies purchase or merge with established opensource firms (e.g., IBM acquiring Red Hat, Microsoft acquiring GitHub) to integrate opensource technology into their product lines. 
+    \end{enumerate}
+\end{itemize}
+
+These definitions make clear that opensource software is not automatically free of charge, that projects are governed by licences, contributor covenants, and community processes, and that corporate involvement does not dissolve the openness of a project.
+
+\subsection{Key Takeaway}
+Open source evolved from a culture of sharing code into a formal movement defined by the GPL's four freedoms, and today both ideals and major corporations cooperate to keep software collaborative, transparent, and widely usable.
+
+\subsection{Questions}
+
+\newpage
+\paragraph{Question 1.}
+Define \emph{copyleft} and provide an example of a copyleft licence.  
+(Answer space.)
+
+\newpage
+\paragraph{Question 2.}
+Describe one corporate strategy for participating in OSS (e.g., direct contribution, sponsorship, or strategic acquisition) and give a concrete example of a company that has used this strategy.  
+(Answer space.)
+
+\newpage
+\paragraph{Question 3.}
+Explain the four freedoms defined by the GPL.  How do these freedoms collectively empower users and developers in an opensource context?  
+(Answer space.)
+
+\newpage
+\paragraph{Question 4.}
+Discuss how the shift from the terminology of the GNU Project (Free Software) to that of the Open Source Initiative affected the adoption of OSS by commercial businesses.  Include at least one specific example of a corporate adoption that illustrates this shift.  
+(Answer space.)
+
+\newpage
+\paragraph{Question 5.}
+Critically analyze the impact of corporate sponsorship on the governance model of a large opensource project such as the Linux kernel.  What potential conflicts of interest arise, and what mechanisms can be employed to mitigate them?  
+(Answer space.)
+
+\newpage
+\paragraph{Question 6.}
+Compare the historical motivations behind the GNU Project and the Open Source Initiative, focusing on the philosophical (ethical) versus pragmatic (businessfriendly) considerations.  How did these motivations shape the design of their respective licensing strategies and the perception of OSS in the wider software industry?  
+(Answer space.)
+
+\newpage
+\paragraph{Question 7.}
+Design a practical framework that a private company can use to integrate an opensource component (licensed under the GPL) into its proprietary product line while ensuring full compliance.  Identify the key steps, documentation requirements, and potential challenges at each stage.  
+(Answer space.)
+
+\newpage
+% ============================================================
+% SECTION  5. Software Licensing
+% ============================================================
+
+% !!!  REVIEW FLAG: 5. Software Licensing  !!!
+% [undefined_term] Add a brief definition that a closedsource (or proprietary) license keeps the source code unavailable to the public.
+% [undefined_term] Define 'reciprocal' as another term for copyleft, clarifying that it requires derived works to adopt the same license.
+% [knowledge_assumption] Add a paragraph or reference to a section that analyzes the broader effects of permissive licenses on the OSS ecosystem.
+% !!! END REVIEW FLAGS !!!
+\section{5. Software Licensing}
+
+\subsection{Before We Begin}
+A software license is a legal agreement that tells you what you may or may not do with a piece of code. Copyright gives the author exclusive rights to control copying, modifying, and sharing that code. Because of copyright, anyone who wants to use the code must follow the rules set out in its license. Understanding these rules lets us compare different ways that software can be shared. With that foundation, we can look at the major families of software licenses.
+
+\subsection{Motivation}
+\emph{Building a house: a restrictive zoning permit (proprietary) versus a flexible building code that lets anyone add rooms as they wish (permissive license).} Just as a city's zoning rules shape how a building can be expanded, software licenses shape how code can be reused, modified, and redistributed. Knowing the license type helps developers choose the right legal ``building code'' for their projects and avoids costly disputes later on.
+
+\subsection{Intuition}
+Think of software as a piece of land. The owner can keep the land completely private, allow anyone to walk on it but only under very strict conditions, or open it up so that anyone can build on it however they like, as long as they give a simple thankyou note. Proprietary licenses keep the land private, publicdomain places the land in the commons with no owner, and opensource licenses fall somewhere in between, ranging from ``must build the same style of fence'' (copyleft) to ``just keep the original sign posted'' (permissive). By recognizing which ``fence rule'' applies, you can decide how freely you may develop on top of existing code.
+
+\subsection{Formal Definition}
+\begin{itemize}
+  \item \textbf{Proprietary software} -- Code that is released under a \emph{closedsource} agreement; the author retains full copyright and users must obey a strict enduser license agreement that typically forbids modification or redistribution.
+  \item \textbf{Public domain} -- Works for which the author has either relinquished all copyright or for which copyright has expired; anyone may copy, modify, and distribute without any conditions.
+  \item \textbf{Opensource software} -- Code distributed under a license that grants the downstream user rights to use, study, modify, and share the software while preserving the author's copyright.
+  \begin{itemize}
+    \item \textbf{Copyleft (reciprocal) licenses} -- A subclass of opensource licenses that require any derived work to be released under the same license terms. The GNU General Public License (GPL) is the classic example: if you distribute a binary that contains GPLlicensed code, you must also make the complete corresponding source code available under the GPL. This ``viral'' effect ensures that the freedoms granted by the original license continue downstream.
+    \item \textbf{LGPL (Lesser GPL)} -- A weaker form of copyleft that permits linking a proprietary program to an LGPLlicensed library, provided that modifications to the library itself remain under the LGPL.
+    \item \textbf{Permissive (academic) licenses} -- Licenses such as MIT, BSD, and Apache that impose minimal obligations: typically only the retention of the original copyright notice and a disclaimer of warranty. They allow the code to be incorporated into proprietary products without requiring the downstream source to be opened.
+  \end{itemize}
+\end{itemize}
+These definitions preempt common errors: the GPL does not ban commercial use; it simply demands that the source remain free when the software is shared. Permissive licenses are not the same as publicdomain dedication because the original author's copyright still exists. Not every opensource license forces you to publish your unchanged source; only copyleft licenses carry that requirement.
+
+\subsection{Worked Example}
+\textbf{Task:} Read the first three paragraphs of the MIT License and extract the two obligations a downstream user must follow.
+
+\begin{enumerate}
+  \item \textbf{Locate the text.} The MIT License begins with a brief permission notice, followed by two substantive paragraphs that describe user obligations.
+  \item \textbf{Identify the first obligation.} The second paragraph states: ``\emph{The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.}'' This means that anyone who redistributes the software (or a significant part of it) must retain the original copyright notice and the license text.
+  \item \textbf{Identify the second obligation.} The third paragraph reads: ``\emph{THE SOFTWARE IS PROVIDED `AS IS', WITHOUT WARRANTY OF ANY KIND, ...}'' This is a disclaimer of liability; downstream users must preserve this disclaimer when they share the software, ensuring that the original author is not held responsible for any problems.
+  \item \textbf{Summarize the obligations.}  
+  \begin{itemize}
+    \item Keep the original copyright and permission notice in every distribution.
+    \item Preserve the disclaimer that the software is offered ``as is'' and without warranty.
+  \end{itemize}
+\end{enumerate}
+\textbf{What this shows us:} A permissive license like MIT places only two simple duties on downstream users---attribution and liability disclaimer---while allowing unrestricted use, modification, and even inclusion in commercial products.
+
+\subsection{Key Takeaway}
+Opensource licenses fall into two streams: copyleft licenses require derived works to stay open, whereas permissive licenses only ask for attribution and a liability disclaimer, making them the most flexible for commercial integration.
+
+\subsection*{Questions}
+% No questions provided.
+
+\newpage
+
+\newpage
+% ============================================================
+% SECTION  6. Using OSS: Libraries, Frameworks, and Categories
+% ============================================================
+
+\section{Using OSS: Libraries, Frameworks, and Categories}
+
+\subsection{Before We Begin}
+A software module is a selfcontained piece of code that performs a specific task, and a function is a named block inside a module that can be called repeatedly.  When a piece of code is written once and then reused in many places, development time and errors are reduced.  Reusing modules and functions lets programmers avoid reinventing the wheel for common operations such as calculations or file handling.  This idea of reusable code is the foundation for both libraries and frameworks.  Understanding reuse will help us see why libraries and frameworks are introduced in software projects.  
+
+\subsection{Motivation}
+A kitchen toolbox (library) that you pick specific tools from versus a fully equipped kitchen (framework) that guides how you cook the whole meal.  Modern software development needs rapid delivery and high quality, but writing every lowlevel component from scratch is slow and errorprone.  Libraries and frameworks provide readymade building blocks that let developers focus on the unique parts of their application.  By choosing the right kind of opensource component, teams can boost productivity while maintaining control over the overall design.  
+
+\subsection{Intuition}
+Think of a library as a shelf of individual tools---like a hammer, a wrench, or a calculator---that you may reach for whenever you need them.  You decide which tools to use, when to call them, and how they fit into the larger structure you are building.  A framework, on the other hand, is like a fully equipped kitchen where the layout, the order of steps, and the flow of cooking are largely predetermined.  You supply the specific recipes (your custom code), but the kitchen (the framework) decides when and how to invoke them, a pattern known as \textit{inversion of control}.  In short, libraries offer optional helpers, while frameworks provide a guiding skeleton for your entire program.  
+
+\subsection{Formal Definition}
+\begin{itemize}
+  \item \textbf{Software library}: a collection of modules and functions that an application may call directly.  Each module groups related functions (e.g., a \texttt{math} module for arithmetic operations).  The application retains full control over the program flow.
+  \item \textbf{Framework}: a structured set of libraries together with a prescribed architecture that calls the developer's code at defined points.  This calling pattern is called \textbf{inversion of control} because the framework, not the application, initiates the execution of userwritten functions.
+  \item \textbf{Inversion of control}: the reversal of the usual relationship where the program invokes library code; instead, the framework invokes the programmer's callbacks, route handlers, or component methods.
+  \item \textbf{OpenSource Software (OSS) categories} (representative projects):
+    \begin{enumerate}
+      \item Operating Systems -- \texttt{Linux}, \texttt{Android}, \texttt{BSD}
+      \item Web Servers -- \texttt{Apache HTTP}, \texttt{Nginx}
+      \item Big Data -- \texttt{Hadoop}, \texttt{Spark}
+      \item QA Automation -- \texttt{Selenium}
+      \item Web Frameworks -- \texttt{Django}, \texttt{Angular}, \texttt{React}
+      \item Databases -- \texttt{MySQL}, \texttt{PostgreSQL}
+      \item Browsers -- \texttt{Firefox}, \texttt{Brave}
+      \item Scripting Languages -- \texttt{Python}, \texttt{Perl}
+      \item Content Management Systems -- \texttt{WordPress}
+    \end{enumerate}
+\end{itemize}
+It is a common misconception that a framework is simply a larger library; unlike a library, a framework dictates the overall program structure and lifecycle.  Another mistake is assuming that importing a library automatically manages the flow of an application---control remains with the programmer.  Finally, not every OSS project works outofthebox; many require configuration, integration, or adaptation to fit a specific project.  
+
+\subsection{Worked Example}
+\textbf{Problem statement:} Write a short Python script that uses the \texttt{requests} library to fetch the web page \texttt{http://example.com}, then contrast it with a minimal Flask application that serves the same page using a framework.
+
+\medskip
+\textbf{Step 1 -- Using a library (requests).}
+\begin{verbatim}
+import requests
+
+def fetch_page():
+    response = requests.get('http://example.com')
+    if response.status_code == 200:
+        print(response.text)
+    else:
+        print('Failed to retrieve page')
+
+if __name__ == '__main__':
+    fetch_page()
+\end{verbatim}
+The script explicitly calls \texttt{requests.get()} to perform an HTTP GET request, checks the status code, and prints the returned HTML.  Control of the program flow (when the request is made, how to handle the response) stays entirely in the script.
+
+\medskip
+\textbf{Step 2 -- Using a framework (Flask).}
+\begin{verbatim}
+from flask import Flask, Response
+import requests
+
+app = Flask(__name__)
+
+@app.route('/')
+def serve_page():
+    resp = requests.get('http://example.com')
+    return Response(resp.text, mimetype='text/html')
+
+if __name__ == '__main__':
+    app.run()
+\end{verbatim}
+Here the developer defines a route \texttt{'/'} and a handler function \texttt{serve\_page}.  The Flask framework creates the web server, listens for incoming HTTP requests, and invokes \texttt{serve\_page} whenever a client accesses the root URL.  This is inversion of control: Flask decides \textit{when} to call the userwritten function, whereas in the library example the script decides \textit{when} to call \texttt{requests.get()}.
+
+\textbf{Final answer:} The library example is a straightforward, linear script that pulls a page on demand.  The framework example sets up a full web service where the framework controls request handling and calls userprovided code at the appropriate moment.
+
+\textbf{What this shows us:} A library supplies a specific capability that the program can invoke at will, while a framework supplies a broader structure that determines the program's execution flow and calls userprovided code via inversion of control.  
+
+\subsection{Key Takeaway}
+A library offers optional, reusable functions that you call directly, whereas a framework provides a complete architectural skeleton that calls your code for you through inversion of control.  Choose a library when you need isolated helpers, and choose a framework when you want the surrounding structure to be managed for you.
+
+\subsection*{Questions}
+\begin{enumerate}
+    \item \textbf{(Easy)}  
+    Explain, in your own words, the primary difference between a software library and a framework.  
+    \newpage
+    
+    \item \textbf{(Medium)}  
+    The following OSS projects are given.  Match each project to the correct category from the list in the theory section.  
+    \begin{itemize}
+        \item \texttt{Linux}
+        \item \texttt{Apache HTTP}
+        \item \texttt{React}
+        \item \texttt{MySQL}
+        \item \texttt{Selenium}
+    \end{itemize}  
+    Provide a onesentence justification for each match.  
+    \newpage
+    
+    \item \textbf{(Hard)}  
+    Consider the Flask example provided in the worked example.  Identify all points where \textbf{inversion of control} occurs, and describe how this contrasts with how a library such as \texttt{requests} is used in the standalone script.  
+    \newpage
+    
+    \item \textbf{(HOTS)}  
+    You have been tasked with building a lightweight web service that renders usersubmitted templates and performs simple database lookups.  Discuss whether you would prefer to use a library (e.g., SQLAlchemy for database access) or a web framework (e.g., Django).  Justify your choice by comparing the control flow, configuration effort, and ability to customize core behavior.  
+    \newpage
+\end{enumerate}
+
+\newpage
+% ============================================================
+% SECTION  7. OSS Case Study: VLC Media Player
+% ============================================================
+
+% !!!  REVIEW FLAG: 7. OSS Case Study: VLC Media Player  !!!
+% [undefined_term] Define the 'git' version control system and its role in cloning and branching within the VLC workflow.
+% !!! END REVIEW FLAGS !!!
+\section{7. OSS Case Study: VLC Media Player}
+
+\subsection{Before We Begin}
+Continuous integration (CI) is a practice where developers frequently run automated tests on their code to catch problems early. An issuetracking system records bugs, feature requests, and other work items, assigning them to people and tracking their progress. Nightly builds are automatically generated versions of the software compiled each night after the latest tests have passed. These concepts help large, distributed projects keep the code healthy despite many contributors. Understanding CI and issue tracking will let us follow how VLC moves from a small patch to a tested build.
+
+\subsection{Motivation}
+Imagine a student who discovers a typo in VLC's help menu and wants to fix it for everyone who uses the player. By submitting a small change, the student can see the entire journey a contribution takes---from local testing on a personal computer, through peer review, to automated verification before the change appears in a nightly build. This concrete path shows why VLC has a structured workflow: it ensures quality, security, and coordination among many volunteers.
+
+\subsection{Intuition}
+VLC is maintained by a modest core team that guides a large community of occasional contributors. Each change starts as a ``patch''---a file describing what was added or altered. Before anyone else sees the patch, the author runs builtin checks to verify it does not break existing functionality. The patch is then emailed to a maintainer, who reviews it and discusses any needed revisions. Once accepted, an automated system (Jenkins) builds the updated code and runs the full test suite; the resulting nightly build lets anyone test the newest code, even though it is not the official release. Milestones are selected by a vote of the core team, determining when a stable version is packaged for public download.
+
+\subsection{Formal Definition}
+\begin{description}
+\item[Core team] A small group of 10--15 developers who have commit access to the main repository and make decisions about milestones, releases, and governance.
+\item[Contributors] Any individual who submits patches; they may have only readonly access to the repository and do not need commit rights.
+\item[Trac] An issuetracking system used to log bugs, feature requests, and tasks. Security vulnerabilities are handled outside Trac to avoid public exposure.
+\item[GitLab] The platform that hosts VLC's source code repositories; it allows cloning, branching, and viewing the project's history.
+\item[Patch] A text file produced by a versioncontrol diff command that records the exact changes made to source files.
+\item[make check] A command that runs the project's suite of local tests and static analyses; it must succeed before a patch is sent for review.
+\item[Jenkins] A continuousintegration server that automatically builds the project, runs all tests, and publishes nightly builds for testing.
+\item[Nightly build] An automatically generated, frequently updated build that reflects the latest merged patches; it is intentionally unstable and meant for testing, not for enduser distribution.
+\item[Milestone] A planned collection of features and fixes that will become an official release once the core team votes to approve it.
+\item[Voting] The process by which the core team decides on milestones and release contents; each core member casts a vote, and a majority determines the outcome.
+\end{description}
+These definitions make clear that opensource projects like VLC do employ formal code review, that nightly builds are testing artifacts rather than final products, and that many contributors work without direct commit privileges.
+
+\subsection{Worked Example}
+\textbf{Goal:} Submit a small helptext correction to VLC and see it pass through the CI pipeline.
+
+\paragraph{Step 1 -- Clone the repository}
+\begin{verbatim}
+$ git clone https://gitlab.videolan.org/videolan/vlc.git
+Cloning into 'vlc'...
+... (output omitted)
+\end{verbatim}
+The local copy of VLC's source code is now on the student's machine.
+
+\paragraph{Step 2 -- Create a new branch for the change}
+\begin{verbatim}
+$ cd vlc
+$ git checkout -b fix-help-typo
+Switched to a new branch 'fix-help-typo'
+\end{verbatim}
+Working on a separate branch keeps the main line untouched.
+
+\paragraph{Step 3 -- Edit the help text}
+Open \texttt{modules/help/help.txt} in an editor and change the line
+\begin{verbatim}
+``Press P to play/pause the video.''
+\end{verbatim}
+to
+\begin{verbatim}
+``Press Space to play/pause the video.''
+\end{verbatim}
+Save and close the file.
+
+\paragraph{Step 4 -- Verify locally with \texttt{make check}}
+\begin{verbatim}
+$ ./configure
+... (configuration output)
+$ make check
+Running unit tests...
+[==========] 120 tests passed, 0 failures.
+\end{verbatim}
+All tests succeed, indicating the patch does not break existing code.
+
+\paragraph{Step 5 -- Generate the patch}
+\begin{verbatim}
+$ git add modules/help/help.txt
+$ git commit -m "Correct shortcut description in help text"
+[fix-help-typo abc1234] Correct shortcut description in help text
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+$ git format-patch origin/master --stdout > fix-help-typo.patch
+\end{verbatim}
+The file \texttt{fix-help-typo.patch} now contains the diff.
+
+\paragraph{Step 6 -- Send the patch via email}
+Compose an email to the VLC maintainer list with subject ``[PATCH] fix-help-typo'' and attach the patch file. The email body explains the change and references the relevant Trac ticket (if any).
+
+\paragraph{Step 7 -- Maintainer review}
+A core developer receives the email, reviews the diff, and replies ``Looks good -- applying.'' The maintainer then merges the patch into the main repository.
+
+\paragraph{Step 8 -- CI verification (Jenkins job)}
+Once the patch lands in the main branch, Jenkins automatically triggers a job:
+\begin{verbatim}
+[INFO] Starting Jenkins build #4523 ...
+[INFO] Checking out latest commit ...
+[INFO] Running full test suite ...
+[INFO] All tests passed.
+[INFO] Publishing nightly build vlc-3.0.0~nightly-20260318
+\end{verbatim}
+The new nightly build contains the corrected help text and is available for anyone to download and test.
+
+\textbf{What this shows us:} A contribution follows a clear path---local testing, emailbased peer review, automated CI validation, and inclusion in a nightly build---ensuring quality even when many volunteers participate.
+
+\subsection{Key Takeaway}
+VLC's development combines disciplined local testing, peerreviewed patch submission, and continuousintegration nightly builds to maintain a highquality opensource media player despite a large, distributed contributor base.
+
+\subsection*{Questions}
+% No questions are provided for this section.
+
+\newpage{}
+
+\newpage
+% ============================================================
+% SECTION  8. LLMs and Prompt Engineering in Software
+% ============================================================
+
+\section{8. LLMs and Prompt Engineering in Software}
+
+\subsection{Before We Begin}
+A \emph{prompt} is the text that we give to a large language model (LLM) to tell it what we want it to do.  
+LLMs generate their answers by sampling from many possible continuations, so the same prompt can lead to different outputs on different runs.  
+Because of this builtin randomness, the exact wording and structure of the prompt become crucial for obtaining reliable results.  
+A wellcrafted prompt reduces ambiguity, guides the model toward the desired reasoning path, and helps the model stay consistent.  
+Now we can see why the way we phrase a request matters for softwareengineering tasks.
+
+\subsection{Motivation}
+\textbf{Ordering a custom pizza: you must tell the chef exactly what toppings, crust, size, and any special instructions to get the result you want.}  
+Just as a pizza chef needs a clear order to bake the right pie, an LLM needs a clear prompt to produce useful software artefacts.  
+Prompt engineering exists to tame the randomness of LLMs and turn them into dependable assistants for tasks such as coding, testing, and design.  
+
+\subsection{Intuition}
+Think of an LLM as a talented but occasionally forgetful collaborator.  
+If we hand it a vague request, it may wander off topic or give an answer that varies each time.  
+By packaging our request into welldefined pieces---what the task is, what input it will see, how the answer should look, any extra guidance, and how we will judge the answer---we give the model a roadmap that keeps it on track.  
+We can either give the whole roadmap at once (singleprompt) or break the roadmap into smaller steps that feed into each other (multiprompt).  
+
+\subsection{Formal Definition}
+An \emph{effective prompt} for software engineering consists of the following five components:
+
+\begin{enumerate}
+    \item \textbf{Task Description}: a concise statement of what the model should accomplish (e.g., ``generate a Python function that validates an email address'').
+    \item \textbf{Input Data}: concrete examples or specifications that the model may need to reference (e.g., a sample email string).
+    \item \textbf{Output Format}: a precise description of how the answer should be structured (e.g., ``return a Boolean and include inline comments'').
+    \item \textbf{Additional Instructions}: any extra constraints or preferences, such as ``use regular expressions'' or ``write the code as a senior developer would''.
+    \item \textbf{Evaluation Criteria}: rules for checking the answer, for instance ``the function must return False for ``bad@.com'' and True for ``good@example.com''''.
+\end{enumerate}
+
+Prompting strategies are divided into two families:
+
+\begin{description}
+    \item[Singleprompt] The entire prompt---including all five components---is given to the LLM in one request.  Variants include:
+    \begin{itemize}
+        \item \emph{Oneshot/Fewshot}: supplying one or a few example inputs and outputs to illustrate the pattern.
+        \item \emph{Role prompting}: asking the model to adopt a specific persona, such as ``act as a senior Python developer''.
+        \item \emph{Chainofthought}: explicitly requesting stepbystep reasoning before producing the final answer.
+    \end{itemize}
+    \item[Multiprompt] The overall task is split into a sequence of smaller prompts.  The output of one prompt becomes the input of the next.  Techniques include:
+    \begin{itemize}
+        \item \emph{Promptchaining}: breaking a complex specification into successive subtasks.
+        \item \emph{Exploratory prompting}: generating multiple alternative drafts and selecting the best.
+        \item \emph{Selfconsistency}: iteratively refining the prompt until the answers converge.
+    \end{itemize}
+\end{description}
+
+These definitions help avoid common misunderstandings: a longer prompt does not guarantee a better answer, ambiguous wording still leads to unpredictable outputs, and a single example (oneshot) is often insufficient for intricate engineering problems.
+
+\subsection{Worked Example}
+\textbf{Problem statement}: Create a prompt that asks an LLM to generate a Python function that validates an email address.  The prompt must contain a task description, an input example, a desired output format, and a note to include comments.
+
+\begin{enumerate}
+    \item \textbf{Step 1 -- State the role.}\\
+    ``You are a senior Python developer who writes clean, welldocumented code.''
+
+    \item \textbf{Step 2 -- Provide the task description.}\\
+    ``Write a function called \texttt{is_valid_email(email: str) -> bool} that checks whether the supplied email address is syntactically correct.''
+
+    \item \textbf{Step 3 -- Give an input example.}\\
+    ``For example, the input string \texttt{'user@example.com'} should be considered valid, while \texttt{'bad@.com'} should be considered invalid.''
+
+    \item \textbf{Step 4 -- Specify the output format.}\\
+    ``Return only the Python code block, and include inline comments that explain each major step.''
+
+    \item \textbf{Step 5 -- Provide evaluation criteria (optional but helpful).}\\
+    ``The function must return \texttt{True} for a wellformed address and \texttt{False} otherwise, and it should use a regular expression for validation.''
+
+    \item \textbf{Combine all pieces into a single prompt.}\\
+    Final prompt text:
+    
+    \begin{verbatim}
+You are a senior Python developer who writes clean, well-documented code.
+Write a function called is_valid_email(email: str) -> bool that checks whether the supplied email address is syntactically correct.
+For example, the input string 'user@example.com' should be considered valid, while 'bad@.com' should be considered invalid.
+Return only the Python code block, and include inline comments that explain each major step.
+The function must return True for a well-formed address and False otherwise, and it should use a regular expression for validation.
+    \end{verbatim}
+\end{enumerate}
+
+\textbf{What this shows us}: By explicitly separating the role, task, example, format, and evaluation guidance, we give the LLM a clear scaffold that reduces randomness and produces a reliable, wellcommented solution.
+
+\subsection{Key Takeaway}
+A wellengineered prompt breaks the request into five explicit parts and chooses either a singleprompt or multiprompt strategy to keep the LLM's output reliable and useful.
+
+\subsection*{Questions}
+No questions are available for this section.
+
+\newpage
+
+\newpage
+% ============================================================
+% SECTION  9. LLMs for Requirements Engineering
+% ============================================================
+
+\section{9. LLMs for Requirements Engineering}
+
+\subsection{Before We Begin}
+A Software Requirements Specification (SRS) is a written description of what a software system must do and the constraints under which it must operate.  
+Completeness means that every needed function, behavior, and constraint appears in the document, leaving no important piece unwritten.  
+If an SRS misses a requirement, developers may build the wrong feature or omit a critical safeguard, leading to rework or faulty products.  
+Even a single omitted requirement can cause costly delays later in the project lifecycle.  
+Understanding what an SRS is and why it must be complete prepares us to see how largelanguage models can help generate and check such documents.
+
+\subsection{Motivation}
+\textbf{Example First:} Building a house blueprint piece by piece: first the foundation plan, then electrical layout, then interior design, each feeding into the next.  
+Largelanguage models (LLMs) cannot output an entire, detailed SRS in one request because their responses are limited in length.  
+Therefore we break the creation process into a series of smaller, focused prompts---called promptchaining---so that each segment can be reviewed, corrected, and then assembled into a full specification.  
+The same idea lets us ask the LLM to examine the whole SRS from the perspective of different stakeholders, revealing gaps or inconsistencies that would otherwise stay hidden.
+
+\subsection{Intuition}
+Think of the LLM as a collaborative assistant rather than a lone author.  
+We first ask it to produce a manageable piece, such as a list of functional use cases.  
+After confirming that list, we ask for the next piece---nonfunctional requirements---using the previously generated content as context.  
+When the entire draft is assembled, we change the LLM's ``role,'' pretending it is a project manager, a tester, or a customer, and ask it to scan the document for missing or conflicting items.  
+By repeatedly feeding small, welldefined prompts and switching roles, we keep the assistant's output within size limits while still obtaining a thorough, stakeholderaware SRS.
+
+\subsection{Formal Definition}
+\textbf{PromptChaining} is the practice of issuing a sequence of prompts where each prompt builds on the output of the previous one.  
+The first prompt may request an outline (e.g., functional use cases).  
+The second prompt supplies that outline and asks for a deeper elaboration (e.g., nonfunctional requirements for each use case).  
+The third prompt presents the accumulated document and asks the LLM to act in a designated role, such as ``project manager,'' to evaluate the SRS for properties like completeness, consistency, and unambiguity.
+
+\textbf{FewShot Examples} are short demonstrations placed in a prompt that show the model how to perform a task.  
+When we want the LLM to flag ambiguous language, we provide a few pairs of requirements, each labeled as ``ambiguous'' or ``clear.''  
+These examples teach the model the pattern it must recognize, but they do not guarantee perfect detection; the model may still miss subtleties.
+
+\textbf{Role Prompting} instructs the LLM to adopt a specific stakeholder's viewpoint.  
+By stating, for instance, ``You are a QA analyst reviewing the following SRS,'' the model tailors its feedback toward the concerns of that role, such as missing testable requirements or contradictory statements.  
+Even with role prompting, human reviewers remain essential; the model's suggestions are a guide, not a replacement for expert judgment.
+
+\subsection{Worked Example}
+\textbf{Goal:} Create a threestep prompt chain for a mock online bookstore and then use role prompting to uncover any missing requirements.
+
+\paragraph{Problem Statement}
+Produce an SRS for an online bookstore using promptchaining.  
+Step 1: List five functional use cases.  
+Step 2: For each use case, generate corresponding nonfunctional requirements.  
+Step 3: Feed the assembled draft to the LLM as a ``project manager'' to identify any missing requirements.
+
+\paragraph{Step 1 -- List Functional Use Cases}
+\begin{verbatim}
+Prompt:
+List five functional use cases for an online bookstore.
+\end{verbatim}
+\textbf{LLM Response:}
+\begin{enumerate}
+  \item Browse catalog and search for books.
+  \item Add selected books to a shopping cart.
+  \item Complete purchase with payment processing.
+  \item View order history and track shipment.
+  \item Write and submit book reviews.
+\end{enumerate}
+
+\paragraph{Step 2 -- Generate NonFunctional Requirements}
+\begin{verbatim}
+Prompt:
+Using the following functional use cases, provide nonfunctional
+requirements for each.  
+Use cases:  
+1. Browse catalog and search for books.  
+2. Add selected books to a shopping cart.  
+3. Complete purchase with payment processing.  
+4. View order history and track shipment.  
+5. Write and submit book reviews.
+\end{verbatim}
+\textbf{LLM Response:}
+\begin{enumerate}
+  \item \textbf{Usability:} Search results must appear within 2 seconds for queries of up to 10 keywords.  
+  \item \textbf{Performance:} Adding an item to the cart must not take longer than 1 second under normal load.  
+  \item \textbf{Security:} Payment data must be transmitted over TLS 1.2 or higher and never stored in plain text.  
+  \item \textbf{Reliability:} Orderhistory service must be available 99.9 % of the time each month.  
+  \item \textbf{Maintainability:} Review submission must support Markdown formatting and be editable within 15 minutes of posting.
+\end{enumerate}
+
+\paragraph{Step 3 -- Role Prompting for Consistency Check}
+First we assemble the partial SRS:
+
+\begin{verbatim}
+SRS Draft:
+Functional Use Cases:
+1. Browse catalog and search for books.
+2. Add selected books to a shopping cart.
+3. Complete purchase with payment processing.
+4. View order history and track shipment.
+5. Write and submit book reviews.
+
+NonFunctional Requirements:
+1. Search results must appear within 2 seconds for queries of up to 10 keywords.
+2. Adding an item to the cart must not take longer than 1 second under normal load.
+3. Payment data must be transmitted over TLS 1.2 or higher and never stored in plain text.
+4. Orderhistory service must be available 99.9 % of the time each month.
+5. Review submission must support Markdown formatting and be editable within 15 minutes of posting.
+\end{verbatim}
+
+\begin{verbatim}
+Prompt:
+You are a project manager reviewing the SRS draft above.  
+Identify any missing functional or nonfunctional requirements, and note any
+inconsistencies or gaps that could affect project success.
+\end{verbatim}
+\textbf{LLM Response:}
+\begin{itemize}
+  \item \textbf{Missing Functional Requirement:} No use case for ``User account creation and authentication,'' which is essential before any other action.  
+  \item \textbf{Missing NonFunctional Requirement:} No performance target for the checkout process; suggest a maximum of 3 s for completing a purchase.  
+  \item \textbf{Inconsistency:} The security requirement mentions TLS 1.2, but the usability requirement assumes instantaneous search results; recommend clarifying acceptable latency under encrypted traffic.  
+  \item \textbf{Gap:} No requirement for data backup or recovery in case of system failure, which is vital for orderhistory reliability.
+\end{itemize}
+
+\paragraph{What this shows us}
+By breaking the creation into three focused prompts, we stayed within the LLM's output limits, obtained detailed functional and nonfunctional content, and then leveraged role prompting to surface omissions and contradictions that would have been easy to overlook in a single monolithic draft.
+
+\subsection{Key Takeaway}
+Promptchaining lets an LLM produce a complete, reviewable SRS piece by piece, while fewshot examples and role prompting help the model detect ambiguity and ensure stakeholderfocused consistency.
+
+\subsection*{Questions}
+\textbf{Easy}
+\begin{enumerate}
+  \item What is the definition of promptchaining when using an LLM to generate an SRS? \newpage
+
+  \item In which situation are fewshot examples especially useful when guiding an LLM to detect ambiguous language? \newpage
+\end{enumerate}
+
+\textbf{Medium}
+\begin{enumerate}
+  \item Consider a set of functional use cases for a new ecommerce platform. Outline a promptchaining workflow that (1) obtains nonfunctional requirements for each use case, (2) integrates the results into a single draft, and (3) sends the draft to the LLM in a role prompting step to identify possible gaps. Describe the content of at least three distinct prompts. \newpage
+
+  \item Explain how role prompting can change the LLM's evaluation of an SRS, and give an example of a stakeholder role that would be particularly relevant for checking consistency between functional and nonfunctional requirements. \newpage
+\end{enumerate}
+
+\textbf{Hard}
+\begin{enumerate}
+  \item Design a comprehensive prompt chain for a publictransportation booking system that includes: (a) identification of missed stakeholder requirements, (b) classification of requirement ambiguity levels in the current draft, and (c) proposal of a remediation plan for any detected issues. Provide the sequence of prompts and explain briefly how you would verify that each stage was successful. \newpage
+
+  \item Critically evaluate the limitations of relying on LLMs for requirement validation, focusing on these three aspects: detection of ambiguous language, assurance of completeness, and fidelity to specific stakeholder perspectives. For each limitation, propose realistic mitigation strategies that a practitioner could apply in a real project setting. \newpage
+\end{enumerate}
+
+\newpage
+
+\end{document}

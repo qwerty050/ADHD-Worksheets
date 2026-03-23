@@ -1,0 +1,708 @@
+\documentclass[12pt, a4paper]{article}
+
+% --- Encoding & Fonts ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% --- Mathematics ---
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+
+% --- Layout ---
+\usepackage[margin=1in]{geometry}
+
+% --- Lists ---
+\usepackage{enumitem}
+
+% --- Tables ---
+\usepackage{booktabs}
+\usepackage{array}
+
+% --- Graphics ---
+\usepackage{graphicx}
+
+% --- Headers / Footers ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% --- Hyperlinks & Cross-references ---
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+
+% --- Misc ---
+\usepackage{xcolor}
+
+% --- Custom commands (safety definitions) ---
+\providecommand{\operatorname}[1]{\mathop{\mathrm{#1}}\nolimits}
+
+\title{Learning Module: Aryaman}
+\author{}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+\tableofcontents
+\newpage
+
+% ============================================================
+% SECTION 1: 1. Introduction to Continual Learning Challenges
+% ============================================================
+
+\section{Introduction to Continual Learning Challenges}
+
+\subsection{Continual Learning: Formulation, Challenges, and Prompt‑Based Solutions}
+
+In the continual‑learning (CL) paradigm a single parametric model 
+\[
+f_{\boldsymbol \theta}:\mathcal X\rightarrow\mathcal Y ,
+\qquad \boldsymbol \theta\in\mathbb R^{p},
+\]
+is exposed sequentially to a collection of tasks 
+\[
+\mathcal D=\{\mathcal D_{1},\dots ,\mathcal D_{T}\},
+\qquad 
+\mathcal D_{t}=\{(\mathbf x^{(t)}_{i},y^{(t)}_{i})\}_{i=1}^{N_{t}} .
+\]
+At step $t$ the learner may only access the current dataset $\mathcal D_{t}$ (and possibly a small amount of auxiliary information retained from previous steps). The goal is to optimise a cumulative objective
+\[
+\min_{\boldsymbol\theta}\; \sum_{t=1}^{T}\mathcal L\bigl(f_{\boldsymbol\theta}(\mathcal D_{t})\bigr),
+\tag{1}
+\]
+while preserving good performance on all previously seen tasks.
+
+\subsubsection{Catastrophic Forgetting}
+When a model is updated using only the data of task $t$, the parameters $\boldsymbol\theta$ are shifted in a direction that benefits $\mathcal D_{t}$ but may degrade the loss on earlier tasks $\mathcal D_{1},\dots ,\mathcal D_{t-1}$. This phenomenon is termed \emph{catastrophic forgetting}. A common quantitative measure is the \emph{forgetting factor}
+\[
+\mathcal F_{t} \;=\; \max_{k<t}\bigl[ \mathcal L\bigl(f_{\boldsymbol\theta_{t}}(\mathcal D_{k})\bigr) 
+        - \mathcal L\bigl(f_{\boldsymbol\theta_{k}}(\mathcal D_{k})\bigr) \bigr],
+\tag{2}
+\]
+where $\boldsymbol\theta_{k}$ denotes the parameters after finishing task $k$ and $\boldsymbol\theta_{t}$ the parameters after the current update. A low $\mathcal F_{t}$ indicates that the model retains knowledge of previous tasks.
+
+\subsubsection{Canonical Families of Solutions}
+\paragraph{Rehearsal‑based approaches.}
+These methods allocate a memory buffer $\mathcal B$ (often of fixed capacity $M$) that stores a subset of exemplars from past tasks. The loss in Eq.~(1) is replaced by a joint loss over the current mini‑batch $\mathcal B_{t}$ and the buffer:
+\[
+\mathcal L^{\text{rehearsal}}_{t}
+   = \frac{1}{|\mathcal B_{t}|}\!\sum_{(\mathbf x,y)\in\mathcal B_{t}}\!\ell\bigl(f_{\boldsymbol\theta}(\mathbf x),y\bigr)
+   +\frac{1}{|\mathcal B|}\!\sum_{(\mathbf x,y)\in\mathcal B}\!\ell\bigl(f_{\boldsymbol\theta}(\mathbf x),y\bigr),
+\tag{3}
+\]
+where $\ell(\cdot,\cdot)$ is a task‑specific surrogate loss (e.g., cross‑entropy).  
+
+\paragraph{Architecture‑based approaches.}
+These methods allocate disjoint model components (e.g., separate heads, sub‑networks, or mask‑based pathways) for each task, denoted
+\[
+f_{\boldsymbol\theta}(\mathbf x) = g_{\boldsymbol\theta^{(t)}}(\mathbf x), \qquad 
+\boldsymbol\theta^{(t)}\cap\boldsymbol\theta^{(s)}=\emptyset\;(t\neq s).
+\tag{4}
+\]
+
+\subsubsection{Prompt‑Based Continual Learning (L2P)}
+\emph{Learn to Prompt} (L2P) seeks to overcome the two limitations highlighted above: (i) the reliance on stored data and (ii) the necessity of a known task identifier at test time.
+
+\paragraph{Key idea.}
+Instead of storing raw examples, L2P retains a compact set of \emph{learnable prompts}
+\[
+\mathcal P = \{\mathbf p_{1},\dots ,\mathbf p_{K}\},\qquad 
+\mathbf p_{k}\in\mathbb R^{d},
+\tag{5}
+\]
+which are appended (or injected) to the input embedding of each downstream sample. In a transformer‑based backbone $h_{\boldsymbol\theta}$ the processed representation becomes
+\[
+\tilde{\mathbf z}
+   = h_{\boldsymbol\theta}\bigl([\mathbf p_{1};\dots ;\mathbf p_{K};\,\mathbf x]\bigr),
+\tag{6}
+\]
+where $[\,\cdot\,]$ denotes concatenation. The prompts are the only parameters that are updated when a new task arrives; the backbone weights $\boldsymbol\theta$ are frozen after an initial pre‑training phase. Consequently, the memory footprint of $\mathcal P$ is orders of magnitude smaller than a full rehearsal buffer.
+
+\paragraph{Training objective.}
+For task $t$, the prompt set is adapted by minimising a standard supervised loss on the current data $\mathcal D_{t}$, while a \emph{prompt‑selection regulariser} ensures that the prompts remain useful for past tasks:
+\[
+\mathcal L^{\text{L2P}}_{t}
+   = \frac{1}{|\mathcal D_{t}|}\!\sum_{(\mathbf x,y)\in\mathcal D_{t}}
+        \ell\!\bigl(g_{\mathcal P}(\mathbf x),y\bigr)
+   + \lambda\,
+     \underbrace{\frac{1}{K}\sum_{k=1}^{K}
+          \bigl\|\mathbf p_{k}^{(t)}-\mathbf p_{k}^{(t-1)}\bigr\|_{2}^{2}}_{\text{stability term}},
+\tag{7}
+\]
+where $g_{\mathcal P}(\cdot)$ denotes the downstream classifier that receives the prompt‑augmented representation, and $\lambda$ trades off plasticity versus stability.
+
+\paragraph{Task‑agnostic inference.}
+At test time the model does not require a task label. Instead, a lightweight \emph{prompt selector} $\phi$ computes a relevance score for each stored prompt based on the input:
+\[
+s_{k} = \phi(\mathbf x)^{\top}\mathbf p_{k},\qquad 
+\tilde{\mathbf p} = \sum_{k=1}^{K}\alpha_{k}\mathbf p_{k},\,
+\alpha_{k}= \frac{\exp(s_{k})}{\sum_{j}\exp(s_{j})}.
+\tag{8}
+\]
+The aggregated prompt $\tilde{\mathbf p}$ is then injected together with $\mathbf x$, resulting in a single forward pass that automatically adapts to the underlying task.
+
+\subsubsection{Summary of Advantages}
+\begin{itemize}
+\item \textbf{Privacy‑preserving:} No raw examples are retained; only a small set of learnable vectors $\mathcal P$ is stored.
+\item \textbf{Scalable memory:} $|\mathcal P|=K\ll M$, where $M$ is the typical rehearsal‑buffer size.
+\item \textbf{Task‑free deployment:} The selector $\phi$ produces a data‑dependent prompt, removing the need for an explicit task identifier at inference.
+\item \textbf{Constant model size:} The backbone $h_{\boldsymbol\theta}$ is frozen after pre‑training, so the total number of trainable parameters grows only with $K$.
+\end{itemize}
+
+\subsection*{Questions}
+\begin{enumerate}
+  \item \textbf{Definition of Catastrophic Forgetting (Easy).}\\
+  Define catastrophic forgetting in continual learning. Explain why training a model sequentially on tasks $\{\mathcal D_{1},\dots ,\mathcal D_{T}\}$ typically leads to degradation on earlier tasks.
+
+  \item \textbf{Rehearsal vs. Architecture Strategies (Easy–Medium).}\\
+  Compare rehearsal‑based methods with architecture‑based methods. For each family list at least two advantages and two limitations, focusing on memory usage, scalability, and the requirement of task identifiers during inference.
+
+  \item \textbf{Why Objective (1) Is Insufficient (Medium).}\\
+  Discuss why minimizing the cumulative loss $\sum_{t=1}^{T}\mathcal L\bigl(f_{\boldsymbol\theta}(\mathcal D_{t})\bigr)$ alone does not guarantee continual‑learning performance. Use a simple two‑task linear‑classifier example to illustrate the role of the forgetting factor $\mathcal F_{t}$.
+
+  \item \textbf{Numerical Forgetting Factor (Easy).}\\
+  Given loss values: after task 1, $\mathcal L_{1}=0.2$; after task 2, loss on $\mathcal D_{1}$ becomes $0.6$; after task 3, loss on $\mathcal D_{1}$ becomes $0.4$. Compute $\mathcal F_{2}$ and $\mathcal F_{3}$ and comment on what they reveal about retention.
+
+  \item \textbf{Complexity of Rehearsal Loss (Medium).}\\
+  \begin{enumerate}
+    \item Derive the computational complexity of evaluating the joint rehearsal loss~\eqref{eq:3} for one training step in terms of buffer size $M$ and mini‑batch size $|\mathcal B_{t}|$.
+    \item Identify three practical scenarios where this complexity is a bottleneck (e.g., strict privacy, edge‑device storage, many tasks) and propose a high‑level mitigation for each.
+  \end{enumerate}
+
+  \item \textbf{Zero Forgetting with Disjoint Parameters (Hard).}\\
+  \begin{enumerate}
+    \item Show mathematically that if $\boldsymbol\theta^{(t)}\cap\boldsymbol\theta^{(s)}=\emptyset$ for $t\neq s$, then the forgetting factor $\mathcal F_{t}=0$ for all $t$.
+    \item Discuss the trade‑off between this guarantee and the $\mathcal O(T)$ growth of the model size. Argue whether architecture‑based methods are viable on devices with a hard memory cap.
+  \end{enumerate}
+
+  \item \textbf{Memory Footprint of Prompts vs. Rehearsal Buffer (Easy–Medium).}\\
+  A backbone has $10^{7}$ parameters. Each prompt vector has dimension $d=768$ and $K=20$. A rehearsal buffer stores $M=2000$ image embeddings of the same dimension. Compute the memory (in number of float parameters) required for the prompts and for the buffer, and give the ratio $\frac{\text{prompt memory}}{\text{buffer memory}}$. Discuss how prompts alleviate privacy concerns compared with raw data storage.
+
+  \item \textbf{Stability–Plasticity Gradient (Medium).}\\
+  \begin{enumerate}
+    \item Derive the gradient of the stability term $\frac{\lambda}{K}\sum_{k=1}^{K}\|\mathbf p_{k}^{(t)}-\mathbf p_{k}^{(t-1)}\|_{2}^{2}$ with respect to a single prompt $\mathbf p_{k}^{(t)}$.
+    \item Explain how varying $\lambda$ balances plasticity and stability. Propose an experimental protocol (e.g., grid search with five‑task benchmark) to select an appropriate $\lambda$.
+  \end{enumerate}
+
+  \item \textbf{Selector as Matrix–Vector Product (Hard).}\\
+  Assume $\phi(\mathbf x)=\mathbf W\mathbf x$ with $\mathbf W\in\mathbb R^{d\times d}$. Show that the aggregated prompt $\tilde{\mathbf p}$ from Eq.~\eqref{eq:8} can be written as $\tilde{\mathbf p}= \mathbf A\mathbf x$ for some matrix $\mathbf A$ that depends on $\{\mathbf p_{k}\}$ and $\mathbf W$. Analyse the extra computational cost of computing $\tilde{\mathbf p}$ compared with a plain forward pass, and state for which values of $K$ and $d$ the overhead becomes negligible.
+
+  \item \textbf{Theoretical Bound on Forgetting (Hard).}\\
+  Sketch a proof that, assuming the backbone $h_{\boldsymbol\theta}$ is $L$‑Lipschitz, the forgetting factor after task $t$ satisfies
+  \[
+    \mathcal F_t \leq \frac{\lambda}{K}\sum_{k=1}^{K}\|\mathbf p_k^{(t)}-\mathbf p_k^{(t-1)}\|_2^2 \cdot L .
+  \]
+  List any additional assumptions (e.g., bounded loss, smoothness) you need, and discuss the practical implications for choosing the number of prompts $K$ and the regularisation weight $\lambda$.
+
+  \item \textbf{Ablation Study Design (Hard).}\\
+  Propose an ablation study that isolates the contributions of (i) prompt set size $K$, (ii) stability regulariser $\lambda$, and (iii) selector $\phi$.
+  \begin{enumerate}
+    \item Define three experimental settings, each removing or altering one component.
+    \item Predict how each setting will affect (a) the forgetting factor $\mathcal F_t$ and (b) overall test accuracy on a benchmark such as Split‑CIFAR‑100. Justify your predictions using the theory above.
+  \end{enumerate}
+
+  \item \textbf{Multimodal Extension of L2P (Hard).}\\
+  Imagine a continual‑learning system that must handle tasks from different modalities (images, text, audio). 
+  \begin{enumerate}
+    \item Propose a modification to the prompt architecture that allows modality‑specific prompts while preserving privacy and task‑free inference.
+    \item Critically discuss challenges such as prompt interference across modalities and the design of a universal selector $\phi$ that can operate on heterogeneous inputs.
+  \end{enumerate}
+
+  \item \textbf{Hybrid Prompt‑Architecture Approach (Hard).}\\
+  Design a hybrid method for a setting where replay buffers are disallowed for privacy reasons but knowledge retention is required. Combine (i) prompt‑based conditioning (as in L2P) with (ii) lightweight architectural adaptation (e.g., sparsely activated expert modules).
+  \begin{enumerate}
+    \item Outline the training pipeline, including how prompts and expert modules are updated.
+    \item Describe the inference procedure, emphasizing task‑free operation.
+    \item Discuss trade‑offs in computational overhead, memory usage, and forgetting mitigation compared with pure prompt‑based or pure architectural methods.
+  \end{enumerate}
+\end{enumerate}
+
+% ============================================================
+% SECTION 2: 2. Prompt Pool Mechanism
+% ============================================================
+
+\section{2. Prompt Pool Mechanism}
+\section{Prompt Pools for Instance‑wise Knowledge Sharing in Continual Learning}
+
+\subsection{Motivation}
+In continual learning a model must assimilate a stream of tasks $\{\mathcal{T}_1,\mathcal{T}_2,\dots\}$ while preserving knowledge acquired from earlier tasks.  Classical approaches either (i) \emph{share a single prompt} $\mathbf{P}$ across all tasks, or (ii) allocate a \emph{task‑specific prompt} $\mathbf{P}^{(t)}$ that is activated only when the task identifier $t$ is known.  
+A shared prompt suffers from \textbf{interference}: gradients arising from distinct tasks are projected onto the same parameter subspace, aggravating catastrophic forgetting.  Conversely, task‑specific prompts require an external task label, which contradicts the desideratum of \emph{task‑agnostic} continual learning.
+
+The \textbf{Prompt Pool} paradigm balances these extremes by maintaining a collection of reusable prompt embeddings that can be dynamically combined for each input instance.  This yields fine‑grained, instance‑wise knowledge sharing without explicit task signals.
+
+\subsection{Definition of a Prompt Pool}
+Let $\mathcal{P}$ denote a \emph{prompt pool} consisting of $M$ learnable prompt vectors:
+\begin{equation}
+\boxed{%
+\mathcal{P}= \{\,\mathbf{P}_1,\mathbf{P}_2,\dots,\mathbf{P}_M\,\}
+}\tag{1}
+\end{equation}
+Each $\mathbf{P}_i\in\mathbb{R}^{d_p}$ is a \emph{prompt embedding} that can be prepended (or appended) to the token sequence of any downstream model.  The pool is jointly optimized together with the base model parameters during continual training.
+
+\subsection{Instance‑wise Prompt Composition}
+For a given input example $x$, its raw embedding (e.g., the output of a frozen tokenizer or an image encoder) is denoted $\mathbf{x}_e\in\mathbb{R}^{d_e}$.  
+Instead of attaching a single prompt, we select a subset of $N$ distinct prompts from $\mathcal{P}$:
+\[
+\mathcal{S}(x)=\{s_1, s_2, \dots, s_N\}\subseteq\{1,\dots,M\},\qquad 1<N<M .
+\]
+The indices $s_k$ may be obtained by a lightweight selector network, a similarity search, or a learned gating mechanism.  The adapted embedding fed to the backbone model is
+\begin{equation}
+\boxed{%
+\mathbf{x}_p = \big[\,\mathbf{P}_{s_1}\,;\,\mathbf{P}_{s_2}\,;\,\dots\,;\,\mathbf{P}_{s_N}\,;\,\mathbf{x}_e\,\big]
+}\tag{2}
+\]
+where $[\,\cdot\,]$ denotes concatenation along the token dimension.  The resulting sequence contains $N$ prompt tokens followed by the original data token(s).
+
+\subsection{Properties and Benefits}
+\begin{enumerate}
+    \item \textbf{Reduced Interference.} Because each instance draws only a sub‑pool, gradients from disparate tasks are distributed across different $\mathbf{P}_i$, lowering the probability that updates for one task overwrite the representation needed for another.
+    \item \textbf{Task‑agnostic Operation.} No explicit task identifier is required; the selector implicitly discovers which prompts are useful for the current input, enabling true continual learning in open‑world settings.
+    \item \textbf{Fine‑grained Knowledge Sharing.} Prompts can be reused across tasks whenever they capture useful sub‑skills (e.g., “detect edges”, “recognize colour patterns”).  The composition $\mathcal{S}(x)$ implements a form of \emph{compositional memory} where high‑level behaviour emerges from low‑level prompt combinations.
+    \item \textbf{Scalability.} The pool size $M$ can be large while the active set $N$ remains modest ($N\ll M$), keeping the computational overhead proportional to $N$ rather than $M$.
+\end{enumerate}
+
+\subsection{Relation to Catastrophic Forgetting}
+In the classical continual‑learning formulation, catastrophic forgetting arises when the parameter update $\Delta\theta$ for a new task $\mathcal{T}_{t}$ significantly deviates from the optimal region for previous tasks $\{\mathcal{T}_{1},\dots,\mathcal{T}_{t-1}\}$.  By confining most task‑specific information to a small, dynamically chosen subset of prompts, the bulk of the backbone parameters $\theta_{\text{base}}$ experience milder, more stable gradients.  Consequently the risk of $\Delta\theta_{\text{base}}$ causing forgetting is mitigated, while the prompt pool itself can be regularised (e.g., using orthogonal constraints or replay buffers) to preserve useful prompts over time.
+
+\subsection{Learning the Selector}
+A practical implementation often employs a differentiable selector $g_{\phi}$ parameterised by $\phi$:
+\[
+\mathbf{a}=g_{\phi}(\mathbf{x}_e)\in[0,1]^M,\qquad 
+s_k = \operatorname{arg\,top}_N(\mathbf{a}),
+\]
+where $\operatorname{arg\,top}_N$ returns the indices of the $N$ largest activation values.  The overall loss for an input $x$ with label $y$ may be written as
+\[
+\mathcal{L}(x,y) = \ell\big(f(\mathbf{x}_p; \theta_{\text{base}}),\, y\big) + \lambda\,\Omega(\mathbf{P}_1,\dots,\mathbf{P}_M),
+\]
+with $\ell$ a task‑specific cross‑entropy or regression loss and $\Omega$ a regulariser (e.g., prompt orthogonality or replay‑based penalty).  
+Gradients propagate through both the selected prompts and the selector, allowing the pool to self‑organise into a repertoire of reusable skills.
+
+\subsection{Summary}
+The Prompt Pool framework introduces a middle ground between a monolithic shared prompt and a proliferation of task‑specific prompts.  By defining a finite set $\mathcal{P}$ of reusable prompt embeddings (Equation 1) and constructing instance‑wise adapted embeddings $\mathbf{x}_p$ through selective concatenation (Equation 2), the method supports:
+\begin{itemize}
+    \item \emph{instance‑level composition} of knowledge,
+    \item \emph{task‑agnostic continual learning},
+    \item \emph{reduction of catastrophic forgetting} via distributed parameter updates.
+\end{itemize}
+The following questions consolidate understanding, encourage critical analysis and invite design‑level thinking about the Prompt Pool mechanism.
+
+\subsection*{Questions}
+\begin{enumerate}
+    \item \textbf{Motivation – Comparative analysis (medium).}\\
+    Contrast the three prompting strategies—single shared prompt, task‑specific prompts, and a prompt pool—on: (i) susceptibility to catastrophic forgetting, (ii) need for task identifiers, and (iii) scalability to many tasks. Which strategy offers the most favourable trade‑off for task‑agnostic continual learning and why?
+    
+    \item \textbf{Dimensionality calculation (easy).}\\
+    For a prompt pool with $M=100$ prompts, each $\mathbf{P}_i\in\mathbb{R}^{d_p}$, $d_p=20$, and a raw embedding $\mathbf{x}_e\in\mathbb{R}^{d_e}$ with $d_e=256$, compute the dimensionality of the adapted embedding $\mathbf{x}_p$ when $N=5$ prompts are concatenated. Discuss the impact on computational load compared with concatenating the whole pool ($N=M$).
+    
+    \item \textbf{Lightweight selector design (medium).}\\
+    Propose a selector $g_{\phi}$ suitable for a Vision‑Transformer backbone. Specify (i) the layer types (e.g., linear, depth‑wise conv), (ii) the activation function, and (iii) how the architecture enables fast top‑$N$ selection at inference time.
+    
+    \item \textbf{Interference mitigation – Critical evaluation (hard).}\\
+    Explain why selecting a subset $\mathcal{S}(x)$ of prompts reduces gradient interference between tasks. Under what conditions could this mitigation fail (e.g., highly overlapping tasks)? Suggest a regularisation technique to alleviate the failure.
+    
+    \item \textbf{Task‑agnostic deployment on a mobile robot (hard).}\\
+    Sketch the end‑to‑end pipeline for a robot that receives raw visual sensor data, uses a prompt‑pool system without any task label, and produces a prediction (e.g., navigation decision). Emphasise the role of the selector and how the system adapts online.
+    
+    \item \textbf{Fine‑grained knowledge sharing – Synthesis (medium).}\\
+    Identify three hypothetical sub‑skills that could be encoded in individual prompts (e.g., edge detection, colour constancy, texture synthesis). Describe how a particular combination of these prompts could yield a higher‑level capability such as recognising reflective metallic objects.
+    
+    \item \textbf{Scalability under memory budget (easy).}\\
+    With a memory budget of $K=10\,$MiB for prompt embeddings, each stored as 32‑bit floats, $d_p=64$ and $N=4$, compute the maximum number of prompts $M_{\max}$ that can be stored. Discuss the trade‑off between increasing $M$ versus increasing $N$ given the same budget.
+    
+    \item \textbf{Effect on backbone updates – Derivation (hard).}\\
+    Starting from the standard continual‑learning update $\Delta\theta = -\eta \nabla_{\theta}\mathcal{L}$, show how isolating most task‑specific information in the prompt pool changes the effective update on the backbone parameters $\theta_{\text{base}}$. What implication does this have for the Fisher information matrix used in regularisation‑based CL methods (e.g., EWC)?
+    
+    \item \textbf{Parallel top‑$N$ on GPU (medium).}\\
+    Given a batch of $B=32$ inputs, each yielding an activation vector $\mathbf{a}^{(i)}\in[0,1]^M$, outline an algorithm that computes the top‑$N$ indices for all batch elements in parallel on a GPU. Explain why such parallelisation is crucial for training efficiency.
+    
+    \item \textbf{Regularisation strategies comparison (medium).}\\
+    Compare (a) an orthogonal constraint $\Omega_{\text{ortho}}=\sum_{i\neq j}\|\mathbf{P}_i^{\!\top}\mathbf{P}_j\|^{2}$ with (b) a replay‑based penalty that constrains prompt activations to stay close to stored exemplars. Which is more appropriate when the prompt pool must constantly adapt to a drifting task distribution? Justify your choice.
+    
+    \item \textbf{Hierarchical prompt pools – Open‑ended design (hard).}\\
+    Propose an extension that organises prompts hierarchically (e.g., groups or a tree). Discuss how this hierarchy would affect selector design, memory consumption, and the system’s ability to transfer knowledge across distant tasks.
+    
+    \item \textbf{Summative reflection (easy).}\\
+    In no more than three sentences, summarise how the Prompt Pool framework simultaneously tackles (i) interference, (ii) the need for task identifiers, and (iii) scalability, linking each point to the relevant equation or property from the theory.
+\end{enumerate}
+
+% ============================================================
+% SECTION 3: 3. Instance-wise Prompt Querying
+% ============================================================
+
+\section{3. Instance-wise Prompt Querying}
+
+\subsection{Key–Value Retrieval in \texttt{L2P}}
+
+In the \texttt{Learning to Prompt} (L2P) framework the prompt pool is organised as a \emph{key–value} store.  Each prompt \(P_i\) (the \emph{value}) is coupled with a learnable embedding  
+\[
+k_i \in \mathbb{R}^{D_k}, \qquad i = 1,\dots ,M ,
+\]  
+where \(M\) denotes the total number of prompts in the pool and \(D_k\) is the dimensionality of the key space.  
+The key vectors are the parameters that are trained (e.g. by back‑propagation) while the prompts themselves remain fixed once instantiated.  This separation enables the system to retrieve the most relevant prompts for a new input without altering the prompts themselves, thereby preserving previously acquired knowledge.
+
+\subsubsection{Query Construction}
+
+Given an incoming sample \(x\), L2P first extracts a compact representation of the input by means of a frozen pre‑trained model (typically a vision or language backbone).  Formally,
+\[
+q(x) = f(x)[0,:] \in \mathbb{R}^{D_k},
+\]  
+where \(f\) denotes the backbone network and the notation \([0,:]\) extracts the feature vector associated with the \texttt{CLS} token (or its analogue).  Because \(f\) is frozen, the query function \(q(\cdot)\) is \textbf{task‑agnostic}: it depends only on the raw input distribution, not on any task‑specific label or loss.
+
+\subsubsection{Matching Score and Distance Metric}
+
+To assess the compatibility between a query \(q(x)\) and a key \(k_i\) a similarity (or distance) function \(\gamma(\cdot,\cdot)\) is defined.  In L2P the most common choice is the cosine distance
+\[
+\gamma_{\text{cos}}(a,b)=1-\frac{a^{\top}b}{\|a\|_2\,\|b\|_2},
+\]  
+which is bounded in \([0,2]\) and treats vectors that point in the same direction as highly similar (score close to \(0\)).  Other admissible choices include Euclidean distance or learned metrics, but the cosine variant enjoys scale invariance and computational simplicity.
+
+\subsubsection{Top‑\(N\) Retrieval Procedure}
+
+The goal of retrieval is to select a subset of \(N\) prompts whose keys best match the query.  Let \(\{s_i\}_{i=1}^N\) be the indices of the chosen prompts, with \(s_i\in\{1,\dots ,M\}\).  The selection problem can be written as the optimisation
+\[
+\{s_i\}_{i=1}^{N}= \underset{\substack{\{t_i\}_{i=1}^{N}\subseteq[1,M] \\ t_i\neq t_j\; \forall i\neq j}}{\arg\min}\;
+\sum_{i=1}^{N}\gamma\!\bigl(q(x),\,k_{t_i}\bigr) .
+\tag{3}
+\]  
+Equation (3) simply asks for the \(N\) keys with the smallest matching scores (i.e. largest cosine similarity).  In practice this is implemented by computing \(\gamma(q(x),k_i)\) for all \(i\) and performing an efficient partial sort (often via \texttt{torch.topk} or \texttt{numpy.argpartition}) to obtain the indices of the top‑\(N\) matches:
+\[
+K_x = \{k_{s_1},\dots ,k_{s_N}\}, \qquad
+P_x = \{P_{s_1},\dots ,P_{s_N}\}.
+\]
+
+\subsubsection{Task‑Agnostic Memory Access}
+
+Because the retrieval depends only on the similarity between the frozen feature of the raw input and the learned keys, no task identifier or label is required.  This property yields two important benefits for continual learning:
+
+\begin{enumerate}
+    \item \textbf{Task‑invariant storage:} Prompt vectors can be reused across tasks as long as their keys capture the underlying data modality.  Consequently, when a new task arrives the system does not need to allocate a dedicated prompt bank; it can simply query the existing pool and obtain the most compatible prompts.
+    \item \textbf{Mitigation of catastrophic forgetting:} Since the prompts themselves are never overwritten during retrieval, earlier knowledge embedded in the pool remains intact.  The only parameters that adapt are the keys \(k_i\), which evolve to better align with the distribution of incoming samples while preserving the relative positions of previously learned keys.
+\end{enumerate}
+
+\subsubsection{Relation to the Prompt Pool Mechanism}
+
+Recall from the previous section that the prompt pool acts as an external memory where each prompt stores a “piece of knowledge’’ (e.g. a class prototype or a task‑specific feature transformation).  The key–value mechanism described here furnishes a \emph{retrieval interface} to that memory:
+
+\begin{itemize}
+    \item \textbf{Storing:} During training on a task, the model updates both the content of the prompts (through gradient descent on downstream loss) and the corresponding keys (so that future queries will retrieve them).
+    \item \textbf{Retrieving:} At inference time (or when processing a new task), the query function extracts a representation of the current input, matches it to the stored keys, and selects the most relevant prompts to be prepended to the backbone.
+\end{itemize}
+
+Thus the key–value retrieval is the operational bridge that transforms the static prompt pool into a dynamic, task‑agnostic memory system capable of supporting continual learning without the need for explicit task labels.
+
+\subsubsection{Summary of the Retrieval Pipeline}
+
+\begin{enumerate}
+    \item \textbf{Feature extraction:} \(q(x)=f(x)[0,:]\) using a frozen backbone.
+    \item \textbf{Similarity computation:} Evaluate \(\gamma(q(x),k_i)\) for all keys.
+    \item \textbf{Top‑\(N\) selection:} Solve Equation (3) to obtain index set \(\{s_i\}_{i=1}^N\).
+    \item \textbf{Prompt aggregation:} Retrieve prompts \(\{P_{s_i}\}_{i=1}^N\) and concatenate (or otherwise combine) them with the input representation before forwarding to the downstream model.
+\end{enumerate}
+
+By adhering to this pipeline, L2P leverages a compact, learnable index (the keys) to perform fast, scalable retrieval from a large prompt pool, thereby providing a robust foundation for continual learning systems that must retain past knowledge while adapting to new data streams.
+
+\subsection{Questions}
+
+\begin{enumerate}
+    \item \textbf{Conceptual analysis (Medium).}\\
+    Explain why the keys \(k_i\) are the only learnable parameters in the L2P retrieval module, while the prompts \(P_i\) remain fixed after instantiation. Discuss the consequences of this design choice for  
+    \begin{enumerate}
+        \item continual‑learning stability, and  
+        \item the ability to reuse prompts across different tasks.
+    \end{enumerate}
+    
+    \item \textbf{Derivation of the matching score (Easy).}\\
+    Show that minimising the cosine distance  
+    \[
+    \gamma_{\text{cos}}(q(x),k_i)=1-\frac{q(x)^{\top}k_i}{\|q(x)\|_2\|k_i\|_2}
+    \]  
+    is equivalent to maximising the cosine similarity between the query and the key. Provide a short proof and explain why the distance formulation is preferred in the optimisation problem of Equation (3).
+
+    \item \textbf{Application of the top‑\(N\) retrieval (Easy).}\\
+    Suppose a prompt pool contains \(M=10\,000\) keys of dimension \(D_k=256\). For a new input \(x\) you compute the cosine distances to all keys and obtain the 5 smallest values: \(0.03, 0.05, 0.07, 0.09, 0.11\).  
+    \begin{enumerate}
+        \item What are the corresponding cosine similarities?
+        \item If the retrieval system were to use Euclidean distance instead, would the same set of indices necessarily be selected? Justify your answer qualitatively.
+    \end{enumerate}
+    
+    \item \textbf{Critical evaluation of task‑agnostic memory access (Hard).}\\
+    Identify at least two scenarios in which the task‑agnostic property of the retrieval mechanism could become a limitation for continual learning. For each scenario propose a modification to the L2P pipeline that could mitigate the limitation.
+
+    \item \textbf{Design problem (Medium).}\\
+    Design an experiment to compare the effect of three different similarity metrics—(i) cosine distance, (ii) Euclidean distance, and (iii) a learned Mahalanobis distance—on the quality of retrieved prompts. Outline:
+    \begin{itemize}
+        \item the dataset and tasks you would use;
+        \item the evaluation metric(s) (e.g., downstream accuracy, forgetting rate);
+        \item how you would keep the comparison fair (e.g., same number of keys, same training budget).
+    \end{itemize}
+    
+    \item \textbf{Algorithmic implementation (Easy).}\\
+    Write pseudocode (Python‑like) that implements the retrieval step described in the summary pipeline, explicitly showing:
+    \begin{enumerate}
+        \item extraction of the query vector \(q(x)\);
+        \item computation of the cosine distances to all keys;
+        \item use of an efficient partial‑sort routine to obtain the indices of the top‑\(N\) matches;
+        \item retrieval and concatenation of the corresponding prompts.
+    \end{enumerate}
+    Comment on the computational complexity with respect to \(M\) (size of the pool) and \(N\) (number of retrieved prompts).
+
+    \item \textbf{Quantitative reasoning (Medium).}\\
+    Assume the cosine distances for all keys follow a uniform distribution on \([0,2]\). Approximate the expected value of the minimum distance among the top‑\(N\) retrieved keys, i.e. \(\mathbb{E}\bigl[\min\{\gamma_i\}_{i=1}^{N}\bigr]\). Use this approximation to discuss how increasing \(N\) influences the relevance of the retrieved prompts.
+
+    \item \textbf{Interpreting the role of the frozen backbone (Hard).}\\
+    Discuss how the choice of the pretrained backbone \(f\) (e.g., a vision transformer pretrained on ImageNet vs. a language model pretrained on a large text corpus) influences the geometry of the query vectors \(q(x)\). What implications does this have for the learnability of the keys \(k_i\) and for the overall retrieval performance?
+
+    \item \textbf{Synthesis and future direction (Hard).}\\
+    Propose an extension of the key–value retrieval mechanism that incorporates temporal information (e.g., timestamps of when prompts were learned) to improve continual‑learning performance. Describe how you would modify the similarity computation and the selection objective, and hypothesise the potential benefits and drawbacks of your approach.
+\end{enumerate}
+
+% ============================================================
+% SECTION 4: 4. Optimization and Training Objective
+% ============================================================
+
+\section{4. Optimization and Training Objective}
+\subsection{Dual–Term Objective for Prompt–Pooled Continual Learning}
+
+In the prompt‑pool framework the learner optimises three groups of parameters simultaneously:
+
+\begin{itemize}
+    \item $P=\{p_{1},\dots ,p_{|P|}\}$ – the \emph{prompt pool}, i.e. the set of learnable prompt vectors that are stored as values in a key–value memory.
+    \item $K=\{k_{1},\dots ,k_{|K|}\}$ – the \emph{key bank} associated with the prompts.  Each key $k_{s_i}$ lives in the same latent space as a query vector $q(x)$ and is used to retrieve the most relevant prompt(s) for an input $x$.
+    \item $\phi$ – the parameters of the classifier head $g_{\phi}(\cdot)$ that maps the (prompt‑augmented) token representation to class logits.
+\end{itemize}
+
+The backbone visual encoder, a Vision Transformer (ViT) denoted $f_{r}^{\text{avg}}(\cdot)$, is kept frozen throughout training.  Freezing the backbone preserves the generic visual features that have been pre‑trained on a large corpus, while learning $P$, $K$ and $\phi$ enables the system to adapt to a stream of tasks without incurring catastrophic forgetting.
+
+\subsection{Formal Statement of the Loss}
+The overall objective is a \emph{dual‑term loss}:
+\begin{equation}
+\label{eq:dual_term}
+\min_{P,K,\phi}\;
+\underbrace{\mathcal{L}\!\bigl(g_{\phi}\bigl(f_{r}^{\text{avg}}(x_{p})\bigr),\,y\bigr)}_{\text{(i) classification loss}}
+\;+\;
+\lambda \underbrace{\sum_{k_{s_i}\in K_{x}} \gamma\!\bigl(q(x),\,k_{s_i}\bigr)}_{\text{(ii) query–key alignment}}
+\end{equation}
+where
+\begin{description}
+    \item[$x_{p}$] the input image $x$ after it has been \emph{prompt‑augmented};
+    \item[$y$] the ground‑truth class label for $x$;
+    \item[$\mathcal{L}(\cdot,\cdot)$] the standard softmax cross‑entropy loss;
+    \item[$q(x)$] the query vector obtained from the frozen representation $f_{r}^{\text{avg}}(x)$;
+    \item[$K_{x}$] the subset of keys retrieved for $x$ (e.g. top‑$M$ nearest neighbours);
+    \item[$\gamma(\cdot,\cdot)$] a similarity or distance function such as the negative cosine distance
+    \[
+        \gamma\bigl(q,k\bigr)= -\,\frac{q^{\top}k}{\|q\|\;\|k\|},
+    \]
+    or a squared Euclidean distance;
+    \item[$\lambda$] a scalar hyper‑parameter that controls the trade‑off between the two terms.
+\end{description}
+
+\subsection{Interpretation of the Two Terms}
+\paragraph{(i) Classification loss.}
+Term (i) forces the classifier head $\phi$ to produce correct predictions from the feature map that already incorporates the selected prompts.  Because the backbone is frozen, all task‑specific adaptation must be realised through $P$ and $\phi$.
+
+\paragraph{(ii) Surrogate query–key loss.}
+Term (ii) encourages the key vectors to be close to the queries they are intended to serve.  Minimising $\gamma\bigl(q(x),k_{s_i}\bigr)$ makes $k_{s_i}$ more likely to be retrieved for inputs whose queries are similar, thereby pulling the associated prompt $p_{s_i}$ into the forward pass for those inputs.  This tight coupling between the external memory and the instance‑wise retrieval process mitigates catastrophic forgetting.
+
+\subsection{Optimization Procedure}
+All learnable parameters $\{P,K,\phi\}$ are updated with the Adam optimiser \cite{kingma2014adam}.  For each mini‑batch $\{(x^{(b)},y^{(b)})\}_{b=1}^{B}$:
+
+\begin{enumerate}
+    \item Compute the frozen representation $z^{(b)} = f_{r}^{\text{avg}}(x^{(b)})$.
+    \item Obtain the query $q^{(b)} = \mathcal{Q}(z^{(b)})$, where $\mathcal{Q}$ is the linear projection that defines $q(\cdot)$.
+    \item Retrieve the top‑$M$ keys $K_{x^{(b)}}$ nearest to $q^{(b)}$ under the similarity measure used in $\gamma$.
+    \item Assemble the prompt‑augmented token sequence $x^{(b)}_{p}$ by concatenating the prompts $\{p_{s_i}\}$ whose keys belong to $K_{x^{(b)}}$.
+    \item Forward $x^{(b)}_{p}$ through the frozen ViT, obtain logits $\hat{y}^{(b)} = g_{\phi}\bigl(f_{r}^{\text{avg}}(x^{(b)}_{p})\bigr)$, and compute the cross‑entropy loss.
+    \item Compute the surrogate loss $\sum_{k_{s_i}\in K_{x^{(b)}}} \gamma\bigl(q^{(b)},k_{s_i}\bigr)$.
+    \item Form the total loss according to Eq.~\eqref{eq:dual_term}, back‑propagate gradients \emph{only} through $P$, $K$, and $\phi$, and update them with Adam.
+\end{enumerate}
+
+Gradients are blocked from flowing into the frozen ViT, so optimisation focuses exclusively on shaping the external memory (keys and prompts) and the classifier.
+
+\subsection{Role of the Trade‑off Parameter $\lambda$}
+\begin{itemize}
+    \item \textbf{Large $\lambda$} – forces tight query–key alignment, yielding precise prompt retrieval but risking over‑fitting to the memory structure and hurting classification accuracy.
+    \item \textbf{Small $\lambda$} – reduces the influence of the surrogate term, letting the classifier rely more on frozen ViT features, which may degrade the ability to exploit task‑specific prompts for out‑of‑distribution tasks.
+\end{itemize}
+In practice $\lambda$ is tuned on a held‑out validation stream that mimics the continual‑learning scenario.
+
+\subsection{Connection to Instance‑Wise Prompt Querying}
+The surrogate loss directly penalises mismatches between queries and their retrieved keys, encouraging a geometry where semantically similar inputs map to nearby keys and thus retrieve the same or similar prompts.  This self‑organising behaviour preserves earlier knowledge (prompts remain reachable) while allowing new prompts to be added without altering the frozen backbone.
+
+\subsection{Summary}
+The dual‑term loss in Eq.~\eqref{eq:dual_term} provides a principled training objective for a continual‑learning system that leverages a frozen Vision Transformer and an external prompt pool.  The first term guarantees discriminative performance on the current task, whereas the second term enforces a tight coupling between query vectors and memory keys, ensuring that the instance‑wise retrieval mechanism remains effective throughout the lifelong learning trajectory.  Optimisation with Adam updates only the mutable components ($P$, $K$, $\phi$), preserving the stability of the pretrained visual encoder while granting the flexibility needed to acquire new knowledge incrementally.
+
+\subsection*{Questions}
+\begin{enumerate}
+    \item \textbf{(Analysis)} Derive the gradient of the total loss in Eq.~\eqref{eq:dual_term} with respect to a single prompt vector $p_{j}\in P$.  Explicitly show how the gradient separates into contributions from the classification term and the query–key alignment term.  Discuss why gradients do \emph{not} flow into the frozen ViT $f_{r}^{\text{avg}}(\cdot)$.
+
+    \item \textbf{(Analysis)} Consider a scenario where the similarity function $\gamma$ is the negative cosine distance.  Explain how the choice of $\gamma$ influences the geometry of the key space during training.  What would be the effect of replacing $\gamma$ with a squared Euclidean distance on the retrieved prompts?
+
+    \item \textbf{(Evaluation)} The hyper‑parameter $\lambda$ governs the trade‑off between classification accuracy and query–key alignment.  Propose a systematic validation procedure to select an appropriate $\lambda$ for a continual‑learning stream of $T$ tasks.  Justify how your procedure balances the two competing desiderata and mitigates over‑fitting to either term.
+
+    \item \textbf{(Evaluation)} Suppose after several tasks the model exhibits a drop in accuracy on early tasks while the surrogate loss remains low.  Diagnose potential reasons for this phenomenon in terms of the prompt‑pool dynamics and suggest two concrete remedial strategies.
+
+    \item \textbf{(Application)} You are given a new downstream task whose data distribution deviates significantly from the pre‑training corpus.  Outline how you would adapt the prompt‑pool framework (i.e. modify $P$, $K$, $\phi$, $\lambda$, and $M$) to maximise performance while preserving knowledge of previous tasks.
+
+    \item \textbf{(Application)} Design an experiment to compare three variants of the key retrieval mechanism:  
+    (a) top‑$M$ nearest neighbours under cosine similarity,  
+    (b) softmax‑weighted attention over all keys, and  
+    (c) a learned hashing function.  Specify the metrics you would record, the hypotheses you aim to test, and how the dual‑term loss would need to be altered, if at all, for each variant.
+
+    \item \textbf{(Application)} In a resource‑constrained setting (limited GPU memory), you can store at most $|P|=32$ prompts.  Describe a principled method to decide which prompts to retain or discard when a new task arrives, making use of the learned key vectors and the surrogate loss values.
+
+    \item \textbf{(Conceptual)} Explain how the surrogate query–key loss acts as a form of “self‑organising memory” and how this mechanism mitigates catastrophic forgetting in continual learning.
+
+    \item \textbf{(Conceptual)} Discuss the advantages and possible drawbacks of keeping the Vision Transformer backbone frozen while updating $P$, $K$, and $\phi$ with Adam.  In what situations might fine‑tuning the backbone be preferable?
+
+    \item \textbf{(Conceptual)} The prompt‑augmented token sequence $x_{p}$ is formed by concatenating selected prompts to the original token stream.  Analyse how the number of concatenated prompts (i.e., the value of $M$) can affect both the representational capacity of the model and the computational cost during inference.
+
+    \item \textbf{(Synthesis)} Imagine extending the current framework to a multimodal setting where inputs may be images, text, or both.  Propose modifications to the dual‑term loss, the definition of queries $q(\cdot)$, and the key‑value memory to accommodate heterogeneous modalities while preserving the continual‑learning benefits.
+
+    \item \textbf{(Synthesis)} Critique the use of a single scalar $\lambda$ for balancing the two loss terms throughout an entire lifelong learning trajectory.  Suggest an adaptive scheme (e.g., curriculum‑based, task‑aware, or loss‑scheduling) that dynamically adjusts $\lambda$, and argue how it could improve overall performance.
+\end{enumerate}
+
+% ============================================================
+% SECTION 5: 5. Experimental Evaluation and Benchmarks
+% ============================================================
+
+\section{Experimental Results and Benchmarks}
+\noindent\textbf{Empirical Evaluation of L2P}\\
+
+In this section we present a systematic empirical study of the \textbf{Learning to Prompt} (L2P) framework.  The experiments are designed to answer two central questions:
+
+\begin{enumerate}
+    \item How does L2P compare with the current state‑of‑the‑art (SOTA) continual‑learning algorithms under a variety of benchmark regimes?
+    \item To what extent can L2P retain high performance \emph{without} relying on an explicit rehearsal buffer, i.e. purely through the Prompt Pool mechanism and the loss‑based optimisation described in the preceding sections?
+\end{enumerate}
+
+\subsection{Benchmarks and Protocols}
+
+\paragraph{Datasets.}
+Four widely used continual‑learning benchmarks are employed:
+
+\begin{description}
+    \item[Split CIFAR‑100] A class‑incremental split of CIFAR‑100 into $T\!=\!10$ tasks, each comprising $10$ disjoint classes.  The standard protocol presents one task at a time and evaluates after each task.
+    \item[5‑Dataset Sequence] The sequence \{CIFAR‑10, MNIST, Fashion‑MNIST, SVHN, notMNIST\} (each treated as a separate task).  This setting mixes image modalities and digit versus object domains, stressing cross‑domain transfer.
+    \item[CORe50 (Domain‑incremental)] 50 object categories recorded in $8$ different acquisition conditions (lighting, background, viewpoint).  Each condition constitutes a new domain, testing robustness to distribution shift.
+    \item[Gaussian‑scheduled CIFAR‑100] A \emph{task‑agnostic} scenario where the class distribution evolves according to a Gaussian schedule; the learner never receives an explicit task identifier.
+\end{description}
+
+\paragraph{Evaluation Metric.}
+For a continual‑learning run with $T$ tasks we report the \emph{average accuracy} after the final task:
+
+\[
+\text{Acc}_{\text{avg}} = \frac{1}{T}\sum_{t=1}^{T} \text{Acc}_{t},
+\]
+
+where $\text{Acc}_{t}$ denotes the classification accuracy on the test split of task $t$ evaluated after the model has been trained on all tasks $1,\dots,T$.  Complementary forgetting is measured by
+
+\[
+\mathcal{F} = \frac{1}{T-1}\sum_{t=1}^{T-1}\bigl(\max_{k\le t}\text{Acc}_{t}^{(k)}-\text{Acc}_{t}^{(T)}\bigr),
+\]
+
+with $\text{Acc}_{t}^{(k)}$ the accuracy on task $t$ after learning task $k$.
+
+\paragraph{Baselines.}
+All baselines are instantiated with the same backbone (a ResNet‑18) and the same optimiser (SGD with momentum $0.9$, weight decay $5\times10^{-4}$).  The competitors are:
+
+\begin{itemize}
+    \item \textbf{ER} (Experience Replay)~\citep{rolnick2019experience}: stores a small rehearsal buffer (typically $2000$ samples) and interleaves replayed samples with current data.
+    \item \textbf{DER++} (Data‑Efficient Replay)~\citep{buzzega2020dark}: augments ER with a knowledge‑distillation term on replayed examples.
+    \item \textbf{Co$^{2}$L} (Continual Contrastive Learning)~\citep{aljundi2021online}: combines contrastive regularisation with a replay buffer.
+\end{itemize}
+
+For a fair comparison, we also evaluate L2P in a \emph{bufferless} configuration (Prompt Pool only) and in a \emph{buffer‑augmented} configuration (Prompt Pool plus a $2000$‑sample replay buffer).  The former reflects the key claim of L2P: the Prompt Pool can substitute the external memory.
+
+\subsection{Results}
+\begin{table}[t]
+\centering
+\caption{Average accuracy (\%) after the final task on each benchmark.  ``–'' denotes the bufferless variant.  The best result per column is bolded.}
+\begin{tabular}{lcccc}
+\toprule
+Method & Split CIFAR‑100 & 5‑Dataset & CORe50 & Gaussian‑Sched. CIFAR‑100 \\
+\midrule
+ER (buffer)               & 67.87 & 71.45 & 68.21 & 63.04 \\
+DER++ (buffer)            & 70.12 & 73.02 & 70.03 & 65.18 \\
+Co$^{2}$L (buffer)        & 71.34 & 74.10 & 71.58 & 66.07 \\
+\midrule
+L2P (bufferless)         & \textbf{83.83} & \textbf{79.57} & \textbf{76.44} & \textbf{71.92} \\
+L2P (with $2000$‑sample buffer) & 85.01 & 80.73 & 77.68 & 73.15 \\
+\bottomrule
+\end{tabular}
+\label{tab:results}
+\end{table}
+
+Table~\ref{tab:results} summarises the quantitative outcomes.  Several observations are noteworthy:
+
+\begin{enumerate}[label=(\alph)]
+    \item \textbf{Superior bufferless performance.}  L2P reaches $83.83\%$ average accuracy on Split CIFAR‑100 without any rehearsal buffer, a gain of $+15.96$ points over ER, the strongest buffer‑based baseline.  Similar margins are observed on the other three benchmarks (ranging from $+5.8$ to $+12.8$ percentage points).
+    \item \textbf{Robustness to domain shift.}  On CORe50 (domain‑incremental) and the Gaussian‑scheduled task‑agnostic CIFAR‑100, L2P’s prompt retrieval continues to provide relevant contextual cues even when the input distribution drifts, mitigating catastrophic forgetting as reflected by low $\mathcal{F}$ values (see Appendix~A).
+    \item \textbf{Marginal benefit from a replay buffer.}  Adding a modest rehearsal buffer to L2P yields only a small improvement ($+1.2$ to $+2.2$ points).  This confirms that the Prompt Pool already captures a substantial portion of the information traditionally stored in replay buffers.
+    \item \textbf{Consistency across heterogeneous tasks.}  The 5‑Dataset sequence mixes grayscale and colour images, simple digits and complex objects.  L2P consistently outperforms the baselines, indicating that the query‑key mechanism can flexibly adapt its prompt selection to diverse visual semantics.
+\end{enumerate}
+
+\subsection{Questions}
+\begin{enumerate}
+    \item \textbf{Construction of the Split CIFAR‑100 benchmark (Easy).}\\
+    Describe how the Split CIFAR‑100 benchmark is built for continual‑learning evaluation.  State the number of tasks, the number of classes per task, and the evaluation protocol used to compute the average accuracy.
+
+    \item \textbf{Composition and purpose of the 5‑Dataset sequence (Easy).}\\
+    List the five datasets that constitute this benchmark (CIFAR‑10, MNIST, Fashion‑MNIST, SVHN, notMNIST).  Explain why combining these heterogeneous datasets is valuable for assessing continual‑learning methods, with particular reference to varying data distributions and task similarities.
+
+    \item \textbf{Domain‑incremental learning with CORe50 (Easy).}\\
+    Define a domain‑incremental learning scenario.  Using CORe50 as an example, describe how the data stream is organised (e.g., different object views, illumination conditions) and why this setting challenges methods that rely on explicit task identity.
+
+    \item \textbf{Task‑agnostic continual learning and Gaussian‑scheduled CIFAR‑100 (Easy).}\\
+    Explain the notion of a task‑free (task‑agnostic) continual‑learning setting.  Detail how the Gaussian‑scheduled version of CIFAR‑100 is generated and why evaluating L2P under this regime provides insight into its ability to adapt without explicit task boundaries.
+
+    \item \textbf{Quantitative improvement of L2P over ER (Medium).}\\
+    Using the numbers in Table~\ref{tab:results}, compute the absolute improvement of \textbf{L2P (bufferless)} over \textbf{ER (buffer)} on the Split CIFAR‑100 benchmark.  Discuss why the magnitude of this improvement varies across the four benchmarks (e.g., larger on Split CIFAR‑100 than on the 5‑Dataset sequence).
+
+    \item \textbf{Average forgetting computation (Medium).}\\
+    For a continual‑learning run with $T=5$ tasks, the final‑task accuracies are
+    $\text{Acc}_1^{(5)}=78\%$, $\text{Acc}_2^{(5)}=74\%$, $\text{Acc}_3^{(5)}=71\%$, $\text{Acc}_4^{(5)}=68\%$, $\text{Acc}_5^{(5)}=80\%$.  
+    The corresponding maximum accuracies up to each task are $78\%$, $80\%$, $81\%$, $82\%$ respectively.  
+    \begin{enumerate}
+        \item Compute the forgetting metric $\mathcal{F}$ using the definition provided in the text.
+        \item Interpret the obtained $\mathcal{F}$ value with respect to the model’s stability–plasticity balance.
+    \end{enumerate}
+
+    \item \textbf{Prompt Pool as implicit rehearsal (Medium).}\\
+    Explain, referencing the query–key formulation, how the Prompt Pool can serve as an \emph{implicit rehearsal} mechanism.  Address the role of: (i) the similarity score $s_{ij}$, (ii) the aggregation of the top‑$m$ values to form the adaptive prompt $\mathbf{p}_i$, and (iii) the prompt‑regularisation term in Eq.~(2).
+
+    \item \textbf{Ablation analysis (Medium).}\\
+    Three ablations are reported: (a) removing prompt regularisation ($\lambda=0$), (b) random retrieval of prompts, and (c) reducing the Prompt Pool size from $K=200$ to $K=50$.
+    \begin{enumerate}
+        \item For each ablation, hypothesise the underlying failure mode of L2P (e.g., loss of semantic alignment, increased noise, reduced capacity).
+        \item Propose a diagnostic experiment (including dataset, metric, and expected outcome) that could validate each hypothesis.
+    \end{enumerate}
+
+    \item \textbf{Gradient of the loss w.r.t. a prompt value (Hard).}\\
+    The loss $\mathcal{L}= \ell_{\text{CE}}(y_i,\hat y_i)+\lambda\|\mathbf{p}_i-\mathbf{v}_{\text{ref}}\|_2^2$ depends on a selected prompt value $\mathbf{v}_j$ through the weighted sum that yields $\mathbf{p}_i$.  Derive $\displaystyle\frac{\partial \mathcal{L}}{\partial \mathbf{v}_j}$ explicitly (show the contribution of both the task loss and the regularisation term).  Discuss how this gradient encourages the Prompt Pool to stay aligned with the evolving query distribution and why such alignment is crucial for buffer‑less continual learning.
+
+    \item \textbf{Designing a task‑aware retrieval rule (Hard).}\\
+    Suppose a coarse task identifier is available at test time.  Propose a modification to the Prompt Pool retrieval rule that exploits this identifier while preserving the bufferless advantages of L2P.  Predict qualitatively how your change would affect (i) average accuracy, (ii) forgetting $\mathcal{F}$, and (iii) the required size of the Prompt Pool.
+
+    \item \textbf{Lipschitz continuity of the retrieval operator (Hard).}\\
+    \begin{enumerate}
+        \item Briefly define Lipschitz continuity for a neural‑network similarity function such as $s_{ij}=\frac{\mathbf{q}_i^{\!\top}\mathbf{k}_j}{\|\mathbf{q}_i\|\|\mathbf{k}_j\|}$.
+        \item Argue how Lipschitz continuity of the query–key retrieval could contribute to stability in continual learning, especially under distribution shifts like those encountered in CORe50.
+    \end{enumerate}
+
+    \item \textbf{Probing what prompts encode in the 5‑Dataset sequence (Hard).}\\
+    Design a systematic experiment to determine whether the learned prompts capture colour information, domain information, or task‑specific semantics.  Outline the method you would use to visualise or quantify the prompt embeddings (e.g., t‑SNE/UMAP plots, linear probing, correlation with colour histograms) and how the results would support your conclusion.
+
+    \item \textbf{Privacy and ethical considerations (Hard).}\\
+    Discuss the ethical advantages and potential risks of using a Prompt Pool instead of a raw rehearsal buffer in privacy‑preserving continual learning.  Address at least three points covering data leakage, model‑inversion attacks, and compliance with data‑protection regulations such as GDPR.
+\end{enumerate}}
+
+\end{document}

@@ -1,0 +1,901 @@
+\documentclass[12pt, a4paper]{article}
+
+% --- Encoding & Fonts ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% --- Mathematics ---
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+
+% --- Layout ---
+\usepackage[margin=1in]{geometry}
+
+% --- Lists ---
+\usepackage{enumitem}
+
+% --- Tables ---
+\usepackage{booktabs}
+\usepackage{array}
+
+% --- Graphics ---
+\usepackage{graphicx}
+
+% --- Headers / Footers ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% --- Hyperlinks & Cross-references ---
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+
+% --- Misc ---
+\usepackage{xcolor}
+
+% --- Custom commands (safety definitions) ---
+\providecommand{\operatorname}[1]{\mathop{\mathrm{#1}}\nolimits}
+
+\title{Learning Module: W7M1}
+\author{}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+\tableofcontents
+\newpage
+
+% ============================================================
+% SECTION  Introduction to Binary Classification and Loss Approximation
+% ============================================================
+
+\subsection*{Notation Used in This Section}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning \\ \midrule
+    $\hat{y}_i$ & predicted probability of class 1 for sample i \\
+    $z_i$ & linear score x_i^T\theta + b for sample i \\
+    $C_1(z_i)$ & piecewise linear surrogate loss for class 1 \\
+    $C_0(z_i)$ & piecewise linear surrogate loss for class 0 \\
+\bottomrule
+\end{tabular}
+\vspace{1em}
+
+\section{Introduction to Binary Classification and Loss Approximation}
+
+\subsection{Before We Begin}
+The logistic sigmoid takes a realvalued score and squeezes it into a number between 0 and 1, which we interpret as a probability of belonging to class 1.  
+When we compare this probability with the true label, the logloss assigns a large penalty if the probability is far from the correct label and a small penalty when it is close.  
+A piecewise linear function is a simple ``straightline'' curve that can be drawn to sit close to a more complicated curved loss, making calculations easier.  
+Because a straight line is flat (zero slope) beyond a chosen point, it stops rewarding points that are already far enough on the correct side.  
+These ideas let us replace the curved logloss with a cheap linear surrogate while still encouraging a clear separation between the two classes.
+
+\subsection{Motivation}
+Think of driving a car: the closer you get to the speed limit, the smaller the fine; once you stay exactly at or below the limit (\(z_i \le -1\) or \(z_i \ge 1\)) the fine becomes zero, just like the piecewise cost becomes zero beyond the margin.  
+In binary classification we would like a loss that heavily penalises wrong predictions but stops caring once a point is confidently on the right side of the decision boundary.  
+The traditional logistic (logloss) does this with a smooth curve, but optimizing a smooth curve can be computationally expensive.  
+Replacing it with simple linear pieces keeps the same overall goal---pushing points across a margin---while making the optimisation much faster.
+
+\subsection{Intuition}
+Imagine each training example as a driver who must stay either below or above a speed limit.  
+If a driver is far under the limit (class 0) or far over the limit (class 1) we are satisfied and impose no further penalty.  
+When a driver is too close to the limit or on the wrong side, we issue a fine proportional to how badly they violate the rule.  
+The logistic loss gives a smooth fine that grows quickly as the driver approaches the wrong side, whereas the piecewise linear surrogate gives a straightline fine that stops at a fixed margin.  
+Thus the surrogate captures the essential idea---encourage a safe distance from the boundary---while being much easier to compute.
+
+\subsection{Formal Definition}
+For each training sample \(i\) we denote the true binary label by \(y_i\in\{0,1\}\) (class 0 when \(y_i=0\), class 1 when \(y_i=1\)).  
+The model produces a linear score  
+
+\[
+z_i = x_i^{\top}\theta + b,
+\] 
+
+where \(x_i\) is the feature vector, \(\theta\) is the weight vector, and \(b\) is the bias term.  
+
+The linear score is passed through the logistic sigmoid to obtain the predicted probability of class 1:  
+
+\[
+\hat{y}_i = \operatorname{Prob}(y_i=1\mid x_i,\theta,b)=\frac{1}{1+e^{-z_i}}.
+\]  
+
+The standard logistic (logloss) for a binary label is  
+
+\[
+L_i = -\,y_i\log\hat{y}_i - (1-y_i)\log(1-\hat{y}_i).
+\]  
+
+When \(y_i=1\) this reduces to \(-\log\hat{y}_i\); when \(y_i=0\) it reduces to \(-\log(1-\hat{y}_i)\).  
+
+To obtain a cheaper surrogate, we replace the curved loss with two piecewise linear functions.  
+For class 1 we define  
+
+\[
+C_1(z_i)=
+\begin{cases}
+0, & \text{if } z_i \ge 1,\\[4pt]
+1 - z_i, & \text{if } z_i < 1,
+\end{cases}
+\] 
+
+and for class 0 we define  
+
+\[
+C_0(z_i)=
+\begin{cases}
+0, & \text{if } z_i \le -1,\\[4pt]
+1 + z_i, & \text{if } z_i > -1.
+\end{cases}
+\]  
+
+Both \(C_1(z_i)\) and \(C_0(z_i)\) are zero once the linear score lies beyond the margin \(\pm1\); this does \textbf{not} mean the model ignores how far beyond the margin the point is---rather, the surrogate stops providing additional reward because the point is already safely classified.  
+The use of 0/1 labels here (instead of the \(\pm1\) encoding often used in SVMs) avoids confusion and aligns directly with the logistic loss formulation.
+
+\subsection{Worked Example}
+\textbf{Problem statement.}  
+Consider a onedimensional dataset with two points:
+\[
+x_1 = 0,\; y_1 = 0 \qquad\text{and}\qquad x_2 = 2,\; y_2 = 1.
+\]  
+We will (a) compute the logistic loss for each point, (b) compute the linear scores \(z_i\) using \(\theta = 1\) and \(b = 0\), and (c) evaluate the surrogate losses \(C_1(z_2)\) and \(C_0(z_1)\).
+
+\textbf{Step 1: Compute the logistic loss for each point.}  
+
+For point 1 (\(y_1=0\)):
+\[
+\hat{y}_1 = \frac{1}{1+e^{-z_1}} \quad\text{with } z_1 = x_1\theta + b = 0\cdot 1 + 0 = 0,
+\]
+so \(\hat{y}_1 = \tfrac12\).
+\[
+L_1 = -\bigl(0\cdot\log\tfrac12 + (1-0)\log(1-\tfrac12)\bigr) = -\log\tfrac12 = \log 2 \approx 0.6931.
+\]
+
+For point 2 (\(y_2=1\)):
+\[
+z_2 = x_2\theta + b = 2\cdot 1 + 0 = 2,\qquad
+\hat{y}_2 = \frac{1}{1+e^{-2}} \approx 0.8808.
+\]
+\[
+L_2 = -\bigl(1\cdot\log 0.8808 + (0)\log(1-0.8808)\bigr) = -\log 0.8808 \approx 0.1269.
+\]
+
+\textbf{Step 2: Compute the linear scores \(z_i\).}  
+We already have \(z_1 = 0\) and \(z_2 = 2\) from the calculations above.
+
+\textbf{Step 3: Evaluate the surrogate losses.}  
+
+For class 0 (point 1) we use \(C_0(z_1)\):
+\[
+C_0(z_1) = 
+\begin{cases}
+0, & z_1 \le -1,\\
+1 + z_1, & z_1 > -1.
+\end{cases}
+\]
+Since \(z_1 = 0 > -1\), \(C_0(z_1) = 1 + 0 = 1.\)
+
+For class 1 (point 2) we use \(C_1(z_2)\):
+\[
+C_1(z_2) = 
+\begin{cases}
+0, & z_2 \ge 1,\\
+1 - z_2, & z_2 < 1.
+\end{cases}
+\]
+Because \(z_2 = 2 \ge 1\), \(C_1(z_2) = 0.\)
+
+\textbf{Final answer.}  
+Logistic loss: \(L_1 \approx 0.6931\), \(L_2 \approx 0.1269\).  
+Linear scores: \(z_1 = 0\), \(z_2 = 2\).  
+Surrogate losses: \(C_0(z_1) = 1\), \(C_1(z_2) = 0\).
+
+\textbf{What this shows us.}  
+When a point is already far enough on the correct side of the decision boundary (here \(z_2 = 2\)), the piecewise linear surrogate gives zero loss, mirroring the fact that the logistic loss for that point is already very small.  
+Conversely, a point that is on the wrong side of the margin (here \(z_1 = 0\)) incurs a positive linear penalty (here 1), reflecting the larger logistic loss of \(0.6931\).
+
+\subsection{Key Takeaway}
+Both the logistic logloss and its piecewise linear surrogate aim to push examples across a margin; the surrogate simplifies optimisation by assigning zero loss once the margin \(|z_i|\ge 1\) is satisfied while still penalising points that lie inside the margin.
+
+\subsection*{Questions}
+% No questions provided for this section.
+
+\newpage
+
+\newpage
+% ============================================================
+% SECTION  Linear SVM and Hard Margin Classifier
+% ============================================================
+
+\subsection*{Notation Used in This Section}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning \\ \midrule
+    $\theta$ & weight vector of the linear classifier \\
+    $b$ & bias (intercept) term \\
+    $\eta$ & penalty hyperparameter (often denoted C in textbooks) \\
+    $a(\theta)$ & empirical loss component (as defined in the slide) \\
+\bottomrule
+\end{tabular}
+\vspace{1em}
+
+\section{Linear SVM and Hard Margin Classifier}
+
+\subsection{Before We Begin}
+When we train a linear model we often add a term that measures the size of the weight vector.  Using the squared length (the ``norm squared'') of the weight vector makes the penalty smooth and easy to optimise.  A smaller weight vector means the decision line is flatter, which in turn creates a larger gap between the two sides of the line.  This gap is called the geometric margin.  Understanding why shrinking the norm enlarges the margin will help us see why the hardmargin SVM optimisation looks the way it does.  
+
+\subsection{Motivation}
+Imagine a garden fence (the decision line) with a safety zone on each side; the fence is placed so that the safety zones (margins) are as wide as possible while still keeping the plants (data points) on the correct side.  By formulating the learning problem in terms of this geometric picture we can ask: what linear separator gives the widest possible safety zones?  The hardmargin SVM answers this question by minimising a simple quadratic objective while forcing every plant to lie outside the safety zones.  
+
+\subsection{Intuition}
+A linear classifier separates the two classes with a straight line (in two dimensions) or a hyperplane (in higher dimensions).  If the data can be split perfectly, there is usually not a unique line that does it; many lines pass between the two groups.  The hardmargin SVM picks the line that is farthest away from the nearest points of each class.  Those nearest points sit exactly on the edges of the safety zones; they are called support vectors because they ``support'' the position of the fence.  By pushing the fence outward until these points just touch the margins, we obtain the maximummargin separator, which tends to generalise better to new data.  
+
+\subsection{Formal Definition}
+Let \(\theta \in \mathbb{R}^{p}\) denote the weight vector of the linear classifier and let \(b\) denote the bias (intercept) term.  For each training example \(i\) we write \(x_{i}\in\mathbb{R}^{p}\) for its feature vector and \(y_{i}\in\{-1,+1\}\) for its binary label (with class 0 encoded as \(-1\)).  The empirical loss component is written \(a(\theta)\); the regularisation hyperparameter is \(\eta>0\) (often denoted \(C\) in textbooks).  
+
+When \(\eta\) is taken to be very large the optimisation focuses on driving the loss \(a(\theta)\) to zero, which forces every training point to satisfy  
+
+\[
+y_{i}\bigl(x_{i}^{\mathsf T}\theta + b\bigr) \;\ge\; 1 \qquad\text{for } i=1,\dots,n .
+\]
+
+These inequalities define the hardmargin constraints.  Under these constraints the training objective reduces to minimising the size of the weight vector:
+
+\[
+\boxed{\;
+\min_{\theta ,\,b}\; \frac{1}{2}\,\|\theta\|_{2}^{2}
+\quad\text{s.t.}\quad
+y_{i}\bigl(x_{i}^{\mathsf T}\theta + b\bigr) \ge 1,\; i=1,\dots,n
+\;}
+\]
+
+Here \(\|\theta\|_{2} = \sqrt{\sum_{j=1}^{p}\theta_{j}^{2}}\) is the Euclidean (or \(\ell_{2}\)) norm.  Making \(\|\theta\|_{2}\) small spreads the two margin hyperplanes  
+
+\[
+L_{+1}:\; x^{\mathsf T}\theta + b = 1,
+\qquad
+L_{-1}:\; x^{\mathsf T}\theta + b = -1,
+\]
+
+as far apart as possible, because the geometric margin equals \(1/\|\theta\|_{2}\).  Consequently, a larger \(\|\theta\|\) does not make the classifier stronger; on the contrary, a large \(\|\theta\|\) would shrink the margin.  The hardmargin formulation is only valid when the data are perfectly separable, and only the points that sit exactly on \(L_{+1}\) or \(L_{-1}\) become support vectors---most training points lie strictly beyond the margins.  
+
+\subsection{Worked Example}
+\paragraph{Problem statement}
+Consider four points in the plane:
+
+\[
+\begin{array}{c|c}
+\text{point }x & \text{label }y \\ \hline
+(1,\,1)   & +1 \\
+(1,\,-1)  & +1 \\
+(-1,\,1)  & -1 \\
+(-1,\,-1) & -1
+\end{array}
+\]
+
+All points are linearly separable.  Write the hardmargin constraints, find a separating hyperplane, and identify the support vectors.
+
+\paragraph{Step 1: Write the constraints}
+For each point we require \(y_{i}\bigl(x_{i}^{\mathsf T}\theta + b\bigr) \ge 1\).
+
+\[
+\begin{aligned}
+(+1):\;& (1,1)^{\mathsf T}\theta + b \ge 1, \\
+(+1):\;& (1,-1)^{\mathsf T}\theta + b \ge 1, \\
+(-1):\;& -( -1,1)^{\mathsf T}\theta - b \ge 1 \;\; \Longrightarrow\; (-1,1)^{\mathsf T}\theta + b \le -1,\\
+(-1):\;& -( -1,-1)^{\mathsf T}\theta - b \ge 1 \;\; \Longrightarrow\; (-1,-1)^{\mathsf T}\theta + b \le -1 .
+\end{aligned}
+\]
+
+\paragraph{Step 2: Choose a convenient \((\theta,b)\)}
+A simple solution is \(\theta = (1,1)^{\mathsf T}\) and \(b = 0\).
+
+Check each constraint:
+
+\[
+\begin{aligned}
+(1,1)^{\mathsf T}(1,1) + 0 &= 2 \ge 1,\\
+(1,-1)^{\mathsf T}(1,1) + 0 &= 0 \;\;\text{(fails)}.
+\end{aligned}
+\]
+
+The second point does not satisfy the inequality, so we adjust \(b\).  Take \(b = -0.5\).
+
+Now recompute:
+
+\[
+\begin{aligned}
+(1,1)^{\mathsf T}\theta + b &= 2 - 0.5 = 1.5 \ge 1,\\
+(1,-1)^{\mathsf T}\theta + b &= 0 - 0.5 = -0.5 \;<\; 1 \;\text{(still fails)}.
+\end{aligned}
+\]
+
+Instead, select \(\theta = (1,0)^{\mathsf T}\) and \(b = 0\).  Verify:
+
+\[
+\begin{aligned}
+(1,1)^{\mathsf T}\theta + b &= 1 \ge 1,\\
+(1,-1)^{\mathsf T}\theta + b &= 1 \ge 1,\\
+(-1,1)^{\mathsf T}\theta + b &= -1 \le -1,\\
+(-1,-1)^{\mathsf T}\theta + b &= -1 \le -1 .
+\end{aligned}
+\]
+
+All four inequalities hold with equality for the points whose first coordinate is \(\pm1\).  
+
+\paragraph{Step 3: Identify the support vectors}
+Support vectors are the points that lie exactly on the margin hyperplanes \(L_{+1}\) or \(L_{-1}\), i.e., those for which the inequality holds with equality.
+
+From the calculations above, the equalities occur for
+
+\[
+(1,1),\; (1,-1) \quad\text{on } L_{+1},
+\]
+\[
+(-1,1),\; (-1,-1) \quad\text{on } L_{-1}.
+\]
+
+Thus all four points are support vectors in this symmetric toy dataset.
+
+\paragraph{Final answer}
+A feasible hardmargin classifier is  
+
+\[
+\theta = (1,0)^{\mathsf T},\qquad b = 0,
+\]
+
+with decision hyperplane \(x_{1}=0\).  The two margin lines are \(x_{1}=1\) and \(x_{1}=-1\).  Every training point lies on one of the margins, so each is a support vector.
+
+\textbf{What this shows us:}  When the data are perfectly symmetric and separable, the maximummargin solution pushes the decision boundary exactly halfway between the two classes, and the points that are closest to the boundary become the support vectors that determine the solution.  
+
+\subsection{Key Takeaway}
+The hardmargin SVM chooses the separating hyperplane that minimises \(\tfrac12\|\theta\|_{2}^{2}\), thereby maximising the distance (margin) between the two classes, and only the points that sit on the margin hyperplanes become support vectors.
+
+\subsection*{Questions}
+\newpage
+\paragraph{1.} \textbf{Support vectors and the decision boundary.}  
+(a) Define a support vector in the context of a hardmargin SVM.  
+(b) Explain why only the support vectors influence the position of the boundary while all other training points do not.
+
+\newpage
+\paragraph{2.} \textbf{Effect of adding or removing points.}  
+A hardmargin SVM has been trained on a dataset where  
+\(\,(2,2)\) is one of its support vectors and \(\,(5,1)\) is a nonsupport vector.  
+Describe and justify how the decision boundary would change (if at all) when the following modifications are made:  
+
+\begin{enumerate}
+\item Remove \((2,2)\) from the dataset.  
+\item Remove \((5,1)\) from the dataset.  
+\item Add a new point \((3,2)\) to the positive class.  
+\item Add a new point \((1.5,1.5)\) to the positive class.
+\end{enumerate}
+
+For each case, indicate whether the support vectors, the weight vector \(\theta\), the bias \(b\), or the margin hyperplanes would change, and provide a short mathematical or geometric rationale.
+
+\newpage
+\paragraph{3.} \textbf{Identify the false statement.}  
+Among the following statements about hardmargin SVMs, select the one that is false and give a brief explanation for all four statements:
+
+\begin{enumerate}
+\item The hardmargin SVM is equivalent to minimizing \(\frac{1}{2}\|\theta\|_{2}^{2}\) subject to correct classification with a margin of at least one.  
+\item The width of the margin (distance between the two margin hyperplanes) equals \(\frac{2}{\|\theta\|_{2}}\).  
+\item Every training point must lie on or outside the margin hyperplanes; points on the hyperplanes are the support vectors.  
+\item The bias term \(b\) does not affect the determination of support vectors.
+\end{enumerate}
+
+Ensure that the chosen answer is justified with reasoning that reflects the hardmargin SVM formulation and geometric intuition.   \newpage
+
+\newpage
+% ============================================================
+% SECTION  Geometric Margin
+% ============================================================
+
+\subsection*{Notation Used in This Section}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning \\ \midrule
+    $d$ & geometric margin (distance from a point to the decision hyperplane) \\
+    $\|\theta\|$ & Euclidean norm of the weight vector \\
+\bottomrule
+\end{tabular}
+\vspace{1em}
+
+\section{Geometric Margin}
+\subsection{Before We Begin}
+The Euclidean distance between two points is the length of the straight line that joins them.  
+The Euclidean norm \(\|\theta\|\) of a vector \(\theta\) is the distance from the origin to the point represented by \(\theta\).  
+A hyperplane in a feature space is described by the equation \(x^{\top}\theta+b=0\); the shortest (perpendicular) distance from any point to that hyperplane can be computed using the vector norm of \(\theta\).  
+Understanding how this perpendicular distance is calculated will let us see why the margin in a Support Vector Machine depends on \(\|\theta\|\).  
+With that picture in mind we can now examine the geometric margin of a hardmargin SVM.
+
+\subsection{Motivation}
+Walking away from a wall: each extra step you take increases the distance linearly; the number of steps needed to reach the wall is the inverse of how steeply the floor tilts (analogous to \(1/\|\theta\|\)).  
+In a classification task we would like the separating surface to be as far away as possible from the training points of each class, because a larger separation tends to make the classifier more robust to new data.  
+The geometric margin quantifies exactly that distance, and the SVM objective is to maximise it.
+
+\subsection{Intuition}
+Imagine a flat floor that tilts upward in one direction; the tilt is represented by the weight vector \(\theta\).  
+If the floor is very steep, you reach the wall after only a few short steps -- the distance from the floor to the wall is small.  
+If the floor is gentle (a shallow tilt), you need many steps, meaning the wall is far away.  
+The geometric margin measures this ``farawayness'' for the decision boundary: the shallower the tilt (the smaller \(\|\theta\|\)), the larger the margin.
+
+\subsection{Formal Definition}
+Let \(d\) denote the geometric margin, i.e. the perpendicular distance from a point that lies on the margin hyperplane \(L_{1}\) (where \(x^{\top}\theta+b=1\)) to the decision hyperplane \(L_{0}\) (where \(x^{\top}\theta+b=0\)).  
+For any point satisfying \(x^{\top}\theta+b=1\),
+
+\[
+d=\frac{|\,x^{\top}\theta+b\,|}{\|\theta\|}=\frac{1}{\|\theta\|}.
+\]
+
+Here \(\|\theta\|\) is the Euclidean norm of the weight vector \(\theta\), defined as \(\|\theta\|=\sqrt{\theta_{1}^{2}+\theta_{2}^{2}+ \cdots +\theta_{P}^{2}}\).  
+Because the numerator is fixed at \(1\) for all points on \(L_{1}\), every such point is equally far from the decision hyperplane; the distance depends solely on the size of \(\|\theta\|\).  
+Thus a larger norm produces a smaller margin, while a smaller norm yields a larger margin.  
+This relationship makes it clear that maximising the margin is equivalent to minimising \(\|\theta\|\) under the hardmargin constraints, which is the core optimisation goal of the SVM.
+
+\subsection{Worked Example}
+\textbf{Problem statement.}  
+Take the weight vector \(\theta=(2,-1)\) and bias \(b=0\). Compute the Euclidean norm \(\|\theta\|\) and then the geometric margin \(d=1/\|\theta\|\). Finally, verify the distance of a point on the margin hyperplane \(L_{1}\) (i.e., a point satisfying \(x^{\top}\theta+b=1\)) to the separating hyperplane.
+
+\textbf{Solution.}
+
+\begin{enumerate}
+\item \(\displaystyle\|\theta\| = \sqrt{2^{2}+(-1)^{2}} = \sqrt{5}\).
+\item \(\displaystyle d = \frac{1}{\sqrt{5}}\).
+\item Choose a point on \(L_{1}\): solving \(2x_{1}-x_{2}=1\); take \(x_{1}=1\) and \(x_{2}=1\), so \(x=(1,1)\).
+\item Perpendicular distance: \(\displaystyle\frac{|\,2(1)-1(1)+0\,|}{\sqrt{5}}=\frac{1}{\sqrt{5}}=d\).
+\end{enumerate}
+
+\textbf{Conclusion.} All points satisfying the margin equation lie at the same perpendicular distance from the decision boundary, precisely \(1/\|\theta\|\).
+
+\subsection{Key Takeaway}
+The geometric margin of a hardmargin SVM equals \(d = 1/\|\theta\|\); therefore, maximising the margin is achieved by minimising the Euclidean norm of the weight vector.
+
+\subsection*{Questions}
+
+\begin{question}
+Context: In an SVM, a \emph{support vector} is a training point that lies on the margin boundary and determines the position of the decision hyperplane.  
+Question: Suppose there are total \(n\) data points in a linearly separable dataset. What should be the maximum number of support vectors to form a maximum margin classifier?  
+\textit{(Adapted from past paper)}
+\end{question}
+
+\newpage
+
+\begin{question}
+Context: Margin sensitivity refers to how changes in training points affect the learned margin.  
+Question: In a linear hardmargin SVM, if you slightly move a training sample that is not a support vector, does it affect the learned decision boundary? Justify your answer.  
+\textit{(Adapted from past paper)}
+\end{question}
+
+\newpage
+
+\begin{question}
+Context: Logistic regression and SVM are both classifiers that use a decision boundary defined by a linear function.  
+Question: What are the key differences between Logistic Regression and a hardmargin Support Vector Machine in terms of objective function, decision boundary, and training objective?  
+\end{question}
+
+\newpage
+
+\begin{question}
+Context: The perceptron algorithm is a binary linear classifier that updates its weight vector whenever it misclassifies a training example.  
+Question: Which of the following statements about the perceptron algorithm are correct? (Select all that apply)  
+\begin{enumerate}
+  \item The perceptron update rule uses the sign of the dot product between the input vector and the weight vector.  
+  \item A perceptron can handle linearly inseparable data by adding slack variables.  
+  \item The perceptron algorithm will converge to the optimal margin classifier.  
+  \item The perceptron learning rule does not involve a learning rate parameter.  
+\end{enumerate}
+\textit{(Adapted from past paper)}
+\end{question}
+
+\newpage
+
+\begin{question}
+Context: Perceptron margin refers to the distance between the decision boundary and the nearest misclassified point.  
+Question: Which of the following statements about perceptron margin is NOT true? (Select one)  
+\begin{enumerate}
+  \item Increasing the learning rate always decreases the number of iterations needed for convergence.  
+  \item A larger perceptron margin generally leads to better generalisation.  
+  \item The perceptron algorithm maximises the margin between classes.  
+  \item Randomising the order of training examples can affect convergence speed.  
+\end{enumerate}
+\textit{(Adapted from past paper)}
+\end{question}
+
+\newpage
+
+\begin{question}
+Context: In softmargin SVMs, the regularization parameter \(C\) trades off maximizing the margin against allowing training errors.  
+Question: Explain how the regularisation parameter \(C\) affects both the margin size and the number of classification errors.  Illustrate with a short mathematical formulation.  
+\textit{(Adapted from past paper)}
+\end{question}
+
+\newpage
+
+\begin{question}
+Context: The kernel trick allows an SVM to implicitly map input features into a higherdimensional space without explicitly computing the mapping.  
+Question: Why would one prefer to use the kernel trick in an SVM? Discuss its advantages and potential drawbacks.  
+\textit{(Adapted from past paper)}
+\end{question}
+
+\newpage
+
+\begin{question}
+Context: The RBF kernel is defined as \(K(\mathbf x,\mathbf x')=\exp(-\gamma\|\mathbf x-\mathbf x'\|^2)\).  
+Question: What is the maximum possible value of this kernel as \(\mathbf x\) and \(\mathbf x'\) vary over the input space?  
+\end{question}
+
+\newpage
+
+\begin{question}
+Context: When the number of training samples \(N\) is less than the dimensionality \(D\) of the feature space, the Gram matrix may become singular.  
+Question: Which kernel family is most appropriate for an SVM in this scenario and why?  
+\end{question}
+
+\newpage
+
+\newpage
+% ============================================================
+% SECTION  Soft Margin Classifier and Slack Variables
+% ============================================================
+
+\subsection*{Notation Used in This Section}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning \\ \midrule
+    $\xi_i$ & slack variable measuring margin violation for sample i \\
+    $\eta$ & penalty hyperparameter controlling tradeoff between margin and errors \\
+\bottomrule
+\end{tabular}
+\vspace{1em}
+
+% !!!  REVIEW FLAG: Soft Margin Classifier and Slack Variables  !!!
+% [knowledge_assumption] Provide a brief review of Lagrange multipliers and duality before asking for KKT derivation.
+% [knowledge_assumption] Include an introductory section on classweighting or costsensitive methods.
+% !!! END REVIEW FLAGS !!!
+\section{Soft Margin Classifier and Slack Variables}
+
+\subsection{Before We Begin}  
+The expression \(\max(0,z)\) returns the larger of \(0\) and the value \(z\).  
+If the quantity inside the maximum is negative, the result is forced to be zero, so a negative slack can never occur.  
+Adding a term \(\eta\sum_{i=1}^{n}\xi_i\) to an objective function means that every positive slack \(\xi_i\) incurs a cost proportional to \(\eta\).  
+Larger values of \(\eta\) therefore increase the penalty for any violation of the margin.  
+Understanding this operation helps us see why the slack variable \(\xi_i\) is defined with a \(\max\) and why only nonnegative slack matters for the softmargin SVM.
+
+\subsection{Motivation}  
+Think of a credit card limit: you can spend up to the limit (margin) for free, but if you exceed it you incur a fee (slack). The higher the fee, the more you try to stay within the limit.  
+When training data are not perfectly separable, a hardmargin SVM would have no feasible solution.  
+The softmargin classifier relaxes this requirement by allowing some points to cross the margin, but it charges a penalty that discourages excessive violations.
+
+\subsection{Intuition}  
+Imagine drawing a wide road (the margin) down the middle of two groups of points.  
+If a point lies comfortably on its side of the road, we do nothing.  
+If it wanders onto the road, we note a small ``violation'' -- the point is still on the right side of the road but not far enough away.  
+If the point goes all the way across the road to the other side, we call it a misclassification.  
+The slack variable \(\xi_i\) records how far a point has intruded, and a parameter \(\eta\) decides how much we punish those intrusions.
+
+\subsection{Formal Definition}  
+For each training sample \(i\) with feature vector \(x_i\in\mathbb{R}^d\) and label \(y_i\in\{-1,1\}\),
+
+\[
+\boxed{\;\xi_i \;=\; \max\!\bigl(0,\;1 - y_i\,(x_i^{\mathsf T}\theta + b)\bigr)\;}
+\]
+
+where  
+
+\begin{itemize}
+\item \(\xi_i\) is the slack variable measuring the margin violation of sample \(i\);  
+\item \(\theta\) is the weight vector defining the orientation of the separating hyperplane;  
+\item \(b\) is the bias (intercept) term;  
+\item \(y_i\) is the class label; and  
+\item \(x_i^{\mathsf T}\theta + b\) is the signed distance of the point from the decision boundary.
+\end{itemize}
+
+The softmargin optimisation problem balances a wide margin against the total slack:
+
+\[
+\boxed{\;L'(\theta,b)=\frac{1}{2}\,\|\theta\|_2^{2}\;+\;\eta\sum_{i=1}^{n}\xi_i\;}
+\]
+
+Here \(\|\theta\|_2^{2}= \theta^{\mathsf T}\theta\) measures the squared Euclidean norm of \(\theta\), encouraging a smallnorm (widemargin) solution, while  
+
+\begin{itemize}
+\item \(\eta>0\) is the penalty hyperparameter that controls the tradeoff between margin width and the total amount of slack.  
+\end{itemize}
+
+A larger \(\eta\) forces the optimiser to keep the sum of slack values small, possibly at the expense of a narrower margin; a smaller \(\eta\) allows more violations in order to achieve a larger margin.
+
+The three possible regimes for \(\xi_i\) are  
+
+\begin{itemize}
+\item \(\xi_i = 0\): the point is correctly classified and lies outside the margin;  
+\item \(0<\xi_i<1\): the point is correctly classified but resides inside the margin (margin violation);  
+\item \(\xi_i \ge 1\): the point is misclassified (it lies on the wrong side of the decision boundary).
+\end{itemize}
+
+\subsection{Worked Example}  
+We use three twodimensional training points  
+
+\[
+\begin{aligned}
+x_1 &= (0,0), & y_1 &= +1,\\
+x_2 &= (1,0), & y_2 &= -1,\\
+x_3 &= (0.4,0), & y_3 &= +1,
+\end{aligned}
+\]
+
+and a candidate classifier with \(\theta=(1,0)\) and \(b=0\).
+
+\paragraph{Step 1: Compute the linear score \(s_i = x_i^{\mathsf T}\theta + b\).}
+\[
+\begin{aligned}
+s_1 &= (0,0)\!\cdot\!(1,0)+0 = 0,\\
+s_2 &= (1,0)\!\cdot\!(1,0)+0 = 1,\\
+s_3 &= (0.4,0)\!\cdot\!(1,0)+0 = 0.4.
+\end{aligned}
+\]
+
+\paragraph{Step 2: Compute the margin term \(m_i = 1 - y_i s_i\).}
+\[
+\begin{aligned}
+m_1 &= 1 - (+1)\cdot 0 = 1,\\
+m_2 &= 1 - (-1)\cdot 1 = 2,\\
+m_3 &= 1 - (+1)\cdot 0.4 = 0.6.
+\end{aligned}
+\]
+
+\paragraph{Step 3: Apply the \(\max\) operation to obtain \(\xi_i = \max(0,m_i)\).}
+\[
+\begin{aligned}
+\xi_1 &= 1,\\
+\xi_2 &= 2,\\
+\xi_3 &= 0.6.
+\end{aligned}
+\]
+
+\paragraph{Step 4: Classify each point according to the regime of \(\xi_i\).}
+\[
+\begin{aligned}
+\xi_1 = 1   &\;\Rightarrow\; \text{misclassification},\\
+\xi_2 = 2   &\;\Rightarrow\; \text{misclassification},\\
+\xi_3 = 0.6 &\;\Rightarrow\; \text{margin violation (correct side).}
+\end{aligned}
+\]
+
+\paragraph{Step 5: Evaluate the softmargin objective \(L'(\theta,b)\).}
+First compute the norm term:
+\[
+\|\theta\|_2^{2}=1,\qquad \frac{1}{2}\|\theta\|_2^{2}=0.5.
+\]
+
+Next sum the slacks:
+\[
+\sum_{i=1}^{3}\xi_i = 1 + 2 + 0.6 = 3.6.
+\]
+
+Hence
+\[
+L'(\theta,b)=0.5\;+\;\eta\,(3.6).
+\]
+
+If, for example, \(\eta=1\), then \(L' = 4.1\); larger \(\eta\) would increase the penalty proportionally.
+
+\textbf{What this shows us:} the slack variables quantify exactly how far each point violates the desired margin, and the hyperparameter \(\eta\) scales the total penalty, directly influencing the optimisation value.
+
+\subsection{Key Takeaway}  
+The slack variable \(\xi_i\) records how much a training point violates the margin, and the parameter \(\eta\) governs the tradeoff between keeping the margin wide and tolerating those violations.
+
+\subsection*{Questions}
+
+\begin{enumerate}
+    \item \textbf{Easy.}  
+    For a point with \(x=(2, -1)\), label \(y=1\), weight vector \(\theta = (1, 3)\) and bias \(b=-1\), compute the slack variable \(\xi\).  
+    \newpage
+
+    \item \textbf{Medium.}  
+    Show algebraically why \(\xi_i\ge 0\) for all \(i\), given the definition \(\xi_i = \max(0,\,1 - y_i(x_i^{\mathsf T}\theta + b))\). Explain in words what each of the three possible regimes (\(\xi_i=0\), \(0<\xi_i<1\), \(\xi_i\ge 1\)) implies about the classification of sample \(i\).  
+    \newpage
+
+    \item \textbf{Medium.}  
+    Consider a binary dataset with two points: \(x_1=(0,0)\), \(y_1=+1\) and \(x_2=(1,1)\), \(y_2=-1\).  
+    Find a weight vector \(\theta\) and bias \(b\) that minimizes the softmargin objective \(L'(\theta,b)\) for \(\eta = 1\) without performing a full optimisation algorithm.  Justify your solution by computing the slack values and the objective.  
+    \newpage
+
+    \item \textbf{Hard.}  
+    Derive the Karush--Kuhn--Tucker (KKT) conditions for the softmargin SVM optimization problem:
+    \[
+    \min_{\theta,b,\xi} \;\frac{1}{2}\|\theta\|_2^2 + \eta \sum_{i=1}^n \xi_i
+    \quad\text{s.t.}\quad y_i(\theta^{\mathsf T}x_i + b) \ge 1 - \xi_i,\;\;\xi_i\ge 0.
+    \]
+    Highlight how the slack variables appear in the dual formulation and discuss the effect of increasing \(\eta\) on the optimal solution.  
+    \newpage
+
+    \item \textbf{HOTS.}  
+    Suppose you have a highly imbalanced dataset where one class dominates the other. How would you adapt the slack penalty term \(\eta\sum_{i}\xi_i\) to address this imbalance? Provide a mathematical formulation that introduces different penalties for misclassifying the minority class versus the majority class, and explain the intuition behind your design.  
+    \newpage
+\end{enumerate}
+
+\newpage
+% ============================================================
+% SECTION  Primal and Dual Formulations of SVM
+% ============================================================
+
+\subsection*{Notation Used in This Section}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning \\ \midrule
+    $\eta_i$ & Lagrange multiplier associated with the ith constraint \\
+    $g(\eta)$ & dual objective function to be maximised \\
+    $\theta^*$ & optimal weight vector expressed as a linear combination of training points \\
+\bottomrule
+\end{tabular}
+\vspace{1em}
+
+\section{Primal and Dual Formulations of SVM}
+
+\subsection{Before We Begin}
+A Lagrange multiplier is a number that measures how tightly a constraint limits an optimisation problem.  
+When we have several constraints, we combine the original objective with each constraint multiplied by its own multiplier; this combined expression is called a Lagrangian.  
+The Karush--Kuhn--Tucker (KKT) conditions tell us that at an optimum the gradient of the Lagrangian with respect to the primal variables must be zero, and that the multipliers satisfy certain equality and inequality relationships.  
+These ideas let us rewrite a constrained problem in a different form that sometimes depends only on the data points themselves.  
+With that background we can now look at the supportvectormachine optimisation.
+
+\paragraph{Motivation}
+Imagine budgeting for a project: the total money spent (primal objective) must equal the sum of contributions from individual departments (dual variables). The constraints guarantee the budget balances, much like the equality constraint $\sum_{i=1}^{n} \eta_i y_i =0$ balances the influence of positive and negative classes.  
+Introducing the dual formulation lets us express the optimisation solely through inner products of data vectors, which later enables kernel methods and often reduces the dimensionality of the problem.
+
+\paragraph{Intuition}
+In a softmargin SVM we trade off two goals: keep the separating hyperplane as flat as possible (small weight vector) and penalise points that lie on the wrong side of the margin.  
+The Lagrange multipliers $\eta_i$ act as ``prices'' we pay for each training point to violate its margin constraint.  
+When we substitute the optimal weight vector back into the objective, the optimisation problem collapses to a function of the multipliers only, and every term involves a dotproduct $x_i^{\!\top}x_j$ between training points.  
+Thus the dual problem lets the algorithm focus on the relationships among the data points rather than on the explicit coordinates of the weight vector.
+
+\paragraph{Formal Definition}
+For a training set $\{(x_i,y_i)\}_{i=1}^{n}$ with feature vectors $x_i\in\mathbb{R}^d$ and binary labels $y_i\in\{-1,+1\}$, the softmargin primal problem is  
+
+\[
+\min_{\theta,b,\xi}\;\frac{1}{2}\,\|\theta\|_2^{2}\;+\;\eta\sum_{i=1}^{n}\xi_i
+\]
+
+subject to $y_i\bigl(x_i^{\!\top}\theta+b\bigr)\ge 1-\xi_i$ and $\xi_i\ge0$.  
+Introducing a Lagrange multiplier $\eta_i\ge0$ for each margin constraint gives the Lagrangian  
+
+\[
+L'(\theta,b,\eta)=\tfrac12\,\theta^{\!\top}\theta
++\sum_{i=1}^{n}\eta_i\bigl\{1-y_i(x_i^{\!\top}\theta+b)\bigr\}.
+\]
+
+The KKT stationarity conditions are obtained by differentiating $L'$ with respect to the primal variables and setting the results to zero:
+
+\[
+\frac{\partial L'}{\partial \theta}= \theta-\sum_{i=1}^{n}\eta_i y_i x_i =0
+\quad\Longrightarrow\quad
+\boxed{\theta^{}= \sum_{i=1}^{n}\eta_i y_i x_i},
+\]
+
+\[
+\frac{\partial L'}{\partial b}= -\sum_{i=1}^{n}\eta_i y_i =0
+\quad\Longrightarrow\quad
+\boxed{\sum_{i=1}^{n}\eta_i y_i =0 } .
+\]
+
+The first boxed equation is the Representer Theorem: the optimal weight vector $\theta^{}$ is a linear combination of the training feature vectors, weighted by the multipliers $\eta_i$ (not to be confused with the weight vector itself).
+
+Substituting $\theta^{}$ back into the Lagrangian yields the dual objective function  
+
+\[
+g(\eta)=\sum_{i=1}^{n}\eta_i
+-\frac12\sum_{i=1}^{n}\sum_{j=1}^{n}
+\eta_i\eta_j\,y_i y_j\,(x_i^{\!\top}x_j),
+\]
+
+which is maximised over the multipliers $\eta_i$ subject to the equality constraint $\sum_{i=1}^{n}\eta_i y_i =0$ and the nonnegativity constraints dictated by the chosen hard or softmargin formulation.  
+Because $g(\eta)$ involves only inner products $x_i^{\!\top}x_j$, the dual can be evaluated in a space where the data are represented by kernels, and the optimisation may involve far fewer variables than a direct solution of the primal when the number of training points is smaller than the dimensionality of the feature space.
+
+\paragraph{Worked Example}
+Consider the tiny data set  
+
+\[
+x_{1}=(1,1),\; y_{1}=+1,\qquad
+x_{2}=(-1,-1),\; y_{2}=-1 .
+\]
+
+\textbf{Step 1 -- Write the primal Lagrangian}\\
+\[
+L'(\theta,b,\eta)=\tfrac12\theta^{\!\top}\theta
++\eta_{1}\bigl\{1-y_{1}(x_{1}^{\!\top}\theta+b)\bigr\}
++\eta_{2}\bigl\{1-y_{2}(x_{2}^{\!\top}\theta+b)\bigr\}.
+\]
+
+\textbf{Step 2 -- Stationarity w.r.t.\ $\theta$}\\
+\[
+\frac{\partial L'}{\partial \theta}= \theta-\eta_{1}y_{1}x_{1}
+-\eta_{2}y_{2}x_{2}=0
+\;\Longrightarrow\;
+\theta^{}= \eta_{1}y_{1}x_{1}+ \eta_{2}y_{2}x_{2}.
+\]
+
+\textbf{Step 3 -- Stationarity w.r.t.\ $b$}\\
+\[
+\frac{\partial L'}{\partial b}= -\eta_{1}y_{1}-\eta_{2}y_{2}=0
+\;\Longrightarrow\;
+\eta_{1}y_{1}+\eta_{2}y_{2}=0 .
+\]
+
+Because $y_{1}=+1$ and $y_{2}=-1$, the equality constraint becomes $\eta_{1}=\eta_{2}\stackrel{\text{def}}{=} \alpha$.
+
+\textbf{Step 4 -- Express $\theta^{}$}\\
+\[
+\theta^{}= \alpha(1)(1,1)+\alpha(-1)(-1,-1)
+          = 2\alpha\,(1,1).
+\]
+
+\textbf{Step 5 -- Enforce the margin constraints}\\
+For a softmargin SVM with no slack (the points are linearly separable) we need  
+$y_{i}\bigl(x_{i}^{\!\top}\theta^{}+b\bigr)\ge 1$.  
+Choosing $b=0$ (symmetry) gives $4\alpha\ge 1$, so the smallest feasible $\alpha$ is $\alpha=0.25$.
+
+\textbf{Step 6 -- Final solution}\\
+\[
+\eta_{1}=\eta_{2}=0.25,\qquad
+\theta^{}=2(0.25)(1,1)=(0.5,\,0.5).
+\]
+
+The decision boundary is $\theta^{\,\top}x+b=0$, i.e.  
+
+\[
+0.5\,x_{1}+0.5\,x_{2}=0\;\Longrightarrow\;x_{1}+x_{2}=0,
+\]
+
+a line through the origin with slope $-1$, which correctly separates the two points.
+
+\textbf{Step 7 -- Dual objective value}\\
+Compute the inner products: $x_{1}^{\!\top}x_{1}=2$, $x_{2}^{\!\top}x_{2}=2$, $x_{1}^{\!\top}x_{2}=-2$.  
+Then  
+
+\[
+g(\eta)=\eta_{1}+\eta_{2}
+-\frac12\!\sum_{i,j}\eta_{i}\eta_{j}y_{i}y_{j}x_{i}^{\!\top}x_{j}
+=0.5-\frac12\bigl(0.125+0.125+0.125+0.125\bigr)
+=0.5-0.25=0.25 .
+\]
+
+\textbf{What this shows us:} the optimal multipliers are equal, the weight vector is a combination of the two training points, and the dual objective attains a positive value while satisfying the equality constraint $\sum\eta_i y_i=0$.
+
+\subsection{Key Takeaway}
+The dual of the softmargin SVM expresses the optimisation entirely through dotproducts of training points, and the optimal weight vector $\theta^{}$ is a weighted sum of those points with weights given by the Lagrange multipliers $\eta_i$.
+
+\subsection{Questions}
+\begin{problem}
+Write the dual optimisation problem for a hardmargin SVM. Clearly state the objective function, the constraints, and explain the role of each term.
+\end{problem}
+\newpage
+\begin{problem}
+Show rigorously why the equality constraint \(\displaystyle \sum_{i=1}^{n}\eta_i y_i = 0\) holds in the dual problem.  In your proof, use the stationarity condition with respect to the bias term \(b\) and interpret the meaning of the resulting constraint.
+\end{problem}
+\newpage
+\begin{problem}
+For the data set in the worked example (\(x_{1}=(1,1), y_{1}=+1;\;x_{2}=(-1,-1), y_{2}=-1\)), solve the dual problem explicitly.  Find the optimal multipliers \(\eta_1,\eta_2\), verify that they satisfy the constraints, and compare the resulting primal solution \(\theta^{}\) with the one obtained in the example.
+\end{problem}
+\newpage
+\begin{problem}
+Prove that the dual objective function \(g(\eta)=\sum_i\eta_i-\frac12\sum_{i,j}\eta_i\eta_jy_i y_j\,x_i^{\!\top}x_j\) is concave in \(\eta\).  Explain why this concavity (or convexity after a minus sign) is crucial for formulating the dual as a quadratic program.  Then determine the condition that the kernel matrix \(K_{ij}=y_i y_j\,x_i^{\!\top}x_j\) must satisfy for the quadratic program to be wellposed.
+\end{problem}
+\newpage
+\begin{problem}
+Describe how the dual formulation enables the use of kernel functions.  Select the Gaussian RBF kernel \(k(x,z)=\exp(-\|x-z\|^2/(2\sigma^2))\) as an example and rewrite the dual objective in terms of this kernel \(k(\cdot,\cdot)\).  Discuss any modifications to the constraints or the interpretation of the resulting optimisation.
+\end{problem}
+\newpage
+\begin{problem}
+Explain the relationship between nonzero dual multipliers \(\eta_i>0\) and support vectors.  Prove that a training point is a support vector if and only if its corresponding multiplier is strictly greater than zero, and outline the implications for computing the decision function directly from the support vectors.
+\end{problem}
+\newpage
+
+\end{document}

@@ -1,0 +1,603 @@
+[
+  {
+    "title": "Quiz 1 (2023)",
+    "questions": [
+      {
+        "id": 1,
+        "question": "How can you solve overfitting?",
+        "options": {
+          "A": "Gather more training data",
+          "B": "Use a more complex model",
+          "C": "Reduce your training data",
+          "D": "Decrease the model complexity"
+        },
+        "answer": "c) A and D because introducing more data and decreasing the model complexity can help the model generalize better on unseen data."
+      },
+      {
+        "id": 2,
+        "question": "Why cost function (Mean Squared Error) which has been used for linear regression can't be used for logistic regression?",
+        "options": {
+          "1": "Because it will be a non-convex function of its parameters. Gradient descent will converge into the global minimum only if the function is convex.",
+          "2": "Because it will be a convex function of its parameters. Gradient descent will not converge into a global minimum if the function is convex.",
+          "3": "Because it will be a convex function of its parameters. Gradient descent will converge into the global minimum only if the function is non-convex.",
+          "4": "None of the above."
+        },
+        "answer": "1) Because it will be a non-convex function of its parameters. Gradient descent will converge into the global minimum only if the function is convex"
+      },
+      {
+        "id": 3,
+        "question": "In the context of Linear Regression, consider a dataset with potential outliers. You aim to estimate the regression coefficients using robust methods. Which statement accurately differentiates between Maximum Likelihood Estimation (MLE) and Maximum A Posteriori (MAP) estimation regarding robustness and outliers?",
+        "options": {
+          "1": "MLE is robust to outliers due to its reliance on prior information, while MAP is sensitive to outliers as it directly maximizes the likelihood of observed data.",
+          "2": "Both MLE and MAP are robust to outliers due to their ability to handle data points deviating from the model.",
+          "3": "MLE is sensitive to outliers as it directly maximizes the likelihood of observed data, while MAP can be more robust by incorporating a robust prior distribution.",
+          "4": "MLE is sensitive to outliers due to its focus on prior information, while MAP is robust because it considers the posterior distribution of parameters."
+        },
+        "answer": "(C) MLE finds the optimal parameters that maximizes the likelihood of the sample fitting the regression line. However, if the data sample does not represent the actual population well and contains outliers, the regression line will not generalize well on the actual population and, hence is susceptible to overfitting. On the other hand, MAP overcomes this as it also considers the prior distribution of the parameters."
+      },
+      {
+        "id": 4,
+        "question": "Increasing the complexity of a machine learning model is likely to result in:",
+        "options": {
+          "1": "Higher bias and lower variance",
+          "2": "Lower bias and higher variance",
+          "3": "Both higher bias and variance",
+          "4": "Neither higher bias nor variance"
+        },
+        "answer": "b) Lower Bias and Higher Variance. This is because of the reason that as we increase the model complexity, the model will start to fit the training data better, and doing so will reduce the bias. Also, in order to capture more data points better on the training set, the model will lose the overall general trend present, also known as overfitting and therefore, the variance will increase."
+      },
+      {
+        "id": 5,
+        "question": "Let f be some function so that f(θ0, θ1) outputs a number. For this problem, f is some arbitrary/unknown smooth function (not necessarily the cost function of linear regression, so f may have local optima). Suppose we use gradient descent to try to minimize f(θ0, θ1) as a function of θ0 and θ1. Choose the True statement(s) and Justify it.",
+        "options": {
+          "1": "If the learning rate is too small, then gradient descent may take a very long time to converge.",
+          "2": "If θ0 and θ1 are initialized at a local minimum, then one iteration will not change their values.",
+          "3": "If θ0 and θ1 are initialized so that θ0 = θ1, then by symmetry (because we do simultaneous updates to the two parameters), after one iteration of gradient descent, we will still have θ0 = θ1.",
+          "4": "Even if the learning rate α is very large, every iteration of gradient descent will decrease the value of f(θ0, θ1)."
+        },
+        "answer": "1) and 2). Reasoning: If the learning rate is too low, the update will happen slowly, and it will take longer to converge to the optimum. If both parameters are initialized at a local minimum, the gradient would be 0. During their updates: W_{i+1}=W_i−η(∇(Loss)), ∇(Loss)=0, making no change in the updated values."
+      },
+      {
+        "id": 6,
+        "question": "You are given two binary classification models for predicting cancer. Both are tested on unseen 2000 samples and the results are given in table. According to medical specifications, a false negative result is 3 times more dangerous than a false positive result and adds up to the medical risk. State which model is better considering the medical risk. Also calculate precision and recall for that model. (Model 1: TP=760, FP=110, TN=910, FN=220 | Model 2: TP=780, FP=90, TN=930, FN=200)",
+        "options": {},
+        "answer": "Model 2 is better as it has lower risk (Risk 1 = 770, Risk 2 = 690). For Model 2: Precision = 0.8966, Recall = 0.7959."
+      },
+      {
+        "id": 7,
+        "question": "Apply Linear Regression techniques on the given dataset and predict the sales in the 6th and 10th week. Dataset: Week(x): [1, 2, 3, 4, 5], Sales(y): [1.2, 1.8, 2.6, 3.2, 3.8].",
+        "options": {},
+        "answer": "Regression equation: Y = 0.66x + 0.54. Sales in 6th week (x=6): 4.5. Sales in 10th week (x=10): 7.14."
+      },
+      {
+        "id": 8,
+        "question": "Use the logistic regression on the dataset given log(odds) or logit = -64 + 2 * hours. 1. Calculate the probability of a pass for the student who studied 33 hours. 2. At least how many hours a student should study that will make him pass the course by the probability of more than 80%.",
+        "options": {},
+        "answer": "1. For 33 hours, P = 0.88. 2. For P > 0.80, student should study at least 32.693 hours."
+      }
+    ]
+  },
+  {
+    "title": "Quiz 2 (2023)",
+    "questions": [
+      {
+        "id": 1,
+        "question": "For SVM, which options are correct?",
+        "options": {
+          "A": "Support vectors are data points that are closer to the hyperplane and influence the position and orientation of the hyperplane",
+          "B": "Support vectors are data points that are far away from the hyperplane and influence the position and orientation of the hyperplane",
+          "C": "Deleting the support vectors will change the position of the hyperplane",
+          "D": "Deleting the support vectors won't change the position of the hyperplane"
+        },
+        "answer": "a) A and C, support vectors are used to find the optimal hyperplane and hence they directly affect the orientation of the hyperplane."
+      },
+      {
+        "id": 2,
+        "question": "You are given data of 1000 emails, of which 300 are spam and 700 are not spam. The dataset contains two features: the presence of the word 'discount' and the presence of the word 'lottery'. Classify a new email containing both words using Naive Bayes. Probabilities: P(D|S)=0.8, P(D|NS)=0.2, P(L|S)=0.6, P(L|NS)=0.1.",
+        "options": {},
+        "answer": "P(S|D,L) ≈ 0.9114."
+      },
+      {
+        "id": 3,
+        "question": "The total size of the dataset is 23. What is the number of experiments 't' that needs to be conducted given we are using the leave one out cross-validation technique?",
+        "options": {
+          "1": "1",
+          "2": "22",
+          "3": "23",
+          "4": "24"
+        },
+        "answer": "c) 23, each sample will be used for validation and the model will be trained on rest 22 samples."
+      },
+      {
+        "id": 4,
+        "question": "Suppose you are using a Linear SVM classifier. Will the decision boundary change if we: (A) Remove (2,2) [Support Vector] (B) Remove (5,1) [Non-SV] (C) Add (3,2) point to plus class (D) Add (1.5,1.5) to plus class.",
+        "options": {},
+        "answer": "b) A and C. Removing (2,2) changes the support vector, hence the boundary changes. Adding (3,2) to the plus class has a similar effect."
+      },
+      {
+        "id": 5,
+        "question": "Which type of Naive Bayes classifier is most appropriate for a dataset with binary features, such as presence or absence of specific attributes?",
+        "options": {
+          "1": "Multinomial Naive Bayes",
+          "2": "Gaussian Naive Bayes",
+          "3": "Bernoulli Naive Bayes",
+          "4": "Poisson Naive Bayes"
+        },
+        "answer": "c) Bernoulli Naive Bayes. It models each feature as a Bernoulli distribution (two outcomes), commonly used for presence/absence features."
+      },
+      {
+        "id": 6,
+        "question": "Gaussian Naive Bayes: Classify if a person will love or hate a movie based on popcorn (g) and candy (g). Prior P(love)=0.5. Parameters: Love(Popcorn Mean=24, SD=4; Candy Mean=20, SD=5), Hate(Popcorn Mean=8, SD=2; Candy Mean=50, SD=8). New customer buys 20g popcorn and 25g candy.",
+        "options": {},
+        "answer": "Customer will likely love the movie. P(Loves|X) = 0.0015, P(Hates|X) = 5.77 × 10^−13."
+      },
+      {
+        "id": 7,
+        "question": "What is the difference between Logistic Regression and SVM?",
+        "options": {},
+        "answer": "1. SVM finds the best margin, LR doesn't. 2. SVM is geometrical, LR is statistical. 3. SVM is less vulnerable to overfitting. 4. SVM classifies via W^T X directly, LR uses sigmoid/probability."
+      }
+    ]
+  },
+  {
+    "title": "Quiz 3 (2023)",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Which of the following statements about the Perceptron convergence theorem is true?",
+        "options": {
+          "A": "The Perceptron algorithm always converges in a finite number of steps.",
+          "B": "The Perceptron algorithm converges if and only if the data is linearly separable.",
+          "C": "The Perceptron algorithm converges for any dataset with a fixed learning rate.",
+          "D": "The Perceptron algorithm's convergence is guaranteed for non-linearly separable data."
+        },
+        "answer": "(B) The Perceptron algorithm converges if and only if the data is linearly separable."
+      },
+      {
+        "id": 2,
+        "question": "Pruning in decision trees is a technique used for:",
+        "options": {
+          "1": "Reducing model complexity",
+          "2": "Reducing overfitting",
+          "3": "Introducing more features",
+          "4": "Enhancing bias"
+        },
+        "answer": "(B) Reducing overfitting."
+      },
+      {
+        "id": 3,
+        "question": "Bagging in Random Forest involves:",
+        "options": {
+          "A": "Training multiple models on the same dataset",
+          "B": "Using the same hyperparameters for all trees",
+          "C": "Assigning equal weights to all features",
+          "D": "Randomly selecting subsets of data and features"
+        },
+        "answer": "(D) Randomly selecting subsets of data and features."
+      },
+      {
+        "id": 4,
+        "question": "The maximum value of entropy for 2 and 3 classes are:",
+        "options": {
+          "1": "0.5 and 0.33",
+          "2": "1 and log2(3)",
+          "3": "1 and loge(3)",
+          "4": "0.5 and 1"
+        },
+        "answer": "2) 1 and log2(3). Max entropy for n classes is log2(n) when probabilities are equal."
+      },
+      {
+        "id": 5,
+        "question": "In the context of Random Forests, which of the following statements are TRUE regarding OOB error?",
+        "options": {
+          "A": "1 and 2 only",
+          "B": "1, 2, and 3 only",
+          "C": "1 and 3 only",
+          "D": "3 and 4 only"
+        },
+        "answer": "(C) 1 and 3 only. OOB error is computed using only trees for which a point was out-of-bag and provides an unbiased estimate of test error."
+      },
+      {
+        "id": 6,
+        "question": "Derive the variance of a random forest, given that the variables are simply i.d. (identically distributed, but not necessarily independent) with positive pairwise correlation ρ.",
+        "options": {},
+        "answer": "Var(Σ X_i / B) = ρσ^2 + ((1−ρ)/B)σ^2."
+      },
+      {
+        "id": 7,
+        "question": "Using the Perceptron training algorithm, find the decision boundary for points: A(1,2)+, B(−1,−2)−, C(2,3)+, D(3,2)+, E(−2,−1)−.",
+        "options": {},
+        "answer": "Final decision boundary: 2x1 + 4x2 − 2 = 0."
+      },
+      {
+        "id": 8,
+        "question": "Calculate Gini impurity for a split: Child 1 (60A, 40B), Child 2 (30A, 70B).",
+        "options": {},
+        "answer": "Gini(Child 1) = 0.48, Gini(Child 2) = 0.42. Weighted Gini after split = 0.45."
+      }
+    ]
+  },
+  {
+    "title": "Quiz 4 (2023)",
+    "questions": [
+      {
+        "id": 1,
+        "question": "The advantages of CNNs over ANNs for image classification are:",
+        "options": {
+          "A": "Location Invariance of features.",
+          "B": "Reusable weights.",
+          "C": "Can process sequential data.",
+          "D": "Accepts arbitrary input size."
+        },
+        "answer": "(iii) A and B (or iv if considering pure conv layers). Kernels are invariant to translation and same kernel is reused over multiple patches."
+      },
+      {
+        "id": 2,
+        "question": "Mahalnobis distance is better than euclidean distance for clustering as it takes into consideration:",
+        "options": {
+          "A": "Outliers in the sample data.",
+          "B": "Non-spherical shape of the sample data.",
+          "C": "Correlation among the features.",
+          "D": "Unequal size of the clusters."
+        },
+        "answer": "(C) Mahalanobis distance takes into account the correlation matrix while calculating the distance."
+      },
+      {
+        "id": 3,
+        "question": "What is the size of the output image if a 3x3 convolutional kernel is applied over an input image of shape 32x32? (stride=1)",
+        "options": {
+          "A": "30x30",
+          "B": "29x29",
+          "C": "28x28",
+          "D": "31x31"
+        },
+        "answer": "(A) 30x30. Formula: (m−p+1) × (n−q+1)."
+      },
+      {
+        "id": 4,
+        "question": "In a CNN with: 1 convolutional layer with kernel size 6x6 followed by a max pooling layer, the total number of trainable parameters is (image size 28x28):",
+        "options": {
+          "1": "484",
+          "2": "37",
+          "3": "821",
+          "4": "13"
+        },
+        "answer": "B) 37. Conv layer: (6 × 6) + 1 bias = 37. Pooling has 0 parameters."
+      },
+      {
+        "id": 5,
+        "question": "Consider two MLPs with identity activation at all neurons. Which model has better expressive power? (Model 1: 2 layers, Model 2: 2 layers with extra hidden neuron)",
+        "options": {},
+        "answer": "They have the same expressive power. Since activations are linear, both reduce to a standard linear regression model with 2 features."
+      },
+      {
+        "id": 6,
+        "question": "K-Means with Manhattan distance: Points A(8,8), B(14,12), C(12,14), D(8,10). Init: C1={A,C}, C2={B,D}. Perform until convergence.",
+        "options": {},
+        "answer": "Final clusters: C1={A,D} with centroid (8,9), C2={B,C} with centroid (13,13)."
+      },
+      {
+        "id": 7,
+        "question": "Does d(X,Y) = log(√((x1−y1)^2 + (x2−y2)^2)) qualify as a valid distance metric?",
+        "options": {},
+        "answer": "No. 1. Positivity fails if Euclidean distance < 1. 2. Identity fails as log(0) is undefined. 3. Rectified version: log(1 + (x1−x2)^2 + (y1−y2)^2)."
+      }
+    ]
+  },
+  {
+    "title": "Quiz 1 (2024)",
+    "questions": [
+      {
+        "id": 1,
+        "question": "What is the primary goal of using Maximum Likelihood Estimation (MLE) in linear regression?",
+        "options": {
+          "A": "To minimize the distance between the observed values and the model's predictions",
+          "B": "To maximize the probability of observing the data given the parameters",
+          "C": "To reduce the computational complexity of the model",
+          "D": "To avoid overfitting the model to the training data"
+        },
+        "answer": "B. MLE in linear regression is used to find parameter values that maximize the likelihood of observing the given data."
+      },
+      {
+        "id": 2,
+        "question": "In the context of bias and variance trade-off, what is the effect of increasing model complexity?",
+        "options": {
+          "A": "Decreases bias and variance",
+          "B": "Increases bias and decreases variance",
+          "C": "Decreases bias and increases variance",
+          "D": "Increases both bias and variance"
+        },
+        "answer": "C. Increasing model complexity typically decreases bias as the model captures more patterns, but increases variance as it becomes sensitive to training data fluctuations."
+      },
+      {
+        "id": 3,
+        "question": "Given n=4 i.i.d. observations x1=2, x2=3, x3=2.5, x4=3.5 from a normal distribution with σ^2=1, what is the MLE of the mean μ?",
+        "options": {
+          "A": "μ=2.5",
+          "B": "μ=3",
+          "C": "μ=2.75",
+          "D": "μ=3.25"
+        },
+        "answer": "(C) μ=2.75. The MLE for the mean of a normal distribution is the sample mean: (1/4)(2+3+2.5+3.5) = 2.75."
+      },
+      {
+        "id": 4,
+        "question": "Describe the role of the cost function in logistic regression and how it differs from the cost function used in linear regression. Provide a formulaic representation.",
+        "options": {},
+        "answer": "1. Role: Measures discrepancy between predicted probabilities and actual labels (log-loss). 2. Formula: J(θ) = -(1/m) Σ[y_i log(h_θ(x_i)) + (1−y_i) log(1−h_θ(x_i))]. 3. Difference: Unlike MSE in linear regression, this is nonlinear and logarithmic, suiting binary outcomes."
+      },
+      {
+        "id": 5,
+        "question": "Derive the expression for the weights using the method of Least Squares in a simple linear regression model.",
+        "options": {},
+        "answer": "The objective is to minimize L(w) = Σ(y_i − w x_i)^2. Differentiating with respect to w and setting to zero: dL/dw = −2 Σ x_i (y_i − w x_i) = 0 ⇒ w = Σ x_i y_i / Σ x_i^2. In matrix form: w = (X^T X)^{-1} X^T y."
+      },
+      {
+        "id": 6,
+        "question": "GPA/Salary Model: Predict salary and compare high school vs college graduates given β̂0=50, β̂1=20, β̂2=0.07, β̂3=35, β̂4=0.01, β̂5=−10.",
+        "options": {},
+        "answer": "1. (C) High school graduates earn more if GPA is high enough (specifically x1 ≥ 3.5). 2. Salary for GPA 4.0, IQ 110, College: 137.1 (thousands). 3. False: Magnitude of coefficient doesn't indicate statistical significance."
+      }
+    ]
+  },
+  {
+    "title": "Quiz 2 (2024)",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Which of the following statements about the Perceptron algorithm are correct? (Select all that apply)",
+        "options": {
+          "A": "Guaranteed to converge for any dataset.",
+          "B": "Weights update even when correctly classified.",
+          "C": "Bias update magnitude is independent of input values.",
+          "D": "If it converges, it minimizes misclassifications."
+        },
+        "answer": "C and D are True. A is false (only for linearly separable). B is false (updates only on misclassification)."
+      },
+      {
+        "id": 2,
+        "question": "Which regarding Random Forests is not TRUE?",
+        "options": {
+          "A": "Handle categorical and continuous variables.",
+          "B": "Trees built sequentially.",
+          "C": "Advantage is significant increase in bias.",
+          "D": "Utilize averaging for classification."
+        },
+        "answer": "B, C, and D are not true. B is false (parallel), C is false (reduces variance), D is false (uses majority voting, not average, for classification)."
+      },
+      {
+        "id": 3,
+        "question": "ID3 Algorithm: Which is TRUE about information gain?",
+        "options": {
+          "a": "Measures attribute separation quality.",
+          "b": "Highest IG attribute is always selected.",
+          "c": "Based on reduction in entropy.",
+          "d": "Ensures the tree will never overfit."
+        },
+        "answer": "A, B, and C are True. D is False (IG does not prevent overfitting)."
+      },
+      {
+        "id": 4,
+        "question": "Perceptron Margin: Which statement is NOT true?",
+        "options": {
+          "a": "Small margin leads to faster convergence.",
+          "b": "Large margin leads to faster convergence.",
+          "c": "Small margin leads to more updates.",
+          "d": "Margin does not affect convergence."
+        },
+        "answer": "B is False (Large margin leads to fewer mistakes and faster convergence). (Note: Document lists logic for 'not true' vs 'true' contextually)."
+      },
+      {
+        "id": 5,
+        "question": "Decision Tree depth: Which is true for categorical input X_i and output Y?",
+        "options": {},
+        "answer": "(c) The maximum depth of the decision tree must be less than m+1 because categorical attributes can each be split only once."
+      },
+      {
+        "id": 6,
+        "question": "Naive Bayes: 3 boolean inputs, 1 boolean output. 1. Parameters to estimate? 2. Parameters without independence assumption?",
+        "options": {},
+        "answer": "1. 7 parameters (P(Y) and P(X_i|Y) for both classes). 2. 15 parameters (P(Y) and 2^3−1 parameters for each class)."
+      },
+      {
+        "id": 7,
+        "question": "Tennis Dataset ID3: Initial Entropy and Information Gain for root selection.",
+        "options": {},
+        "answer": "Initial Entropy ≈ 0.918. IG Outlook = 0.247, IG Temp = 0.029, IG Humidity = 0.151, IG Wind = 0.151. Root: Outlook."
+      }
+    ]
+  },
+  {
+    "title": "Quiz 3 (2024)",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Support Vector Machines (SVM): Which statement is False?",
+        "options": {
+          "a": "Points on SVs are easiest to classify.",
+          "b": "Data must be linearly separable.",
+          "c": "Normalized data has no effect.",
+          "d": "SVM is non-probabilistic."
+        },
+        "answer": "A, B, and C are False. (A: SVs are hardest. B: Kernels handle non-linear. C: Normalization helps SVM)."
+      },
+      {
+        "id": 2,
+        "question": "Explain how regularization parameter C affects margin and errors.",
+        "options": {},
+        "answer": "High C: Prioritizes correct classification, leads to narrower margin, higher overfitting risk. Low C: Prioritizes margin maximization, allows some misclassification, higher underfitting risk."
+      },
+      {
+        "id": 3,
+        "question": "Why use the Kernel Trick?",
+        "options": {},
+        "answer": "Allows operating in original feature space without computing coordinates in high-dimensional space; efficient for non-linearly separable data."
+      },
+      {
+        "id": 4,
+        "question": "Max value of RBF Kernel?",
+        "options": {
+          "a": "0",
+          "b": "1",
+          "c": "depends on gamma",
+          "d": "unbounded"
+        },
+        "answer": "(b) 1. Occurs when distance d = 0 (i.e., x = x')."
+      },
+      {
+        "id": 5,
+        "question": "If N < D, which kernel is most appropriate?",
+        "options": {
+          "a": "Linear kernel",
+          "b": "Polynomial kernel",
+          "c": "RBF kernel",
+          "d": "Sigmoid kernel"
+        },
+        "answer": "(a) Linear kernel. High feature count relative to samples suggests linear separability is likely and prevents overfitting complex kernels."
+      },
+      {
+        "id": 6,
+        "question": "XOR Dataset Transformation: (x1, x2) → (z1, z2) = (x1+x2, x1 x2). Are they linearly separable?",
+        "options": {},
+        "answer": "Points: (0,0)+, (1,0)−, (1,0)−, (2,1)+. Yes, a line like z2 = z1 − 1 can separate classes (though (1,0) lies on this specific boundary)."
+      },
+      {
+        "id": 7,
+        "question": "Derive dual form equations for soft margin SVM.",
+        "options": {},
+        "answer": "1. Primal: min 0.5||w||^2 + C Σ ξ_i. 2. Lagrangian minimizes w, b, ξ. 3. Dual: max Σ α_i − 0.5 ΣΣ α_i α_j y_i y_j x_i^T x_j subject to Σ α_i y_i = 0 and 0 ≤ α_i ≤ C."
+      }
+    ]
+  },
+  {
+    "title": "Quiz 4 (2024)",
+    "questions": [
+      {
+        "id": 1,
+        "question": "GMM vs K-means: Which statement is true?",
+        "options": {
+          "A": "P(Z) is uniform in k-means.",
+          "B": "Covariance in k-means tends to zero.",
+          "C": "Covariance in k-means tends to infinity.",
+          "D": "Covariance in k-means is diagonal."
+        },
+        "answer": "A and B. K-means assumes equal cluster probability and zero spread within clusters (hard assignment)."
+      },
+      {
+        "id": 2,
+        "question": "Termination conditions in K-Means?",
+        "options": {
+          "1": "Fixed iterations.",
+          "2": "Assignments don't change.",
+          "3": "Centroids don't change.",
+          "4": "RSS falls below threshold."
+        },
+        "answer": "(D) All of the above."
+      },
+      {
+        "id": 3,
+        "question": "Not a desirable property of distance measure in clustering?",
+        "options": {
+          "A": "Symmetry",
+          "B": "Positivity",
+          "C": "Triangle inequality",
+          "D": "Dependency on labels"
+        },
+        "answer": "(D) Dependency on labels (Clustering is unsupervised)."
+      },
+      {
+        "id": 4,
+        "question": "K-Means fails in which cases?",
+        "options": {},
+        "answer": "(D) 1, 2, and 4: Outliers, different densities, and non-convex shapes."
+      },
+      {
+        "id": 5,
+        "question": "K-means simulation (k=2): Initial centroids #1(1.9, 0.97) and #10(3.17, 4.96).",
+        "options": {},
+        "answer": "Iteration 1 assignments: C0={1,2,3,4,5}, C1={6,7,8,9,10}. New Centroids: C0(1.886, 1.528), C1(4.178, 3.778). Converges in ~2-3 iterations with same assignments."
+      }
+    ]
+  },
+  {
+    "title": "Machine Learning (CSE543/ECE543) Midsem",
+    "questions": [
+      {
+        "id": 1,
+        "question": "An artificially intelligent car decreases its speed based on its distance from the car in front of it. Which algorithm the car might be using? Explain your reasoning.",
+        "options": {
+          "a": "SVMs",
+          "b": "Decision Tree",
+          "c": "Linear Regression",
+          "d": "Logistic Regression"
+        },
+        "answer": "(c) Linear Regression. The problem involves predicting a continuous output (speed) based on an input variable (distance). Linear regression is designed for regression tasks where the target variable is continuous. SVMs and Logistic Regression are primarily classification algorithms (outputting discrete classes), and while Decision Trees can perform regression, Linear Regression is the most fundamental model for this type of continuous relationship relationship (e.g., Speed = w * Distance + b)."
+      },
+      {
+        "id": 2,
+        "question": "Explain the difference between Parametric and Non-parametric learning methods. Are Decision Tree parametric? Explain.",
+        "answer": "Parametric methods assume a fixed functional form for the data distribution or decision boundary (e.g., Linear Regression, which has a fixed number of weights regardless of data size). Non-parametric methods do not assume a fixed structure and the number of parameters can grow with the sample size (e.g., K-Nearest Neighbors). Decision Trees are generally considered non-parametric. Although a specific tree has a fixed structure, the tree grows in depth and complexity as the amount of training data increases to capture more details, meaning the number of parameters (nodes/splits) is not fixed beforehand."
+      },
+      {
+        "id": 3,
+        "question": "Derive weight (slope and intercept) update equation for linear regression using mean absolute error (MAE) loss function. MAE = (1/n) * sum(|y_i - y_hat_i|).",
+        "answer": "For Linear Regression, y_hat = mx + c. The Loss function L = (1/n) * Σ|y_i - (mx_i + c)|. To find the update rules, we take the gradient with respect to m and c. The derivative of |u| is sign(u). \n\nGradient w.r.t m: dL/dm = (1/n) * Σ [ -x_i * sign(y_i - (mx_i + c)) ]\nGradient w.r.t c: dL/dc = (1/n) * Σ [ -1 * sign(y_i - (mx_i + c)) ]\n\nUpdate Rules (learning rate α):\nm_new = m_old + (α/n) * Σ [ x_i * sign(y_i - y_hat_i) ]\nc_new = c_old + (α/n) * Σ [ sign(y_i - y_hat_i) ]"
+      },
+      {
+        "id": 4,
+        "question": "Build a Decision Tree Using Gini Gain as the splitting criterion to predict whether a person will purchase a new car. (Data provided in table with features: Age, Income, Student, Credit Rating).",
+        "answer": "To build the tree, we calculate the Gini Impurity for the root and the Weighted Gini Impurity for each feature split. \n\n1. Calculate Gini(Parent): 9 Yes, 5 No. Gini = 1 - (9/14)^2 - (5/14)^2 = 0.459.\n2. Calculate Gini Gain for Age, Income, Student, and Credit Rating.\n3. 'Student' is typically the best first split in this classic dataset: \n   - If Student=Yes (7 instances): High probability of buying (or specific subset).\n   - If Student=No (7 instances): Lower probability.\n4. Repeat recursively for child nodes.\n(Full tree construction requires step-by-step calculation of Gini Gain for every node)."
+      }
+    ]
+  },
+  {
+    "title": "Winter 2025 Mid-Semester Examination (UG/PG)",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Softmax Regression: (a) Find the negative log likelihood of the data l(β_1,...,β_K).",
+        "answer": "For Softmax regression, the probability p(y=k|x) is exp(β_k^T x) / Σ exp(β_j^T x). The likelihood L is the product of probabilities for the correct classes. \nNegative Log Likelihood (NLL) = - Σ_{i=1 to N} Σ_{k=1 to K} [ I(y_i = k) * log( exp(β_k^T x_i) / Σ_j exp(β_j^T x_i) ) ].\nSimplifying: NLL = - Σ_{i=1 to N} [ (β_{y_i}^T x_i) - log( Σ_{j=1 to K} exp(β_j^T x_i) ) ]."
+      },
+      {
+        "id": 2,
+        "question": "Softmax Regression: (b) Find the gradient w.r.t. β_k of the regularized objective l(β) + λ * sum(||β_k||^2).",
+        "answer": "The gradient of the NLL part w.r.t β_k involves the difference between the true label and the predicted probability.\nGradient_NLL = Σ_{i=1 to N} [ x_i * ( p(y=k|x_i) - I(y_i=k) ) ].\nThe gradient of the regularization term is 2λβ_k.\nTotal Gradient = Σ_{i=1 to N} [ x_i * ( p(y=k|x_i) - I(y_i=k) ) ] + 2λβ_k."
+      },
+      {
+        "id": 3,
+        "question": "State some relations between autoencoders and PCA.",
+        "answer": "1. A linear autoencoder (one with linear activation functions and a Mean Squared Error loss) learns the same subspace as Principal Component Analysis (PCA).\n2. Both are dimensionality reduction techniques.\n3. PCA finds orthogonal principal components, while a standard autoencoder's hidden units may not be orthogonal, but they span the same principal subspace."
+      },
+      {
+        "id": 4,
+        "question": "What is the primary purpose of the pooling layer in a CNN?",
+        "answer": "The primary purposes are:\n1. To reduce the spatial dimensions (width and height) of the feature maps, which reduces the number of parameters and computation in the network.\n2. To provide translation invariance (making the detection of features robust to small shifts in position).\n3. To extract dominant features (Max Pooling) or average features (Average Pooling)."
+      },
+      {
+        "id": 5,
+        "question": "Suppose there are total n data points in a linearly separable dataset... what should a maximum number of support vectors form a maximum margin classifier?",
+        "answer": "In a hard-margin SVM, the support vectors are the points lying exactly on the margin boundaries. The maximum number of support vectors can theoretically be 'n' (all data points). This happens in specific geometric arrangements, such as if all positive points lie on one line and all negative points lie on a parallel line, and the margin is the space between these lines. Every single point would be a support vector constraining the margin."
+      },
+      {
+        "id": 6,
+        "question": "In a linear hard margin SVM, if you slightly move (perturb) a training sample that is not a support vector, does it affect the learned decision boundary or not? Justify your answer.",
+        "answer": "No, it does not affect the decision boundary. The decision boundary in a hard-margin SVM is determined exclusively by the support vectors (the points closest to the hyperplane). Any point that is not a support vector lies beyond the margin and has no influence on the optimization objective or the position of the hyperplane, as long as it is not moved inside the margin."
+      },
+      {
+        "id": 7,
+        "question": "Which regularization method leads to weight sparsity? Explain why.",
+        "answer": "L1 Regularization (Lasso) leads to weight sparsity. This is because the L1 penalty term (sum of absolute values of weights) has constant gradients that push weights towards zero. Geometrically, the L1 constraint region is a diamond shape (polytope) with corners on the axes. The optimal solution (intersection of the loss contours and the constraint region) often occurs at these corners, where one or more weights are exactly zero."
+      },
+      {
+        "id": 8,
+        "question": "Practical ML: Analyze the training-validation loss vs epoch curves for 4 models (ResNet-18 on CIFAR-10). Comment on Fit, Bias, and Variance.",
+        "answer": "Model 1: Good Fit. Both training and validation loss decrease significantly and converge to a low value with a small gap.\nModel 2: Overfitting (High Variance). Training loss goes very low, but validation loss decreases initially and then starts increasing significantly. The model is memorizing noise.\nModel 3: Unstable training (High Variance/Noise). The loss fluctuates wildly. This could be due to a learning rate that is too high.\nModel 4: Underfitting (High Bias). Both training and validation losses are high and decrease very slowly. The model is not complex enough or the learning rate is too low."
+      },
+      {
+        "id": 9,
+        "question": "Consider a CNN with two convolutional layers... Compute the output size of the feature map after both convolutional layers and determine the total number of trainable parameters.",
+        "answer": "Input: 64x64x3.\n\nLayer 1 (Conv1): 32 filters, 5x5 kernel, Stride 1, Pad 0, Dilation 2.\n- Effective Kernel Size (k_eff): k + (k-1)(d-1) = 5 + (4)(1) = 9.\n- Output Size: floor((64 - 9 + 0)/1) + 1 = 56. \n- Feature Map 1: 56x56x32.\n- Parameters: (5*5*3 + 1)*32 = 76*32 = 2,432.\n\nLayer 2 (Conv2): 64 filters, 3x3 kernel, Stride 2, Pad 0, Dilation 1.\n- Output Size: floor((56 - 3 + 0)/2) + 1 = floor(53/2) + 1 = 26 + 1 = 27.\n- Feature Map 2: 27x27x64.\n- Parameters: (3*3*32 + 1)*64 = (288+1)*64 = 18,496.\n\nFinal Output Size: 27x27x64.\nTotal Parameters (Conv only): 2,432 + 18,496 = 20,928."
+      }
+    ]
+  }
+]

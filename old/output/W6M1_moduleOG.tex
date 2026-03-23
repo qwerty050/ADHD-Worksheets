@@ -1,0 +1,628 @@
+\documentclass[12pt, a4paper]{article}
+
+% --- Encoding & Fonts ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% --- Mathematics ---
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+
+% --- Layout ---
+\usepackage[margin=1in]{geometry}
+
+% --- Lists ---
+\usepackage{enumitem}
+
+% --- Tables ---
+\usepackage{booktabs}
+\usepackage{array}
+
+% --- Graphics ---
+\usepackage{graphicx}
+
+% --- Headers / Footers ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% --- Hyperlinks & Cross-references ---
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+
+% --- Misc ---
+\usepackage{xcolor}
+
+% --- Custom commands (safety definitions) ---
+\providecommand{\operatorname}[1]{\mathop{\mathrm{#1}}\nolimits}
+
+\title{Learning Module: W6M1}
+\author{}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+\tableofcontents
+\newpage
+
+% ============================================================
+% SECTION  1. Dataset Preparation & Practical Motivation
+% ============================================================
+
+% !!!  REVIEW FLAG: 1. Dataset Preparation & Practical Motivation  !!!
+% [undefined_term] Introduce a brief definition for subject‑level splitting in the motivation or theory section to clarify that it refers to partitioning data so that all records from a single subject belong together in either training or testing.
+% [undefined_term] Define or explain that a clinical rule of thumb is a heuristic used by clinicians to assess risk, as this term may be unfamiliar to students.
+% !!! END REVIEW FLAGS !!!
+\section{1. Dataset Preparation \& Practical Motivation}
+
+\subsection{Before We Begin}
+A dataset is a collection of data organized in a table.  
+Each horizontal line of the table is called a row and represents one sample (for example, one patient).  
+Each vertical line is a column and represents a feature (for example, age or blood pressure).  
+One of the columns is often designated as the label or target that we want to predict (for example, whether a disease is present).  
+Understanding these parts lets us see why we must look carefully at the data before building a model.  
+
+\subsection{Motivation}
+\textbf{example\_first} — Let’s start with a concrete scenario.  
+Preparing a dataset is like gathering and cleaning ingredients before cooking a meal: you first inspect each ingredient, discard any that are spoiled, and cut them to the right size before you can start cooking.  
+Just as unclean ingredients can ruin a dish, raw data that contain missing entries, mislabeled rows, or hidden “fingerprints” can mislead a machine‑learning model.  
+By curating and cleaning the data we create a reliable foundation for training models that truly learn the patterns we care about.  
+
+\subsection{Intuition}
+Think of dataset preparation as a careful inspection and organization step.  
+First we glance through the whole table to get a feel for what values are present.  
+Next we fix obvious problems such as empty cells (missing values) or obvious mistakes in the labels (label noise).  
+We also make sure that the way we split the data for training and testing does not unintentionally share information between them, especially when the data come from a small pool of subjects.  
+When these steps are done, the remaining data are ready to be handed to a learning algorithm with confidence that the algorithm is seeing clean, representative information.  
+
+\subsection{Formal Definition}
+The preparation of a machine‑learning dataset proceeds through four essential steps:
+
+\begin{enumerate}
+\item \textbf{Initial scan.} Examine every row and column to become familiar with the range of values, the presence of outliers, and the overall structure.
+\item \textbf{Curation and handling of missing values.} Identify any cells that contain no value (a missing value). Decide on a strategy such as filling the cell with a plausible estimate (imputation) or removing the affected row, because algorithms generally cannot operate on empty entries.
+\item \textbf{Denoising and label‑noise correction.} Look for rows whose label (the target column) appears inconsistent with the feature values; these are instances of label noise. Correct the label when the true class can be inferred, because learning from incorrect targets corrupts the model.
+\item \textbf{Ground‑truth preparation.} Ensure that the final set of rows and columns truly represent the problem of interest, and verify that the splitting of data into training and testing subsets respects any special constraints (e.g., using subject‑level splits for medical data) to avoid \textit{data leakage}.
+\end{enumerate}
+
+These steps address common misconceptions: missing values are not automatically handled by most algorithms, label noise is not harmless, and simply adding more data does not replace the need for careful curation.  
+
+\subsection{Worked Example}
+\textbf{Problem statement.}  
+We have a tiny CSV file with 10 rows. The columns are \texttt{Age}, \texttt{BloodPressure}, and the label \texttt{DiseasePresent}. We will walk through the four preparation steps and produce a clean version ready for training.
+
+\begin{enumerate}
+\item \textbf{Step 1 – Scan the file.}  
+Reading the file shows the following rows (excerpt):
+
+\begin{verbatim}
+Row 1: 45, 130, 1
+Row 2: 60, 140, 0
+Row 3: 52, ?, 1
+...
+Row 7: 38, 120, 0
+Row 8: 47, 135, 1
+Row 9: 55, 128, 0
+Row 10: 49, 132, 1
+\end{verbatim}
+We notice a question mark “?” in Row 3, Column \texttt{BloodPressure}, indicating a missing value. All other rows appear syntactically correct.
+
+\item \textbf{Step 2 – Handle the missing value.}  
+We decide to impute the missing blood pressure with the average of the observed \texttt{BloodPressure} values.  
+Average = (130+140+120+135+128+132)/6 = 131.17 (rounded to 131).  
+We replace the “?” in Row 3 with 131.
+
+\item \textbf{Step 3 – Detect and fix label noise.}  
+Row 5 reads: \texttt{Age}=70, \texttt{BloodPressure}=145, \texttt{DiseasePresent}=0.  
+Given the high age and blood pressure, the clinical rule of thumb suggests a high likelihood of disease, making the label suspect.  
+We consult the original medical record and discover the label should be 1.  
+We change the label in Row 5 to 1.
+
+\item \textbf{Step 4 – Prepare the final curated dataset.}  
+The cleaned table now reads:
+
+\begin{verbatim}
+45,130,1
+60,140,0
+52,131,1   % imputed value
+...
+38,120,0
+47,135,1
+55,128,0
+49,132,1
+70,145,1   % corrected label
+\end{verbatim}
+All missing entries have been filled, and the mislabeled row has been corrected. The dataset is now ready for splitting and model training.
+
+\end{enumerate}
+
+\textbf{What this shows us:}  
+Even a very small dataset can contain missing values and label mistakes; detecting and fixing them is straightforward but essential for trustworthy model results.  
+
+\subsection{Key Takeaway}
+Preparing a dataset is a disciplined, step‑by‑step cleaning process that removes missing values, corrects label errors, and avoids data leakage—especially when the data are few or come from sensitive domains such as medicine.
+
+\subsection*{Questions}
+\begin{enumerate}
+\item (Recall) List and briefly describe the four essential steps involved in preparing a machine‑learning dataset as presented in the section.
+\newpage
+\item (Understand) In your own words, explain why splitting data at the subject level (rather than at the individual sample level) is particularly important when working with medical datasets.
+\newpage
+\item (Understand) Describe a potential consequence for model evaluation if a medical dataset were split randomly at the sample level instead of the subject level.
+\newpage
+\item (Apply – Numerical) Consider the following tiny dataset of five patients:
+
+\begin{verbatim}
+PatientID   Age   BloodPressure   DiseasePresent
+1           50    135             1
+2           62    ?               0
+3           48    128             1
+4           55    ?               0
+5           70    145             0   (suspected mislabeled)
+\end{verbatim}
+
+\begin{enumerate}
+\item Compute the imputed value for the missing BloodPressure entries using the average of the observed BloodPressure values.
+\item After imputation, indicate how you would correct the mislabeled row.
+\item Summarize the sequence of preparation steps you would perform on this dataset before feeding it to a learning algorithm.
+\end{enumerate}
+\newpage
+\item (Apply) Given a small dataset that contains two missing feature values and one row with an incorrect label, outline the actions you would take (including decisions about imputation, removal, and label correction) to ready the data for modeling, referencing the four preparation steps from the theory.
+\newpage
+\item (Analyze) Compare the likely impact on model performance of (a) ignoring the missing values entirely (e.g., dropping rows) versus (b) imputing them with the mean of the observed values. Discuss how each approach could affect bias and variance in the trained model.
+\newpage
+\item (Evaluate) Critically assess the statement: “If a dataset is small, we can skip thorough curation because any model will overfit anyway.” Use concepts from the section to argue whether this reasoning is valid or flawed, and suggest what curation steps remain essential even for tiny datasets.
+\newpage
+\end{enumerate}
+
+\newpage
+% ============================================================
+% SECTION  2. Data Splitting: Train, Validation, and Test
+% ============================================================
+
+\subsection*{Notation Used in This Section}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning \\ \midrule
+    $\mathcal{D}_{\text{train}}$ & Training dataset \\
+    $\mathcal{D}_{\text{val}}$ & Validation dataset \\
+    $\mathcal{D}_{\text{test}}$ & Test dataset \\
+    $\ell_{\text{train}}(t)$ & Training loss at epoch t \\
+    $\ell_{\text{val}}(t)$ & Validation loss at epoch t \\
+\bottomrule
+\end{tabular}
+\vspace{1em}
+
+% !!!  REVIEW FLAG: 2. Data Splitting: Train, Validation, and Test  !!!
+% [undefined_term] Define cross‑entropy loss or link to its definition in a prior section, e.g., "cross‑entropy loss for binary classification is defined as…".
+% [undefined_term] Provide a brief definition of SGD or reference a prior section where SGD is introduced.
+% [undefined_term] Introduce logistic regression or reference its prior definition in the curriculum.
+% [knowledge_assumption] Add a sentence summarizing typical split ratios (e.g., "A common practice is a 70/15/15 or 80/10/10 split, though 75/15/10 is often used in practice.") so the recall question is answerable from the text.
+% !!! END REVIEW FLAGS !!!
+\section{2. Data Splitting: Train, Validation, and Test}
+
+\subsection{Before We Begin}
+Overfitting happens when a model learns patterns that are specific to the training data but do not generalize to new data. An epoch is one complete pass through the entire set of training examples. Because a model has already seen the training examples, it can achieve a lower error on them than on data it has never encountered. Recognizing when performance on unseen data starts to degrade is essential for building reliable models. This understanding prepares us to discuss how we deliberately set aside portions of the data for different purposes.
+
+\subsection{Motivation}
+Splitting data is like a student preparing for a final exam by first studying (training set), then taking practice quizzes (validation set) to find weak spots, and finally sitting the real exam (test set) to see the true result.  
+When all the data is used for learning, there is no independent check on whether the model will work on future cases.  
+Creating separate subsets lets us monitor learning, choose the best model, and obtain an honest estimate of real‑world performance.
+
+\subsection{Intuition}
+Think of the three subsets as three roles in a rehearsal. The \textbf{training set} is the rehearsal material that the model repeatedly practices on. The \textbf{validation set} is a friend who watches the rehearsal and points out mistakes, helping the director decide which scenes to keep or cut and which lighting (hyper‑parameters) to adjust. Finally, the \textbf{test set} is the audience on opening night; their reaction shows how well the performance will be received in the real world. By keeping the audience separate from the rehearsal, we avoid the illusion that the play is perfect simply because the actors got used to the rehearsal stage.
+
+\subsection{Formal Definition}
+Let  
+
+\[
+\mathcal{D}_{\text{train}}
+\]
+
+denote the training dataset, the portion of data used by the learning algorithm to adjust its internal parameters.  
+
+\[
+\mathcal{D}_{\text{val}}
+\]
+
+denote the validation dataset, a held‑out subset that is never used for parameter updates but is consulted during training to evaluate how the current model would behave on unseen data.  
+
+\[
+\mathcal{D}_{\text{test}}
+\]
+
+denote the test dataset, which remains untouched until the final trained model is ready to be reported; its performance serves as a proxy for deployment.  
+
+During iterative training (e.g., stochastic gradient descent), the loss on the training set at epoch \(t\) is written as  
+
+\[
+\ell_{\text{train}}(t).
+\]
+
+The loss measured on the validation set at the same epoch is  
+
+\[
+\ell_{\text{val}}(t).
+\]
+
+Typically \(\ell_{\text{train}}(t)\) declines monotonically because the model is explicitly optimized to reduce it. In contrast, \(\ell_{\text{val}}(t)\) often follows a pattern: it decreases at first (the model is learning generalizable patterns), then reaches a minimum, and may start to increase when the model begins to capture noise specific to \(\mathcal{D}_{\text{train}}\) – the hallmark of over‑fitting. The point where \(\ell_{\text{val}}(t)\) stops decreasing and begins to rise signals that further training is unlikely to improve, and may even hurt, performance on new data. Note that the validation set is not the same as the test set; only after the model has been selected based on \(\mathcal{D}_{\text{val}}\) do we evaluate it once on \(\mathcal{D}_{\text{test}}\). Adding more examples to \(\mathcal{D}_{\text{train}}\) can help but does not guarantee the disappearance of overfitting, especially if the model capacity remains too high. Likewise, a continuously decreasing validation loss does not guarantee continued improvement; the loss curve must be inspected for a clear minimum.
+
+\subsection{Worked Example}
+\textbf{Problem statement.}  
+Create a synthetic binary‑classification dataset with 200 samples (features \(x_1, x_2\) and label \(y\)). Split the data into 75 % training, 15 % validation, and 10 % test. Train a simple logistic‑regression model for 20 epochs, record \(\ell_{\text{train}}(t)\) and \(\ell_{\text{val}}(t)\) at each epoch, plot the two loss curves, and identify the epoch where the validation loss first increases (the over‑fitting point).
+
+\textbf{Step 1 – Generate the data.}  
+For \(i=1,\dots,200\) draw \(x_{1}^{(i)}\sim\mathcal{N}(0,1)\) and \(x_{2}^{(i)}\sim\mathcal{N}(0,1)\).  
+Assign a label by \(y^{(i)} = \mathbf{1}\{\,x_{1}^{(i)}+x_{2}^{(i)}+ \epsilon^{(i)} > 0\,\}\) where \(\epsilon^{(i)}\sim\mathcal{N}(0,0.2)\).  
+The resulting set of 200 triples \((x_{1}^{(i)},x_{2}^{(i)},y^{(i)})\) forms the full dataset \(\mathcal{D}\).
+
+\textbf{Step 2 – Split the data.}  
+75 % of 200 → \(150\) samples → \(\mathcal{D}_{\text{train}}\).  
+15 % of 200 → \(30\) samples → \(\mathcal{D}_{\text{val}}\).  
+10 % of 200 → \(20\) samples → \(\mathcal{D}_{\text{test}}\).  
+The split is performed randomly but kept fixed for the whole experiment.
+
+\textbf{Step 3 – Train and record losses.}  
+Using stochastic gradient descent with learning rate \(0.1\), iterate for epochs \(t=1,\dots,20\).  
+At each epoch compute the average cross‑entropy loss on \(\mathcal{D}_{\text{train}}\) (giving \(\ell_{\text{train}}(t)\)) and on \(\mathcal{D}_{\text{val}}\) (giving \(\ell_{\text{val}}(t)\)).  
+The computed values are:
+
+\[
+\begin{array}{c|c|c}
+t & \ell_{\text{train}}(t) & \ell_{\text{val}}(t)\\ \hline
+1 & 0.693 & 0.692\\
+2 & 0.658 & 0.652\\
+3 & 0.624 & 0.618\\
+4 & 0.592 & 0.589\\
+5 & 0.562 & 0.562\\
+6 & 0.534 & 0.540\\
+7 & 0.508 & 0.522\\
+8 & 0.484 & 0.509\\
+9 & 0.462 & 0.500\\
+10& 0.441 & 0.496\\
+11& 0.422 & 0.498\\
+12& 0.404 & 0.503\\
+13& 0.387 & 0.511\\
+14& 0.371 & 0.522\\
+15& 0.356 & 0.535\\
+16& 0.342 & 0.550\\
+17& 0.329 & 0.567\\
+18& 0.317 & 0.585\\
+19& 0.306 & 0.604\\
+20& 0.295 & 0.624
+\end{array}
+\]
+
+\textbf{Step 4 – Plot the curves.}  
+A line plot with epoch \(t\) on the horizontal axis and loss on the vertical axis shows two lines: the blue line (training loss) falling steadily, the orange line (validation loss) decreasing up to epoch 10 and then rising afterwards.
+
+\textbf{Step 5 – Identify the over‑fitting point.}  
+The validation loss reaches its minimum at epoch 10 (\(\ell_{\text{val}}(10)=0.496\)).  
+From epoch 11 onward the validation loss increases, indicating that the model begins to overfit the training data after epoch 10.
+
+\textbf{Final answer.}  
+The model starts to overfit after epoch 10; stopping training at epoch 10 would give the best generalization according to the validation set.
+
+\textbf{What this shows us:}  
+A validation set provides a concrete signal (the rise of \(\ell_{\text{val}}(t)\)) that tells us when further training harms the ability to generalize, even though the training loss \(\ell_{\text{train}}(t)\) continues to improve.
+
+\subsection{Key Takeaway}
+Use three distinct data splits—training, validation, and test—to train, tune, and finally assess a model; the validation loss curve is the practical tool that reveals when overfitting begins.
+
+\subsection{Questions}
+\textbf{Recall 1.} According to the material, what is the commonly used percentage split of a dataset into training, validation, and test sets?\newpage
+
+\textbf{Understand 1.} Explain why a separate validation set is kept apart from the training data during the model‑development process. Include in your answer the role it plays with respect to overfitting and model selection.\newpage
+
+\textbf{Understand 2.} Describe how the validation loss curve can be used to decide when to stop training a model. What pattern in the curve signals that further training may be harmful?\newpage
+
+\textbf{Apply 1.} The following validation losses were recorded for epochs 1 through 10:
+
+\[
+\begin{array}{c|c}
+\text{Epoch } t & \ell_{\text{val}}(t) \\ \hline
+1 & 0.692 \\ 
+2 & 0.652 \\ 
+3 & 0.618 \\ 
+4 & 0.589 \\ 
+5 & 0.562 \\ 
+6 & 0.540 \\ 
+7 & 0.522 \\ 
+8 & 0.509 \\ 
+9 & 0.500 \\ 
+10& 0.496
+\end{array}
+\]
+
+Using these values, after which epoch does the model begin to overfit the training data? Justify your answer by referring to the behaviour of the validation loss.\newpage
+
+\textbf{Apply 2.} Based on the same loss table, at which epoch does the validation loss attain its minimum value? If you were to employ early‑stopping using the validation set, on which epoch would you stop training?\newpage
+
+\textbf{Apply 3.} Compute the difference between the training loss \(\ell_{\text{train}}(t)\) and the validation loss \(\ell_{\text{val}}(t)\) at epoch 5, using the training loss \(\ell_{\text{train}}(5)=0.562\) from the worked example. What does the magnitude of this difference suggest about the model’s generalisation at that point?\newpage
+
+\textbf{Analyse 1.} Discuss how increasing or decreasing the proportion of data allocated to the validation set (while keeping the total dataset size fixed) might influence the reliability of hyper‑parameter tuning. Consider the trade‑offs between having enough data to obtain a stable estimate of validation loss and retaining sufficient training data for learning.\newpage
+
+\textbf{Evaluate 1.} Critically assess the following claim: “If the validation loss never rises, the model will perform perfectly on unseen data.” In your answer, refer to the concepts of overfitting, the distinction between validation and test sets, and any limitations of relying solely on the validation loss trajectory.\newpage
+
+\section{End of Section}
+
+\newpage
+% ============================================================
+% SECTION  3. Cross-Validation (CV) Techniques
+% ============================================================
+
+\subsection*{Notation Used in This Section}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning \\ \midrule
+    $K$ & Number of folds in K‑fold CV \\
+    $\mathcal{D}^{(k)}_{\text{train}}$ & Training data for fold k \\
+    $\mathcal{D}^{(k)}_{\text{val}}$ & Validation data for fold k \\
+    $\hat{y}^{(k)}$ & Prediction made by the model trained on fold k \\
+\bottomrule
+\end{tabular}
+\vspace{1em}
+
+% !!!  REVIEW FLAG: 3. Cross-Validation (CV) Techniques  !!!
+% [undefined_term] Define the term 'class proportions' in the theory or prerequisite sections, e.g., "the fraction of samples belonging to each class in the dataset."
+% [knowledge_assumption] Provide brief definitions of bias, variance, and discuss their trade‑offs in CV so that students can answer the critique confidently.
+% !!! END REVIEW FLAGS !!!
+\section{3. Cross-Validation (CV) Techniques}
+
+\subsection{Before We Begin}
+A “fold’’ is simply a subset of the whole data set that we temporarily set aside for testing while the remaining parts are used for training.  
+When we repeat a train‑test experiment with different folds, each run gives its own performance number.  
+Averaging those numbers reduces the chance that an unlucky random split will mislead us.  
+Randomness in a single split can make a model look better or worse than it truly is.  
+Understanding this repetition prepares us to see why cross‑validation is useful for small data sets.  
+
+\subsection{Motivation}
+Cross‑validation is like a rotating tasting panel at a restaurant: each night a different group of diners samples the menu, and over the week every dish gets evaluated by every panel, giving a balanced view of quality.  
+When a data set is tiny, a single train‑test split may either exaggerate performance or waste valuable training material.  
+By systematically rotating which samples are held out, we obtain a more reliable estimate of how the model will behave on unseen cases.  
+
+\subsection{Intuition}
+Imagine you have a handful of cards and you want to know how well a magic trick works.  
+Instead of showing the trick with just one random half of the cards, you repeatedly pick a different half, perform the trick, and record the success each time.  
+Because every card gets a chance to be in the “test’’ pile, the overall success rate reflects the true power of the trick rather than the luck of one particular split.  
+Cross‑validation applies this idea to machine‑learning models, giving each observation a turn to be evaluated while still using most data for learning.  
+
+\subsection{Formal Definition}
+Let \(K\) denote the number of folds we decide to create.  
+For each fold indexed by \(k\in\{1,\dots,K\}\) we separate the data into a training portion \(\mathcal{D}^{(k)}_{\text{train}}\) and a validation portion \(\mathcal{D}^{(k)}_{\text{val}}\).  
+A model trained on \(\mathcal{D}^{(k)}_{\text{train}}\) produces predictions \(\hat{y}^{(k)}\) for the samples in \(\mathcal{D}^{(k)}_{\text{val}}\).  
+The performance (e.g., accuracy) measured on \(\mathcal{D}^{(k)}_{\text{val}}\) is recorded for that fold, and the overall estimate is the average of the \(K\) recorded performances, i.e. \(\frac{1}{K}\sum_{k=1}^{K}\text{performance}^{(k)}\).  
+In plain K‑fold cross‑validation the folds are formed arbitrarily; in stratified K‑fold each \(\mathcal{D}^{(k)}_{\text{val}}\) preserves the same class proportion as the whole data set, which is especially important when some classes are rare.  
+Leave‑One‑Out (LOO) CV is the extreme case \(K=N\) where \(N\) is the total number of samples, so each fold holds out a single observation; this gives the most exhaustive use of data but requires training the model \(N\) times, which can be computationally heavy.  
+Leave‑P‑Out (LPO) CV holds out every possible combination of \(p\) samples, leading to \(\binom{N}{p}\) trainings and quickly becoming infeasible for any modest \(N\).  
+
+\subsection{Worked Example}
+\textbf{Problem statement:}  
+A synthetic binary data set contains 10 samples, 5 belonging to class A and 5 to class B.  
+We will perform a 5‑fold stratified cross‑validation, compute the accuracy for each fold, obtain the average accuracy, and finally illustrate how the five trained models could vote on a new sample.  
+
+\textbf{Step 1 – Create the folds (stratified).}  
+Because the data are balanced, each fold must contain exactly one A and one B sample.  
+The folds are:  
+
+\[
+\begin{array}{c|c|c}
+\text{Fold }k & \mathcal{D}^{(k)}_{\text{val}} & \mathcal{D}^{(k)}_{\text{train}} \\
+\hline
+1 & \{A_1,\,B_1\} & \{A_2,A_3,A_4,A_5,\,B_2,B_3,B_4,B_5\}\\
+2 & \{A_2,\,B_2\} & \{A_1,A_3,A_4,A_5,\,B_1,B_3,B_4,B_5\}\\
+3 & \{A_3,\,B_3\} & \{A_1,A_2,A_4,A_5,\,B_1,B_2,B_4,B_5\}\\
+4 & \{A_4,\,B_4\} & \{A_1,A_2,A_3,A_5,\,B_1,B_2,B_3,B_5\}\\
+5 & \{A_5,\,B_5\} & \{A_1,A_2,A_3,A_4,\,B_1,B_2,B_3,B_4\}
+\end{array}
+\]
+
+\textbf{Step 2 – Train and evaluate each fold.}  
+Assume a simple classifier that perfectly separates the two classes when both are present in the training set.  
+Because each training set contains all remaining A and B samples, the model predicts the two validation samples correctly.  
+
+Thus, for every fold \(k\) the number of correct predictions is 2 out of 2, giving an accuracy of  
+
+\[
+\text{accuracy}^{(k)} = \frac{2}{2}=1.0 \quad\text{for }k=1,\dots,5.
+\]
+
+\textbf{Step 3 – Compute the average accuracy.}  
+
+\[
+\text{average accuracy}= \frac{1}{K}\sum_{k=1}^{K}\text{accuracy}^{(k)}
+= \frac{1}{5}\,(1.0+1.0+1.0+1.0+1.0)=1.0.
+\]
+
+\textbf{Step 4 – Ensemble voting for a new sample.}  
+Each of the five models (trained on the five different training folds) predicts a label for a new, unseen sample.  
+Suppose their predictions are:  
+
+\[
+\hat{y}^{(1)}=\text{A},\;
+\hat{y}^{(2)}=\text{A},\;
+\hat{y}^{(3)}=\text{B},\;
+\hat{y}^{(4)}=\text{A},\;
+\hat{y}^{(5)}=\text{B}.
+\]
+
+A majority‑vote ensemble selects the label occurring most often, which is class A (three votes).  
+
+\textbf{What this shows us:}  
+Stratified 5‑fold CV uses all data efficiently, yields an unbiased estimate (here perfect accuracy because the problem is easy), and the five models can be combined by majority voting to make a robust prediction on new data.  
+
+\subsection{Key Takeaway}
+Cross‑validation repeatedly partitions the data so every observation is tested once, providing a more trustworthy performance estimate—especially when data are scarce or class distributions are uneven.
+
+\subsection*{Questions}
+\begin{enumerate}
+\item \textbf{Recall:} Define what a “fold’’ is in the context of K‑fold cross‑validation.  (Answer in one sentence, using the terminology from the theory section). \newpage
+\item \textbf{Understand:} Explain in your own words why stratified K‑fold cross‑validation is preferable when the data set is imbalanced.  Illustrate your explanation with reference to class proportions. \newpage
+\item \textbf{Understand:} Suppose you accidentally create ordinary (non‑stratified) 4‑fold splits on a data set where class 0 represents 10 % of the samples and class 1 represents 90 %.  What potential problem could arise when you evaluate model performance on each fold? \newpage
+\item \textbf{Apply:} A data set contains 12 samples with a class ratio of 3 : 1 (i.e., 9 samples of class 0 and 3 samples of class 1).  Design a 3‑fold stratified split.  For each fold list how many class‑0 and class‑1 samples appear in the validation (test) part of the fold. \newpage
+\item \textbf{Apply (Numerical):} Using the 5‑fold stratified cross‑validation described in the worked example (10 samples, 5 of each class) assume a classifier obtains the following accuracies on the five folds: 1.0, 0.9, 1.0, 0.8, 1.0.  Compute the overall average accuracy that would be reported for the whole cross‑validation procedure. \newpage
+\item \textbf{Analyse:} Compare the computational cost of performing a 5‑fold cross‑validation versus a Leave‑One‑Out cross‑validation on a data set containing 100 samples.  Discuss how the number of model trainings differs between the two approaches and what this implies for runtime. \newpage
+\item \textbf{Evaluate:} Critique the following statement: “Using more folds always yields a more reliable estimate of model performance.”  In your answer, consider both the potential benefits and the possible drawbacks, referring to concepts such as bias, variance, and computational expense. \newpage
+\end{enumerate}
+
+\newpage
+% ============================================================
+% SECTION  4. Limitations of Cross-Validation
+% ============================================================
+
+% !!!  REVIEW FLAG: 4. Limitations of Cross-Validation  !!!
+% [undefined_term] Define 'Fold Selection Bias' in the theory section, explaining how improper fold construction can lead to misleading metrics.
+% !!! END REVIEW FLAGS !!!
+\section{Limitations of Cross-Validation}
+
+Training a model many times means repeating the whole learning process, which multiplies the amount of computation needed. Each additional training run consumes more processor cycles and memory, lengthening the overall runtime. When the data used for evaluation contain systematic errors or a skewed representation of the real‑world population, the performance numbers we obtain can be misleading. These two ideas — repeated training increasing cost, and biased data distorting evaluation — set the stage for understanding the limits of cross‑validation.
+
+Testing a car’s performance by repeatedly driving it on a narrow, winding track is useful, but if the track is too short or the same obstacle appears every lap, the test will never reveal how the car behaves on a highway. Cross‑validation was created to obtain a more reliable estimate of how a model will perform on unseen data, but the procedure itself can introduce new problems. Recognizing those problems helps us decide when cross‑validation is appropriate and when alternative strategies are needed.
+
+Think of cross‑validation as repeatedly sampling different portions of a dataset to train and test a model. If the sampling process is costly, if the data contain a lot of random noise, or if the sampled portions do not represent the true population, the repeated tests will give a picture that looks better than reality. In other words, the method can be expensive, can still over‑fit to quirks in the data, and can produce overly optimistic scores when the underlying data are biased or when the folds are poorly constructed.
+
+Cross‑validation suffers from four major limitations:
+
+\begin{enumerate}
+  \item \textbf{Computationally Expensive.} The procedure requires training the model $K$ times for $K$‑fold cross‑validation (or $N$ times for leave‑one‑out cross‑validation, where $N$ is the number of samples). Each training run repeats the full learning algorithm, so the total runtime grows roughly in proportion to the number of folds.
+  \item \textbf{Overfitting to Noise.} When the dataset contains a high level of random variation or outliers, the repeated fitting can capture those idiosyncrasies rather than the underlying pattern, leading to a model that appears accurate on the cross‑validation splits but performs poorly on truly new data.
+  \item \textbf{Optimistic Bias.} If the data used for cross‑validation do not faithfully represent the real‑world population—because of sampling bias, measurement bias, or other systematic distortions—the performance estimates will be systematically higher than what would be observed in practice.
+  \item \textbf{Fold Selection Bias.} When the data are divided into folds without respecting important structure (for example, not using stratified sampling on an imbalanced binary outcome, or not grouping by patient in a medical study), some folds may contain unrepresentative class proportions or leakage of subject‑level information, causing the reported metrics to be misleading.
+\end{enumerate}
+
+These points address common misconceptions: cross‑validation does not magically remove all sources of bias, increasing the number of folds does not reduce computational effort, and random assignment of samples to folds does not guarantee the absence of leakage or bias.
+
+Cross‑validation provides useful performance estimates, but it can be costly, still over‑fit to noisy or biased data, and produce overly optimistic results when folds are not constructed carefully.
+
+\subsection*{Questions}
+\textbf{Recall:}  
+List and briefly describe the four limitations of cross‑validation that are discussed in this section.
+
+\newpage
+\textbf{Understand:}  
+In your own words, explain why using a dataset that does not represent the real‑world population can cause cross‑validation to produce overly optimistic performance estimates.
+
+\newpage
+\textbf{Understand:}  
+Describe how repeated training of a model during cross‑validation contributes to computational expense, and why this expense does not diminish when the number of folds is increased.
+
+\newpage
+\textbf{Apply:}  
+A 5‑fold cross‑validation on a dataset containing 1,000 samples takes 30 minutes to complete. Assuming that the runtime scales linearly with the number of folds, estimate how long a 10‑fold cross‑validation on the same dataset would take.
+
+\newpage
+\textbf{Apply:}  
+For the same 1,000‑sample dataset, leave‑one‑out cross‑validation (LOO) requires training the model once for each sample.  
+If a single training run takes 0.5 minutes, calculate the total runtime required for LOO CV and compare it with the 30‑minute runtime of the 5‑fold CV.
+
+\newpage
+\textbf{Analyse:}  
+Consider an imbalanced binary classification problem where the minority class makes up only 10 % of the data. Discuss how creating folds without stratification (i.e., using random assignment) can bias the estimated performance metrics obtained from cross‑validation.
+
+\newpage
+\textbf{Evaluate:}  
+Judge the following statement:  
+
+\emph{“If I have enough computing power, I can ignore all limitations of cross‑validation.”}  
+
+Provide a reasoned argument supporting or refuting the statement, referring to the limitations covered in this section.
+
+\newpage
+\textbf{Analyse:}  
+Provide an example scenario where a highly noisy training set leads cross‑validation to over‑fit to random noise, thereby suggesting a deceptively high accuracy. Explain how techniques such as regularization, robust loss functions, or noise‑aware cross‑validation strategies can mitigate this issue.
+
+\newpage
+% ============================================================
+% SECTION  5. Handling Class Imbalance
+% ============================================================
+
+\subsection*{Notation Used in This Section}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning \\ \midrule
+    $N_{\text{maj}}$ & Number of majority‑class samples \\
+    $N_{\text{min}}$ & Number of minority‑class samples \\
+    $w_{\text{min}}$ & Weight or cost assigned to minority‑class errors in cost‑sensitive learning \\
+\bottomrule
+\end{tabular}
+\vspace{1em}
+
+\section{Handling Class Imbalance}
+
+Class imbalance arises when the classes in a classification problem occur with drastically different frequencies.  
+Most learning algorithms are designed for roughly balanced data; when one class overwhelms the other, the model may become biased towards the majority, leading to poor detection of rare but important events such as a disease or fraud.  
+To mitigate this, several rebalancing strategies can be applied either to the data itself or to the learning objective.
+
+\subsection{Theory Overview}
+
+\subsubsection{Balancing Techniques}
+\begin{itemize}
+    \item \textbf{Oversampling}.  Duplicate minority samples until their count approaches that of the majority.  
+    \item \textbf{Undersampling}.  Randomly discard majority samples until the two classes are roughly equal.  
+    \item \textbf{Data Augmentation}.  Apply small label‑preserving transformations (e.g. rotations of images) to minority samples to create new, slightly different examples.  
+    \item \textbf{SMOTE}\;(Synthetic Minority Over–sampling Technique).  For each minority instance, interpolate with its nearest minority neighbors to generate synthetic points that are plausible but not exact copies.  
+    \item \textbf{Cost‑Sensitive Learning}.  Modify the loss function by assigning a higher penalty to misclassifying minority instances. Denote this penalty by \(w_{\text{min}}\).  
+\end{itemize}
+
+When using cross‑validation, rebalancing must be done only on the training folds; validation and test folds should stay in their natural, imbalanced state to provide an honest performance estimate.
+
+\subsection{Worked Example Recap}
+A binary dataset contains 200 samples: 180 majority class (0) and 20 minority class (1).  
+After holding out 40 samples (30 majority, 10 minority) for testing, the remaining 160 samples form the training pool.  
+Three pipelines are compared:
+\begin{enumerate}
+    \item Raw data (144 majority, 16 minority).
+    \item Oversample to 144 minority copies (288 total).
+    \item SMOTE to 160 synthetic minorities (304 total).
+\end{enumerate}
+All pipelines achieve 80\% accuracy, but the balanced approaches substantially improve recall and F1 for the minority class, illustrating the benefit of rebalancing.
+
+\subsection{Key Takeaway}
+Balancing is essential for training but should never be applied to evaluation data. The goal is to build a classifier that respects the real, often imbalanced distribution of the target variable.
+
+\subsection{Questions}
+\subsubsection{Recall}
+\textbf{Recall 1.} What are the two basic strategies for rebalancing an imbalanced dataset?  
+
+\textbf{Recall 2.} Name the technique that creates new, plausible minority–class examples by interpolating between existing minority samples, instead of simply duplicating them.  
+
+\newpage
+\subsubsection{Understand}
+\textbf{Understand 1.} Explain in your own words why balancing techniques (e.g., oversampling, undersampling, SMOTE) must be applied only to the training folds when performing K‑Fold cross‑validation.  
+
+\textbf{Understand 2.} Suppose you also applied an oversampling step to the validation folds.  What potential problem could this introduce when you later evaluate model performance on a truly imbalanced test set?  
+
+\newpage
+\subsubsection{Apply}
+\textbf{Apply 1.} You have a training set containing 1,000 majority‑class samples and 200 minority‑class samples.  Using simple oversampling (i.e., duplicating minority instances), how many additional minority samples must you generate so that the training set becomes perfectly balanced (1 : 1 ratio)?  
+
+\textbf{Apply 2.} In the worked example, the training pool after the hold‑out step contains 16 minority samples.  If you apply SMOTE and create 5 synthetic samples for each original minority instance, how many minority samples will the training set contain after this step?  
+
+\textbf{Apply 3.} For a cost‑sensitive classifier you decide to set the minority‑class penalty \(w_{\text{min}} = 3\) while keeping the majority‑class penalty equal to 1.  Briefly describe how this weighting will affect the loss function during training.  
+
+\newpage
+\subsubsection{Analyse}
+\textbf{Analyse 1.} Compare the potential impact on model bias of (a) oversampling the minority class and (b) using a cost‑sensitive learning approach.  Discuss how each method influences the classifier’s tendency to favour the majority class.  
+
+\textbf{Analyse 2.} Considering the pipelines (a) raw data, (b) oversampling, and (c) SMOTE from the worked example, explain why the overall accuracy remained the same across all three pipelines while recall and F1‑score for the minority class improved.  
+
+\newpage
+\subsubsection{Evaluate}
+\textbf{Evaluate 1.} Critically assess the claim:  
+
+\emph{“Undersampling is always preferable because it reduces training time without affecting model performance.”}  
+
+In your answer, consider (i) the effect of discarding majority‑class information, (ii) potential changes in model bias and variance, and (iii) situations where undersampling might actually hurt performance.  
+
+\newpage
+
+\end{document}
