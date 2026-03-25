@@ -120,6 +120,7 @@ def compile_section(
             cleaned_q = strip_markdown_artifacts(q)
 
             # Extract (LEVEL) tag if present and place as LaTeX comment
+            level = None
             level_match = re.match(r'^\((\w+)\)\s*', cleaned_q)
             if level_match:
                 level = level_match.group(1).upper()
@@ -127,7 +128,10 @@ def compile_section(
                 parts.append(f"% --- {level} ---")
 
             parts.append("\\begin{question}")
-            parts.append(f"({level}) {cleaned_q}")
+            if level:
+                parts.append(f"({level}) {cleaned_q}")
+            else:
+                parts.append(cleaned_q)
             parts.append("\\end{question}")
             parts.append("")
 
@@ -301,5 +305,3 @@ def generate_context_summary(
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
-
-

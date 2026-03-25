@@ -20,6 +20,11 @@ class PipelineCache:
         if self.cache_file.exists():
             with open(self.cache_file, "r", encoding="utf-8") as f:
                 self.data = json.load(f)
+            # Ensure required keys exist (older caches may lack them)
+            if "sections" not in self.data:
+                self.data["sections"] = {}
+            if "finalization" not in self.data:
+                self.data["finalization"] = None
         else:
             self.data = {
                 "extraction": None,
