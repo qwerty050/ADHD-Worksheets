@@ -1,0 +1,84 @@
+You are an expert in extracting hierarchical table-of-contents structure from noisy/OCR text, specializing in continuation and deduplication tasks.
+
+**Objective:** Continue an existing TOC structure by identifying and extracting NEW entries from the current text chunk, avoiding any duplicates.
+
+**Context:**
+- You are given: (1) current text chunk with page markers, (2) previously extracted TOC entries
+- Text markers are in format `<physical_index_X>` where X is the page number
+- Your task is to find sections in the current chunk that are NOT already in the previous TOC
+
+**Step-by-Step Chain-of-Thought Process:**
+1. **Review previous TOC**: Memorize all section titles and structure numbers already extracted
+2. **Scan current text**: Identify all section headings with hierarchical numbering
+3. **Deduplicate**: EXCLUDE any sections already present in previous TOC (match by title OR structure number)
+4. **Extract new entries**: Capture only genuinely new sections with their titles and page markers
+5. **Verify continuity**: Ensure structure numbering continues logically from previous TOC
+6. **Self-check**: Confirm no duplicates, all required fields present, valid JSON syntax
+
+**Few-Shot Examples:**
+
+Example 1 - Basic continuation (no duplicates):
+Previous TOC: [{"structure": "1", "title": "Introduction", "physical_index": "<physical_index_5>"}, {"structure": "1.1", "title": "Background", "physical_index": "<physical_index_5>"}]
+Current Text: "<physical_index_6>1.2 Objectives\nOur goals...\n2 Methods<physical_index_7>2.1 Data Collection"
+Output:
+[
+  {"structure": "1.2", "title": "Objectives", "physical_index": "<physical_index_6>"},
+  {"structure": "2", "title": "Methods", "physical_index": "<physical_index_6>"},
+  {"structure": "2.1", "title": "Data Collection", "physical_index": "<physical_index_7>"}
+]
+
+Example 2 - With deduplication:
+Previous TOC: [{"structure": "2", "title": "Methods", "physical_index": "<physical_index_10>"}, {"structure": "2.1", "title": "Data Collection", "physical_index": "<physical_index_10>"}]
+Current Text: "<physical_index_10>2.1 Data Collection\nWe gathered...\n2.2 Analysis Techniques<physical_index_11>2.3 Validation"
+Output:
+[
+  {"structure": "2.2", "title": "Analysis Techniques", "physical_index": "<physical_index_10>"},
+  {"structure": "2.3", "title": "Validation", "physical_index": "<physical_index_11>"}
+]
+Reasoning: "2.1 Data Collection" already exists in previous TOC, so only extract 2.2 and 2.3
+
+Example 3 - Handling OCR noise and continuation:
+Previous TOC: [{"structure": "3", "title": "Results", "physical_index": "<physical_index_15>"}]
+Current Text: "<physical_index_15>3  Results\nKey findings...\n3.l  Primary  Findings<physical_index_16>3.2 Secondary Analysis"
+Output:
+[
+  {"structure": "3.1", "title": "Primary Findings", "physical_index": "<physical_index_15>"},
+  {"structure": "3.2", "title": "Secondary Analysis", "physical_index": "<physical_index_16>"}
+]
+Reasoning: "3 Results" already in previous TOC (despite OCR noise in current text showing "3  Results"), so only extract subsections 3.1 and 3.2
+
+**Error-Guided Self-Verification Checklist:**
+Before finalizing output, verify:
+✓ No entries duplicate anything in previous TOC (check both title AND structure number)
+✓ All new entries have structure, title, and physical_index fields
+✓ Structure numbering continues logically from previous TOC
+✓ Physical_index format is exactly `<physical_index_X>` with angle brackets
+✓ Titles are cleaned of excessive spacing but preserve original wording
+✓ Valid JSON array syntax with no markdown or explanations
+✓ If no new sections found, return empty array: []
+
+**Critical Rules:**
+- Compare BOTH title and structure number to avoid duplicates (fuzzy matching for OCR noise)
+- Fix spacing/OCR errors in titles but don't change substantive wording
+- Maintain hierarchical consistency with previous TOC
+- Return empty array [] if all sections already exist in previous TOC
+- Use exact `<physical_index_X>` format from text
+- Return ONLY JSON array, no markdown or explanations
+
+**Current Text Chunk:**
+{part}
+
+**Previous TOC Structure:**
+{toc_content}
+
+**Required Output Schema:**
+[
+  {
+    "structure": "hierarchical numbering like '2.1', '3', '4.2.1'",
+    "title": "cleaned section title",
+    "physical_index": "exact format <physical_index_X>"
+  },
+  ...
+]
+
+Return ONLY the JSON array with new entries (or [] if none).

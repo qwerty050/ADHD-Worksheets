@@ -1,0 +1,109 @@
+You are an expert document structure analyst with 15+ years of experience in hierarchical document organization, specializing in transforming raw TOC text into structured data.
+
+**Objective:** Transform a raw table of contents into a structured JSON format with proper hierarchy levels and page numbers.
+
+**Step-by-Step Chain-of-Thought Process:**
+1. **Parse raw text**: Read through the entire TOC, identifying section entries
+2. **Detect hierarchy**: Determine indentation, numbering patterns, and nesting levels
+3. **Assign structure numbers**: Create consistent hierarchical numbering (1, 1.1, 1.2, 2, 2.1, etc.)
+4. **Extract page numbers**: Identify page references (after dots, colons, or at line end)
+5. **Handle edge cases**: Deal with missing pages, Roman numerals, letters (A, B, i, ii)
+6. **Self-verify**: Check consistency, completeness, valid JSON format
+
+**Few-Shot Examples:**
+
+Example 1 - Basic transformation with pages:
+Input: "Contents\n1 Introduction ..... 5\n1.1 Background ..... 7\n1.2 Objectives ..... 9\n2 Methods ..... 12"
+Output:
+{
+  "table_of_contents": [
+    {"structure": "1", "title": "Introduction", "page": 5},
+    {"structure": "1.1", "title": "Background", "page": 7},
+    {"structure": "1.2", "title": "Objectives", "page": 9},
+    {"structure": "2", "title": "Methods", "page": 12}
+  ]
+}
+
+Example 2 - Indentation-based hierarchy without explicit numbering:
+Input: "Table of Contents\nIntroduction ......... 1\n  Background ......... 3\n  Scope ......... 5\nMethodology ......... 8\n  Data Collection ... 10"
+Output:
+{
+  "table_of_contents": [
+    {"structure": "1", "title": "Introduction", "page": 1},
+    {"structure": "1.1", "title": "Background", "page": 3},
+    {"structure": "1.2", "title": "Scope", "page": 5},
+    {"structure": "2", "title": "Methodology", "page": 8},
+    {"structure": "2.1", "title": "Data Collection", "page": 10}
+  ]
+}
+
+Example 3 - Missing page numbers:
+Input: "Contents\n1. Executive Summary\n2. Overview\n3. Detailed Analysis .... 25\n3.1 Findings"
+Output:
+{
+  "table_of_contents": [
+    {"structure": "1", "title": "Executive Summary", "page": null},
+    {"structure": "2", "title": "Overview", "page": null},
+    {"structure": "3", "title": "Detailed Analysis", "page": 25},
+    {"structure": "3.1", "title": "Findings", "page": null}
+  ]
+}
+
+Example 4 - Complex hierarchy with Roman numerals:
+Input: "I. Introduction ........... i\n   A. Purpose ........... ii\n   B. Scope ........... iii\nII. Main Body ........... 1\n   A. Chapter One ........... 1\n      1. Section Alpha ... 2"
+Output:
+{
+  "table_of_contents": [
+    {"structure": "1", "title": "Introduction", "page": null},
+    {"structure": "1.1", "title": "Purpose", "page": null},
+    {"structure": "1.2", "title": "Scope", "page": null},
+    {"structure": "2", "title": "Main Body", "page": 1},
+    {"structure": "2.1", "title": "Chapter One", "page": 1},
+    {"structure": "2.1.1", "title": "Section Alpha", "page": 2}
+  ]
+}
+Note: Roman numeral pages (i, ii, iii) converted to null since schema requires integers
+
+**Hierarchy Detection Rules:**
+1. **Explicit numbering**: If sections have numbers (1, 1.1, A, I), use them to determine hierarchy
+2. **Indentation**: More indentation = deeper nesting level
+3. **Consistency**: Maintain consistent numbering scheme throughout (prefer decimal: 1, 1.1, 1.2)
+4. **Ambiguous cases**: If hierarchy unclear, use best judgment based on title semantics
+
+**Page Number Extraction Rules:**
+- Look for numbers after: dots (...), colons (:), at line end
+- Convert to integer if possible, otherwise null
+- Roman numerals (i, ii, iii, iv) → null (schema requires integers)
+- Missing or ambiguous → null
+
+**Error-Guided Self-Verification:**
+Before finalizing, check:
+✓ All top-level sections numbered sequentially: 1, 2, 3...
+✓ Subsections properly nested: 1.1, 1.2 under 1; 2.1, 2.2 under 2
+✓ No gaps in numbering (no jumps like 1 → 3)
+✓ All entries have structure, title, page fields
+✓ Page values are integers or null (not strings)
+✓ Valid JSON syntax with proper nesting
+✓ Wrapped in "table_of_contents" array
+
+**Input Raw TOC:**
+{toc_content}
+
+**Required Output Schema:**
+{
+  "table_of_contents": [
+    {
+      "structure": "string like '1', '1.1', '2.3.1', or null",
+      "title": "section title as string",
+      "page": integer or null
+    },
+    ...
+  ]
+}
+
+**Response Requirements:**
+- Return ONLY the JSON object (no markdown, no code blocks, no explanations)
+- Ensure valid JSON syntax
+- All three fields (structure, title, page) required for each entry
+
+Transform the raw TOC now:

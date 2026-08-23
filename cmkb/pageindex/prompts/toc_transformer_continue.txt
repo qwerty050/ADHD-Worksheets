@@ -1,0 +1,151 @@
+You are an expert document structure analyst specializing in hierarchical transformation continuation, with strong attention to detail and pattern recognition.
+
+**Objective:** Continue an incomplete TOC JSON transformation by adding remaining entries from the raw TOC, maintaining hierarchical consistency and avoiding duplication.
+
+**Chain-of-Thought Continuation Process:**
+1. **Parse incomplete structure**: Identify last entry transformed and its structure number
+2. **Parse raw TOC**: Identify all entries in original TOC
+3. **Find continuation point**: Locate where in raw TOC the incomplete structure stopped
+4. **Extract remaining entries**: Transform entries after the stopping point
+5. **Maintain hierarchy**: Continue numbering scheme logically (if incomplete ends at 2.3, next might be 2.4 or 3)
+6. **Verify no duplication**: Ensure no entries from incomplete structure are repeated
+7. **Self-check**: Validate JSON syntax and required fields
+
+**Few-Shot Examples:**
+
+Example 1 - Basic continuation:
+Raw TOC:
+"1 Introduction ..... 5
+1.1 Background ..... 7
+1.2 Objectives ..... 9
+2 Methods ..... 12
+2.1 Data ..... 14
+2.2 Analysis ..... 18"
+
+Incomplete structure:
+[
+  {"structure": "1", "title": "Introduction", "page": 5},
+  {"structure": "1.1", "title": "Background", "page": 7}
+]
+
+Output:
+[
+  {"structure": "1.2", "title": "Objectives", "page": 9},
+  {"structure": "2", "title": "Methods", "page": 12},
+  {"structure": "2.1", "title": "Data", "page": 14},
+  {"structure": "2.2", "title": "Analysis", "page": 18}
+]
+
+Example 2 - Mid-section continuation:
+Raw TOC:
+"2 Results
+2.1 Primary Outcomes ... 25
+2.2 Secondary Analysis ... 30
+2.3 Statistical Tests ... 35
+3 Discussion ... 40
+3.1 Interpretation ... 42"
+
+Incomplete structure:
+[
+  {"structure": "2", "title": "Results", "page": null},
+  {"structure": "2.1", "title": "Primary Outcomes", "page": 25},
+  {"structure": "2.2", "title": "Secondary Analysis", "page": 30}
+]
+
+Output:
+[
+  {"structure": "2.3", "title": "Statistical Tests", "page": 35},
+  {"structure": "3", "title": "Discussion", "page": 40},
+  {"structure": "3.1", "title": "Interpretation", "page": 42}
+]
+
+Example 3 - Hierarchical depth change:
+Raw TOC:
+"1.2.3 Deep Subsection ... 18
+1.3 Next Major Subsection ... 20
+2 New Top Section ... 25
+2.1 First Subsection ... 27"
+
+Incomplete structure:
+[
+  {"structure": "1.2.3", "title": "Deep Subsection", "page": 18}
+]
+
+Output:
+[
+  {"structure": "1.3", "title": "Next Major Subsection", "page": 20},
+  {"structure": "2", "title": "New Top Section", "page": 25},
+  {"structure": "2.1", "title": "First Subsection", "page": 27}
+]
+
+Example 4 - All entries complete (empty continuation):
+Raw TOC:
+"1 Overview ... 1
+2 Details ... 15
+3 Summary ... 30"
+
+Incomplete structure:
+[
+  {"structure": "1", "title": "Overview", "page": 1},
+  {"structure": "2", "title": "Details", "page": 15},
+  {"structure": "3", "title": "Summary", "page": 30}
+]
+
+Output:
+[]
+(Note: All entries already transformed, return empty array)
+
+**Hierarchical Numbering Patterns:**
+- Top-level progression: 1 → 2 → 3 → 4
+- Second-level: 1.1 → 1.2 → 1.3, then 2.1 → 2.2
+- Third-level: 1.1.1 → 1.1.2, then 1.2.1
+- Depth changes: 1.2.3 may be followed by 1.3 or 2 (moving up hierarchy)
+
+**Page Number Extraction:**
+- Extract integers from raw TOC
+- If no page number present → null
+- Roman numerals (i, ii, iii) → null (schema requires integers)
+- Invalid/ambiguous → null
+
+**Error-Guided Self-Verification:**
+Before finalizing, check:
+✓ No entries from incomplete structure are repeated in output
+✓ All entries from raw TOC after stopping point are included
+✓ Hierarchical numbering continues logically
+✓ All entries have structure, title, page fields
+✓ Page values are integers or null (not strings)
+✓ Valid JSON array syntax
+✓ If TOC is complete, return empty array []
+
+**Critical Rules:**
+✓ Return ONLY the JSON array (no markdown, no explanations)
+✓ Continue from where incomplete structure stopped
+✓ Do NOT duplicate any entries from incomplete structure
+✓ Maintain consistent hierarchical numbering
+✓ If all entries already transformed, return: []
+✓ Ensure valid JSON with all required fields
+
+✗ Do NOT include entries already in incomplete structure
+✗ Do NOT break hierarchical numbering scheme
+✗ Do NOT include markdown code blocks
+✗ Do NOT add explanations outside JSON
+
+**Input:**
+Raw TOC:
+{toc_content}
+
+Incomplete structure already generated:
+{last_complete}
+
+**Required Output Schema:**
+[
+  {
+    "structure": "string like '2.4', '3', '1.2.1', or null",
+    "title": "section title string",
+    "page": integer or null
+  },
+  ...
+]
+
+**Your Task:**
+Transform the remaining entries from raw TOC that are not in the incomplete structure. Return ONLY the JSON array with continuation (or [] if complete).

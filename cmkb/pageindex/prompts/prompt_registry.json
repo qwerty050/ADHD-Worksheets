@@ -1,0 +1,243 @@
+{
+  "version": "1.0",
+  "prompts": {
+    "toc.detect_single_page": {
+      "file": "toc_detect_single_page.txt",
+      "objective": "Detect whether page text contains a true Table of Contents",
+      "response_schema": {
+        "type": "object",
+        "required": ["thinking", "toc_detected"],
+        "properties": {
+          "thinking": { "type": "string" },
+          "toc_detected": { "type": "string", "enum": ["yes", "no"] }
+        }
+      },
+      "variables": ["text"]
+    },
+    "toc.generate_init": {
+      "file": "toc_generate_init.txt",
+      "objective": "Generate initial TOC entries from a text chunk",
+      "response_schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["structure", "title", "physical_index"],
+          "properties": {
+            "structure": { "type": "string" },
+            "title": { "type": "string" },
+            "physical_index": { "type": "string" }
+          }
+        }
+      },
+      "variables": ["part"]
+    },
+    "toc.generate_continue": {
+      "file": "toc_generate_continue.txt",
+      "objective": "Generate additional TOC entries from subsequent text chunk",
+      "response_schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["structure", "title", "physical_index"],
+          "properties": {
+            "structure": { "type": "string" },
+            "title": { "type": "string" },
+            "physical_index": { "type": "string" }
+          }
+        }
+      },
+      "variables": ["part", "toc_content"]
+    },
+    "toc.check_title_appearance": {
+      "file": "toc_check_title_appearance.txt",
+      "objective": "Check whether section title appears on target page",
+      "response_schema": {
+        "type": "object",
+        "required": ["thinking", "answer"],
+        "properties": {
+          "thinking": { "type": "string" },
+          "answer": { "type": "string", "enum": ["yes", "no"] }
+        }
+      },
+      "variables": ["title", "page_text"]
+    },
+    "toc.check_title_start": {
+      "file": "toc_check_title_start.txt",
+      "objective": "Check whether section starts at beginning of page",
+      "response_schema": {
+        "type": "object",
+        "required": ["thinking", "start_begin"],
+        "properties": {
+          "thinking": { "type": "string" },
+          "start_begin": { "type": "string", "enum": ["yes", "no"] }
+        }
+      },
+      "variables": ["title", "page_text"]
+    },
+    "toc.check_extraction_complete": {
+      "file": "toc_check_extraction_complete.txt",
+      "objective": "Check whether extracted TOC fully covers document chunk",
+      "response_schema": {
+        "type": "object",
+        "required": ["thinking", "completed"],
+        "properties": {
+          "thinking": { "type": "string" },
+          "completed": { "type": "string", "enum": ["yes", "no"] }
+        }
+      },
+      "variables": ["content", "toc"]
+    },
+    "toc.check_transformation_complete": {
+      "file": "toc_check_transformation_complete.txt",
+      "objective": "Check whether transformed TOC is complete vs raw TOC",
+      "response_schema": {
+        "type": "object",
+        "required": ["thinking", "completed"],
+        "properties": {
+          "thinking": { "type": "string" },
+          "completed": { "type": "string", "enum": ["yes", "no"] }
+        }
+      },
+      "variables": ["content", "toc"]
+    },
+    "toc.extract_content_init": {
+      "file": "toc_extract_content_init.txt",
+      "objective": "Extract full TOC content from text block",
+      "response_schema": {
+        "type": "string"
+      },
+      "variables": ["content"]
+    },
+    "toc.extract_content_continue": {
+      "file": "toc_extract_content_continue.txt",
+      "objective": "Continue TOC extraction from previous response",
+      "response_schema": {
+        "type": "string"
+      },
+      "variables": []
+    },
+    "toc.detect_page_index": {
+      "file": "toc_detect_page_index.txt",
+      "objective": "Detect whether TOC includes page indices",
+      "response_schema": {
+        "type": "object",
+        "required": ["thinking", "page_index_given_in_toc"],
+        "properties": {
+          "thinking": { "type": "string" },
+          "page_index_given_in_toc": { "type": "string", "enum": ["yes", "no"] }
+        }
+      },
+      "variables": ["toc_content"]
+    },
+    "toc.transformer_init": {
+      "file": "toc_transformer_init.txt",
+      "objective": "Transform raw TOC into structured JSON with hierarchy levels and page numbers",
+      "response_schema": {
+        "type": "object",
+        "required": ["table_of_contents"],
+        "properties": {
+          "table_of_contents": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["structure", "title", "page"],
+              "properties": {
+                "structure": { "type": ["string", "null"] },
+                "title": { "type": "string" },
+                "page": { "type": ["integer", "null"] }
+              }
+            }
+          }
+        }
+      },
+      "variables": ["toc_content"]
+    },
+    "toc.transformer_continue": {
+      "file": "toc_transformer_continue.txt",
+      "objective": "Continue extending incomplete TOC JSON structure with remaining entries",
+      "response_schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["structure", "title", "page"],
+          "properties": {
+            "structure": { "type": ["string", "null"] },
+            "title": { "type": "string" },
+            "page": { "type": ["integer", "null"] }
+          }
+        }
+      },
+      "variables": ["toc_content", "last_complete"]
+    },
+    "toc.index_extractor": {
+      "file": "toc_index_extractor.txt",
+      "objective": "Add physical page indices to TOC entries by matching titles to document pages",
+      "response_schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["structure", "title"],
+          "properties": {
+            "structure": { "type": ["string", "null"] },
+            "title": { "type": "string" },
+            "physical_index": { "type": "string" }
+          }
+        }
+      },
+      "variables": ["toc", "content"]
+    },
+    "toc.item_index_fixer": {
+      "file": "toc_item_index_fixer.txt",
+      "objective": "Identify physical page index where a specific section begins in document",
+      "response_schema": {
+        "type": "object",
+        "required": ["thinking", "physical_index"],
+        "properties": {
+          "thinking": { "type": "string" },
+          "physical_index": { "type": "string" }
+        }
+      },
+      "variables": ["section_title", "content"]
+    },
+    "test.tree_search": {
+      "file": "tree_search.txt",
+      "objective": "Identify relevant nodes in document tree matching user query",
+      "response_schema": {
+        "type": "object",
+        "required": ["thinking", "node_ids"],
+        "properties": {
+          "thinking": { "type": "string" },
+          "node_ids": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "variables": ["question", "tree_json"]
+    },
+    "test.answer_generation": {
+      "file": "answer_generation.txt",
+      "objective": "Generate answer from document context based on user question",
+      "response_schema": {
+        "type": "string"
+      },
+      "variables": ["question", "context"]
+    },
+    "metadata.node_summary": {
+      "file": "node_summary_generation.txt",
+      "objective": "Generate concise summary description for a document node section",
+      "response_schema": {
+        "type": "string"
+      },
+      "variables": ["text"]
+    },
+    "metadata.doc_description": {
+      "file": "doc_description_generation.txt",
+      "objective": "Generate one-sentence description for entire document based on structure",
+      "response_schema": {
+        "type": "string"
+      },
+      "variables": ["structure"]
+    }
+  }
+}

@@ -1,0 +1,105 @@
+You are a TOC completeness auditor with expertise in document structure analysis and quality assurance.
+
+**Objective:** Determine whether an extracted table of contents fully captures all major sections present in the document chunk.
+
+**Chain-of-Thought Auditing Process:**
+1. **Inventory TOC entries**: List all sections in the extracted TOC
+2. **Scan document text**: Identify section headings with numbering or formatting that indicate structure
+3. **Compare coverage**: Match TOC entries to document sections
+4. **Identify gaps**: Look for major sections in document not represented in TOC
+5. **Assess significance**: Minor missing subsections may be acceptable, but missing top-level sections are not
+6. **Make decision**: Complete if all major sections captured, incomplete if significant gaps exist
+
+**Few-Shot Examples:**
+
+Example 1 - Complete extraction:
+Input Document: "1. Introduction\nOur research focuses...\n1.1 Background\nPrior work has...\n1.2 Objectives\nWe aim to...\n2. Methods\nWe employed..."
+Extracted TOC: [
+  {"structure": "1", "title": "Introduction"},
+  {"structure": "1.1", "title": "Background"},
+  {"structure": "1.2", "title": "Objectives"},
+  {"structure": "2", "title": "Methods"}
+]
+Output:
+{"thinking": "Document contains sections 1, 1.1, 1.2, and 2. All four sections are present in the TOC. No major sections missing.", "completed": "yes"}
+
+Example 2 - Incomplete extraction (missing top-level section):
+Input Document: "1. Introduction\nThis work...\n2. Background\nPrevious studies...\n3. Methods\nOur approach...\n4. Results\nWe found..."
+Extracted TOC: [
+  {"structure": "1", "title": "Introduction"},
+  {"structure": "2", "title": "Background"},
+  {"structure": "3", "title": "Methods"}
+]
+Output:
+{"thinking": "Document contains 4 major sections (Introduction, Background, Methods, Results). TOC only captures first 3 sections. Section 4 (Results) is missing - a major gap.", "completed": "no"}
+
+Example 3 - Minor subsection missing (still complete):
+Input Document: "2. Methods\nOverview...\n2.1 Data Collection\nWe gathered...\n2.2 Analysis\nTechniques...\n2.2.1 Statistical Tests\nWe used...\n3. Results\n..."
+Extracted TOC: [
+  {"structure": "2", "title": "Methods"},
+  {"structure": "2.1", "title": "Data Collection"},
+  {"structure": "2.2", "title": "Analysis"},
+  {"structure": "3", "title": "Results"}
+]
+Output:
+{"thinking": "Document has sections 2, 2.1, 2.2, 2.2.1, and 3. TOC captures all major sections including top-level and second-level. Missing 2.2.1 is a deep subsection - acceptable for TOC completeness.", "completed": "yes"}
+
+Example 4 - TOC extraction not started:
+Input Document: "Table of Contents\n1. Executive Summary ... 3\n2. Market Analysis ... 15\n3. Financial Projections ... 28\n4. Recommendations ... 42"
+Extracted TOC: []
+Output:
+{"thinking": "Document clearly contains a Table of Contents with 4 major sections listed. The TOC is empty - extraction has not captured any sections yet.", "completed": "no"}
+
+Example 5 - Complete with OCR variations:
+Input Document: "Contents\nl. Introduction\nl.l Background\n2. Methods\n2.l  Data"
+Extracted TOC: [
+  {"structure": "1", "title": "Introduction"},
+  {"structure": "1.1", "title": "Background"},
+  {"structure": "2", "title": "Methods"},
+  {"structure": "2.1", "title": "Data"}
+]
+Output:
+{"thinking": "Despite OCR noise ('l.' instead of '1.', '2.l' instead of '2.1'), document sections 1, 1.1, 2, 2.1 all appear in TOC. All major sections captured.", "completed": "yes"}
+
+**Completeness Criteria:**
+
+**Mark as complete ("yes") if:**
+- All top-level sections (1, 2, 3, etc.) present in TOC
+- Major second-level sections (1.1, 1.2, 2.1, etc.) captured
+- Only minor deep subsections (1.1.1, 2.2.3, etc.) may be missing
+- Continuous coverage without significant gaps
+
+**Mark as incomplete ("no") if:**
+- One or more top-level sections missing from TOC
+- Significant second-level sections absent
+- TOC appears to stop mid-document
+- Empty or nearly empty TOC when document has clear sections
+
+**Critical Rules:**
+✓ Focus on high-level sections (depth 1-2 in hierarchy)
+✓ Allow minor subsections to be missing
+✓ Consider document chunk boundaries (may be partial document)
+✓ Use fuzzy matching for OCR noise
+✓ If in doubt, answer "no" to trigger continuation
+
+**Output JSON Schema:**
+{
+  "thinking": "Brief comparison of document sections vs TOC entries, noting any significant gaps",
+  "completed": "yes" | "no"
+}
+
+**Response Requirements:**
+- Return ONLY valid JSON object
+- `thinking`: 2-3 sentences explaining assessment (30-50 words)
+- `completed`: exactly "yes" or "no" (lowercase)
+- No markdown, no text outside JSON
+
+**Input:**
+Document Chunk:
+{content}
+
+Extracted TOC:
+{toc}
+
+**Your Task:**
+Compare the document and TOC to assess completeness. Return ONLY the JSON response.

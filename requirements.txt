@@ -1,3 +1,8 @@
 requests
 python-dotenv
 PyMuPDF
+faiss-cpu
+numpy
+openai
+anthropic
+scikit-learn

@@ -1,47 +1,51 @@
 # Python
 __pycache__/
 *.py[cod]
-*.pyo
-*.egg-info/
-dist/
-build/
-.eggs/
-
-# Virtual environments
-venv/
-.venv/
+*$py.class
+*.so
+.Python
 env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Environment secrets
+# Virtual Environment
 .env
+.venv
+venv/
+ENV/
+env.bak/
+venv.bak/
 
-# IDE
-.vscode/
+# Environment Variables
+.env
+!.env.example
+
+# Caching and State
+.pipeline_cache/
+*.cmkb/
+
+# IDEs
 .idea/
-.ropeproject/
+.vscode/
 *.swp
 *.swo
-*~
 
-# OS
+# MacOS
 .DS_Store
-Thumbs.db
 
-# Pipeline cache (regenerated on each run)
-.pipeline_cache/
-
-# Output artifacts (regenerated)
+# Outputs
 output/
-json/
-pdfs/
-old/
-embeddingDemo/
-
-# LaTeX build artifacts
-*.aux
-*.log
-*.out
-*.toc
-*.synctex.gz
-*.fls
-*.fdb_latexmk
+*.tex
+*.pdf

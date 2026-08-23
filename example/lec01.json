@@ -1,0 +1,224 @@
+{
+  "cleaned_content": "TARGET SLIDE SET (L0-15-21.pdf) — 6 slides covering applications of motor cognition research:\n\n1. MOTOR MOVEMENT (title slide): Visual survey of motor movement across domains — a muscular/anatomical running figure (illustrating the musculoskeletal basis of movement), a sequence of dance poses (movement creation/choreography), Kathak classical dance performers (culturally specific coordinated movement), the reach-to-grasp experimental paradigm (Becchio et al., 2012 — panel A: hand reaching for an apple; panels B/C: a different grasp-to-drink action, used to study how observers can decode action intention from early kinematics), a business handshake (social/interpersonal motor coordination), a singer performing on stage (vocal-motor performance), and a guitarist's hand on the fretboard (fine motor skill/dexterity).\n\n2. WHY STUDY MOTOR COGNITION? (Robots focus): Examples of humanoid/social robots motivating motor cognition research — a generic humanoid robot bust, NASA's Valkyrie (a full humanoid space robot), F.E.D.O.R./Skybot (a Russian humanoid robot launched into space), and Sophia (a humanoid 'social robot' by Hanson Robotics shown gesturing with a robotic hand). The word 'Cognition' is displayed with an X crossed through the 'g', visually questioning whether these robots possess genuine cognition despite human-like motor behavior. Two reference videos are linked: a general video (https://www.youtube.com/watch?v=fn3KWM1kuAw) and a lecture on Alan Turing (https://www.youtube.com/watch?v=yLtdzJ6mVMk&t=146s), tying the robot/cognition question to the Turing Test tradition.\n\n3. PROSTHETICS: A powered prosthetic arm/hand (Shirley Ryan AbilityLab) allowing a user to perform hand gestures; a prosthetic leg with engineered 'sense of touch' (ETH Zurich research, shown on a treadmill) representing sensory feedback in prosthetic limbs; and Oscar Pistorius, the 'Blade Runner' Paralympic/Olympic sprinter, running on carbon-fiber blade prostheses — illustrating high-performance lower-limb prosthetics.\n\n4. NEUROPROSTHETICS (Edward Chang, UCSF): Diagram of a speech neuroprosthesis system. A patient in a wheelchair has a 128-electrode array placed over the speech motor cortex, connected via a digital connector. Cortical signals are relayed to a Neural Processing System (a rack-mounted computer system), which decodes the neural signals into speech/text. A prompt ('How are you today?') is shown on a screen, and the decoded response ('I am very good') is displayed back to the user — illustrating direct decoding of intended speech from motor cortex activity, bypassing the vocal tract.\n\n5. LIMB NEUROPROSTHETICS: A schematic diagram of a bidirectional brain-machine interface for limb control. A recording array implanted in the brain captures neural activity ('Neural activity'), which travels via an intracortical brain-computer interface (iBCI, upward arrow) to a Decoder, which interprets movement intent. The Decoder outputs to an External stimulator, which sends Functional Electrical Stimulation (FES, downward arrow) through an Implanted lead and Electrode array in the forearm to activate paralyzed muscles. Additional hardware includes a Percutaneous lead connector, an Instrumented goniometer (measures joint angle for feedback), and a Mobile-arm support (passive arm brace). This illustrates a closed feedback loop: iBCI (brain → decoder, 'read' signal) and FES (decoder → muscle, 'write'/stimulation signal).\n\n6. WHY STUDY MOTOR COGNITION? (Summary categorization): Restates the three application domains with headers — 'Robots' (generic humanoid robot image), 'Social Robots' (Sophia), and 'Neuroprosthetics' (the powered prosthetic arm image) — as the three motivating fields for studying motor cognition.",
+  "prerequisite_gaps": [
+    "Brain-Computer Interface (BCI) / intracortical BCI (iBCI) terminology and mechanism — not defined in the provided previous context (L1.pdf), which covers general nervous system, neurons, and motor pathway anatomy but not neural signal decoding technology.",
+    "Functional Electrical Stimulation (FES) — referenced in the Limb Neuroprosthetics diagram but no prior definition of electrical stimulation of paralyzed muscles is given in L1.",
+    "Speech motor cortex localization and cortical electrode array recording (128-electrode array) — L1 covers general motor cortex location (primary motor cortex on cerebral cortex diagram) but not speech-specific decoding methodology.",
+    "The Turing Test / operational definitions of 'cognition' in machines — implied by the crossed-out 'Cognition' graphic and the Alan Turing lecture link, but no prior slide defines the Turing Test or philosophical criteria for machine cognition.",
+    "Reach-to-grasp kinematics and intention-reading from movement (Becchio et al., 2012) is shown in both documents but never formally explained — the previous context reuses the image without describing what the study demonstrated (that grasp kinematics differ based on the actor's downstream intention, e.g., reaching to eat vs. reaching to place)."
+  ],
+  "section_map": [
+    {
+      "section_title": "Motor Movement: Domains of Human Action",
+      "section_content": "Slide 1 (Motor Movement): Visual survey of motor movement across domains — a muscular/anatomical running figure; a sequence of dance poses; Kathak classical dance performers; the reach-to-grasp experimental paradigm (Becchio et al., 2012 — hand reaching for an apple vs. a grasp-to-drink action); a business handshake; a singer performing; a guitarist playing. Sources cited: biologyonline.com, vccafe.com, nupurnritya.com, morganmckinley.com.au, thestatesman.com, musicradar.com.",
+      "topics": ["Motor Movement"],
+      "subtopics": ["Sports/locomotion", "Dance", "Reach-to-grasp behavior", "Social gesture (handshake)", "Performance (singing, instrument playing)"],
+      "dependency_order": 1,
+      "learning_objectives": [
+        "Student can list at least four everyday activities that qualify as examples of motor movement.",
+        "Student can explain why motor movement includes both simple and highly skilled actions (e.g., running vs. playing guitar).",
+        "Student can describe, in general terms, what the reach-to-grasp paradigm (Becchio et al., 2012) is used to study."
+      ],
+      "teach_approach": "example_first",
+      "opening_analogy": "Think about everything your body does without you consciously 'programming' each step: waving hello, tying your shoelaces, catching a ball someone tosses to you. All of these are 'motor movements' — the body executing planned physical actions, ranging from trivial to highly skilled.",
+      "prerequisite_bridge": {
+        "needed": false,
+        "covers": "",
+        "because": ""
+      },
+      "key_misconceptions": [
+        "Students often think 'motor movement' only refers to large, athletic actions (like running), overlooking fine motor skills like finger movements in guitar playing or handwriting.",
+        "Students may assume the reach-to-grasp paradigm is just about grabbing objects, missing that researchers use it to infer the actor's underlying *intention* from movement kinematics.",
+        "Students may think dance and music performance are purely 'artistic' and unrelated to motor cognition, rather than recognizing them as complex, learned motor sequences."
+      ],
+      "notation_introduced": [],
+      "worked_example_required": true,
+      "worked_example_spec": "Walk through the Becchio et al. (2012) reach-to-grasp example step by step: describe panel A (hand reaching toward an apple) and contrast it with panels B/C (a different action outcome, e.g., grasping to drink). Explain that researchers can distinguish the actor's intended follow-up action (e.g., eating vs. placing) from subtle differences in the reach/grasp kinematics alone, before the action is complete. This should make tangible the idea that motor movements carry information about intention.",
+      "question_prompts": {
+        "recall": "List three examples of motor movement shown on this slide.",
+        "understand": "In your own words, explain what makes an action a 'motor movement.'",
+        "apply": "Pick a daily activity not mentioned in the slide (e.g., brushing teeth) and explain why it counts as a motor movement.",
+        "analyse": "Compare the handshake example and the guitar-playing example — what motor skill differences do they highlight (gross vs. fine motor control)?",
+        "evaluate": "Judge whether the reach-to-grasp paradigm (Becchio et al., 2012) is a good way to study how the brain plans movement, and justify your answer."
+      },
+      "extracted_questions": []
+    },
+    {
+      "section_title": "Why Study Motor Cognition? — Robotics and Machine Cognition",
+      "section_content": "Slide 2 (Why study motor cognition? — Robots focus): Humanoid/social robot examples motivating motor cognition research: generic humanoid robot bust; NASA's Valkyrie (full humanoid space robot); F.E.D.O.R./Skybot (Russian humanoid robot launched into space); Sophia (Hanson Robotics social robot). Graphic of the word 'Cognition' with an X through the 'g', questioning whether robots possess true cognition. Linked reference videos: general video (youtube.com/watch?v=fn3KWM1kuAw) and Alan Turing lecture (youtube.com/watch?v=yLtdzJ6mVMk&t=146s).",
+      "topics": ["Why study motor cognition?", "Robotics"],
+      "subtopics": ["Humanoid robots", "Social robots", "Machine cognition / Turing Test reference"],
+      "dependency_order": 2,
+      "learning_objectives": [
+        "Student can name two examples of humanoid robots discussed in the slide (e.g., Valkyrie, Sophia, F.E.D.O.R.).",
+        "Student can explain why building robots that move like humans motivates the study of human motor cognition.",
+        "Student can articulate the distinction the slide is drawing between 'moving like a human' and 'thinking/cognizing like a human.'"
+      ],
+      "teach_approach": "problem_first",
+      "opening_analogy": "Imagine trying to build a robot butler that can carry a tray of drinks across a crowded room without spilling or bumping into anyone. Just copying how a person's arm looks won't help — you need to understand *how* the person's brain and body coordinate to move so smoothly. Engineers face this exact problem when designing humanoid robots.",
+      "prerequisite_bridge": {
+        "needed": true,
+        "covers": "The concept of the Turing Test: a thought experiment where a machine is judged 'intelligent' if a human evaluator can't reliably distinguish its responses from a human's. Alan Turing proposed this as a way to sidestep the harder philosophical question of what 'thinking' really is.",
+        "because": "Without this background, the crossed-out 'Cognition' graphic and the linked Turing lecture will seem disconnected from the robot examples, and the student won't grasp why the slide questions whether robots truly possess cognition."
+      },
+      "key_misconceptions": [
+        "Students often assume that if a robot moves smoothly like a human (e.g., Sophia gesturing), it must also be 'thinking' or 'cognizing' like a human — the slide explicitly challenges this assumption.",
+        "Students may confuse 'humanoid' (human-shaped) robots with 'intelligent' robots, treating physical resemblance as evidence of cognitive ability.",
+        "Students may think all robots shown (Valkyrie, F.E.D.O.R., Sophia) serve the same purpose, when in fact they differ in application (space exploration vs. social interaction)."
+      ],
+      "notation_introduced": [],
+      "worked_example_required": false,
+      "worked_example_spec": null,
+      "question_prompts": {
+        "recall": "Name two humanoid robots mentioned in this section and one thing each was designed to do.",
+        "understand": "Explain in your own words why studying human motor movement could help engineers design better robots.",
+        "apply": "If you were designing a robot to shake hands with people, what aspect of human motor cognition would be most important to study, and why?",
+        "analyse": "Contrast Sophia (a 'social robot') with Valkyrie (a space-exploration robot) in terms of what kind of motor and cognitive abilities each likely needs.",
+        "evaluate": "Do you think a robot that can convincingly imitate human gestures (like Sophia) should be considered 'cognitive'? Justify your position using the idea behind the crossed-out 'Cognition' graphic."
+      },
+      "extracted_questions": []
+    },
+    {
+      "section_title": "Prosthetics",
+      "section_content": "Slide 3 (Prosthetics): Powered prosthetic arm/hand (sralab.org) performing hand gestures; prosthetic leg with engineered sense of touch (ETH Zurich, engadget.com) shown on a treadmill; Oscar Pistorius ('Blade Runner') sprinting on carbon-fiber blade prostheses (thestar.com).",
+      "topics": ["Prosthetics"],
+      "subtopics": ["Upper-limb powered prosthetics", "Sensory feedback in prosthetic legs", "High-performance sport prosthetics"],
+      "dependency_order": 3,
+      "learning_objectives": [
+        "Student can define 'prosthetics' as artificial devices that replace missing or impaired body parts.",
+        "Student can describe how a powered prosthetic arm differs from a purely mechanical/passive one.",
+        "Student can explain why 'sense of touch' in a prosthetic leg is a meaningful engineering advance."
+      ],
+      "teach_approach": "example_first",
+      "opening_analogy": "Think of a prosthetic like a replacement part for a car — but instead of just looking like the original part, the best prosthetics also try to 'feel' and 'move' like the original, sending and receiving signals the way a real limb would.",
+      "prerequisite_bridge": {
+        "needed": false,
+        "covers": "",
+        "because": ""
+      },
+      "key_misconceptions": [
+        "Students often think all prosthetics are purely mechanical/passive replacements, not realizing that 'powered' prosthetics can be actively controlled by the user.",
+        "Students may assume prosthetic limbs cannot provide any sensory feedback, missing the ETH Zurich example of a prosthetic leg with engineered touch sensation.",
+        "Students may think Oscar Pistorius's blade prostheses work the same way as everyday walking prosthetics, rather than being specialized for running/sport performance."
+      ],
+      "notation_introduced": [],
+      "worked_example_required": true,
+      "worked_example_spec": "Walk through the three prosthetic examples side by side: (1) the powered prosthetic arm/hand performing a hand gesture — explain this requires the device to receive control signals from the user; (2) the ETH Zurich prosthetic leg with engineered touch sensation — explain this requires sending sensory information *back* to the user; (3) Oscar Pistorius's blade prostheses — explain these are passive, spring-like devices optimized for running rather than for sensory feedback or fine control. This trio should make tangible the spectrum from purely mechanical to sensorized/powered prosthetics.",
+      "question_prompts": {
+        "recall": "Name the three prosthetic examples shown in this section.",
+        "understand": "Explain the difference between a prosthetic that only replaces the shape of a missing limb and one that also restores function (movement or sensation).",
+        "apply": "If someone lost a hand and needed to type on a keyboard again, which type of prosthetic feature (power/control vs. sensory feedback) would matter most, and why?",
+        "analyse": "Compare the powered prosthetic arm and the sensory prosthetic leg — one focuses on outgoing control signals, the other on incoming sensory signals. Explain this distinction.",
+        "evaluate": "Assess whether Oscar Pistorius's blade prostheses should be considered 'advanced' prosthetics in the same sense as the powered arm or sensory leg — justify using what each device actually does."
+      },
+      "extracted_questions": []
+    },
+    {
+      "section_title": "Neuroprosthetics: Speech Decoding (Edward Chang, UCSF)",
+      "section_content": "Slide 4 (Neuroprosthetics — Edward Chang, UCSF): Diagram of a speech neuroprosthesis. A 128-electrode array is placed over the speech motor cortex of a patient in a wheelchair, connected via a digital connector. Cortical signals travel to a Neural Processing System (rack-mounted computer), which decodes them into speech/text. A displayed prompt ('How are you today?') elicits a decoded response ('I am very good') shown on a monitor. Source: changlab.ucsf.edu/publications/speech-lab.",
+      "topics": ["Neuroprosthetics"],
+      "subtopics": ["Cortical electrode arrays", "Speech motor cortex decoding", "Neural processing/decoding systems"],
+      "dependency_order": 4,
+      "learning_objectives": [
+        "Student can describe the basic pipeline of a speech neuroprosthesis: electrode array → cortical signal → decoder → output speech/text.",
+        "Student can explain why the electrode array is placed specifically over the speech motor cortex rather than elsewhere on the brain.",
+        "Student can state the practical goal of this technology (restoring communication for patients who cannot speak)."
+      ],
+      "teach_approach": "problem_first",
+      "opening_analogy": "Imagine you know exactly what you want to say, but the wires connecting your brain to your mouth are cut — the words are 'there' in your mind, but they can't get out. A speech neuroprosthesis is like installing a new set of wires that reads the electrical activity where speech is planned and translates it directly into words on a screen, skipping the broken pathway entirely.",
+      "prerequisite_bridge": {
+        "needed": true,
+        "covers": "The primary motor cortex is a strip of brain tissue in the frontal lobe responsible for planning and executing voluntary movements, including the fine movements of the mouth, tongue, and throat used in speech. Different regions of the motor cortex control different body parts, so there is a specific area dedicated to speech-related muscles. A 'decoder' in this context is a computational system that translates patterns of electrical brain activity into a meaningful output (like words), similar to how a translator converts one language into another.",
+        "because": "Without knowing that a speech-specific region of the motor cortex exists and that its signals can be captured and translated, the student won't understand why the electrode array is placed exactly where it is or how brain activity becomes text on a screen."
+      },
+      "key_misconceptions": [
+        "Students often think the device is 'reading the mind' in a general sense, rather than specifically decoding motor cortex activity related to attempted speech movements.",
+        "Students may assume the patient is actually speaking out loud and the device just transcribes it, missing that the entire point is the patient cannot physically speak.",
+        "Students may think the 128 electrodes each directly correspond to one word or sound, rather than understanding that the decoder uses patterns across many electrodes to infer intended speech."
+      ],
+      "notation_introduced": [],
+      "worked_example_required": true,
+      "worked_example_spec": "Trace the full example shown on the slide: the patient is shown a prompt ('How are you today?'), the patient attempts to respond using their speech motor cortex, the 128-electrode array over the speech motor cortex picks up the cortical signals, these signals travel through a digital connector to the Neural Processing System, and the system decodes the signal into the text 'I am very good' displayed back to the user. This should make tangible the full signal path from intended speech to decoded output.",
+      "question_prompts": {
+        "recall": "List the four main components of the speech neuroprosthesis pipeline shown in the diagram.",
+        "understand": "Explain in your own words why the electrode array must be placed specifically over the speech motor cortex.",
+        "apply": "If a patient wanted to communicate a different sentence, what part of the diagram would need to correctly interpret their new attempt?",
+        "analyse": "Compare this speech neuroprosthesis to the powered prosthetic arm from the previous section — both use cortical signals, but what is different about what each device is trying to restore?",
+        "evaluate": "Evaluate whether this technology fully restores 'natural' communication for the patient, or whether it is best understood as an assistive workaround — justify your view."
+      },
+      "extracted_questions": []
+    },
+    {
+      "section_title": "Limb Neuroprosthetics: Bidirectional Brain-Machine Interface",
+      "section_content": "Slide 5 (Limb Neuroprosthetics): Schematic of a bidirectional brain-machine interface for limb control. A recording array implanted in the brain captures 'Neural activity,' transmitted via intracortical BCI (iBCI, upward arrow) to a Decoder that interprets movement intent. The Decoder sends output to an External stimulator, which delivers Functional Electrical Stimulation (FES, downward arrow) through an Implanted lead and Electrode array in the forearm to activate paralyzed muscles. Supporting components: Percutaneous lead connector, Instrumented goniometer (joint-angle feedback), Mobile-arm support. Represents a closed-loop 'read' (iBCI) and 'write' (FES) system.",
+      "topics": ["Neuroprosthetics", "Limb Neuroprosthetics"],
+      "subtopics": ["Intracortical BCI (iBCI)", "Functional Electrical Stimulation (FES)", "Neural decoding for limb movement", "Closed-loop feedback (goniometer)"],
+      "dependency_order": 5,
+      "learning_objectives": [
+        "Student can distinguish the two directions of signal flow in the system: iBCI (brain → decoder) and FES (decoder → muscle).",
+        "Student can explain the function of each major component: recording array, decoder, external stimulator, implanted lead/electrode, goniometer.",
+        "Student can describe why this system is called 'bidirectional' or a 'closed loop,' unlike the one-way speech decoding system in the previous section."
+      ],
+      "teach_approach": "concept_first",
+      "opening_analogy": "Picture a smart home system: a sensor reads that you want the lights dimmer (a 'read' signal), a controller decides how much to dim them, and then the controller sends a 'write' signal to the light bulb to actually change its brightness. This limb system works the same way — it 'reads' the brain's intention to move, and then 'writes' a signal to the muscles to make the movement actually happen.",
+      "prerequisite_bridge": {
+        "needed": true,
+        "covers": "Intracortical BCI (iBCI) refers to an implanted device that reads electrical activity directly from neurons in the brain to determine what movement a person intends to make. Functional Electrical Stimulation (FES) is the reverse process: applying small electrical pulses directly to muscles (or the nerves controlling them) to make them contract, even if the natural nerve pathway from brain to muscle is damaged (e.g., due to spinal cord injury or paralysis).",
+        "because": "Without understanding that iBCI reads brain signals and FES artificially triggers muscle contraction, the student cannot interpret the upward and downward arrows in the diagram or grasp why this is called a 'bidirectional' system."
+      },
+      "key_misconceptions": [
+        "Students often think the recording array and the stimulating electrode array are the same device, when they are actually implanted in different locations (brain vs. forearm) and perform opposite functions.",
+        "Students may believe the decoder directly moves the muscles, without realizing the External stimulator and FES are the intermediate steps that actually deliver electrical stimulation.",
+        "Students may overlook the goniometer's role, assuming the system works open-loop (no feedback) when in fact joint-angle feedback is used to refine the stimulation."
+      ],
+      "notation_introduced": [
+        {"symbol": "iBCI", "meaning": "intracortical Brain-Computer Interface — reads neural activity from the brain to determine movement intent (the 'read'/upward signal)"},
+        {"symbol": "FES", "meaning": "Functional Electrical Stimulation — electrical pulses delivered to muscles to produce movement (the 'write'/downward signal)"}
+      ],
+      "worked_example_required": true,
+      "worked_example_spec": "Trace a hypothetical case: a paralyzed patient intends to grasp a cup. The recording array in the brain detects the associated neural activity, which is transmitted via iBCI to the Decoder. The Decoder interprets this as an intended grasping movement and sends a command to the External stimulator. The stimulator delivers FES through the implanted lead and electrode array in the forearm, activating the muscles needed to close the hand. The Instrumented goniometer measures the resulting joint angle and feeds this back into the system to fine-tune the stimulation. This example should make the full read-decode-write-feedback loop tangible.",
+      "question_prompts": {
+        "recall": "Name the component that reads neural activity and the component that stimulates the muscles.",
+        "understand": "Explain in your own words the difference between the iBCI signal path and the FES signal path.",
+        "apply": "If a patient wants to open their paralyzed hand, which components of this system must activate, and in what order?",
+        "analyse": "Compare this limb neuroprosthesis system to the speech neuroprosthesis from the previous section — why does this one need an 'External stimulator' and a goniometer, while the speech system does not need to stimulate anything?",
+        "evaluate": "Assess the importance of the Instrumented goniometer to the overall system — would the device still work reasonably well without joint-angle feedback? Justify your answer."
+      },
+      "extracted_questions": []
+    },
+    {
+      "section_title": "Why Study Motor Cognition? — Summary of Application Domains",
+      "section_content": "Slide 6 (Why study motor cognition? — summary): Recap of three motivating application areas with header labels and representative images: 'Robots' (generic humanoid robot), 'Social Robots' (Sophia), and 'Neuroprosthetics' (powered prosthetic arm).",
+      "topics": ["Why study motor cognition?"],
+      "subtopics": ["Robots", "Social Robots", "Neuroprosthetics"],
+      "dependency_order": 6,
+      "learning_objectives": [
+        "Student can list the three major application domains that motivate the study of motor cognition.",
+        "Student can briefly summarize why each domain (robots, social robots, neuroprosthetics) benefits from understanding human motor cognition.",
+        "Student can connect this summary back to the specific examples covered earlier in the lecture (Valkyrie, Sophia, prosthetic arm, speech/limb neuroprosthetics)."
+      ],
+      "teach_approach": "concept_first",
+      "opening_analogy": null,
+      "prerequisite_bridge": {
+        "needed": false,
+        "covers": "",
+        "because": ""
+      },
+      "key_misconceptions": [
+        "Students may treat this summary slide as introducing new content rather than recognizing it as a recap of the robotics, social robot, and neuroprosthetics material already covered.",
+        "Students may conflate 'Robots' and 'Social Robots' as identical categories, missing that the slide separates general-purpose/task robots from robots designed for human social interaction."
+      ],
+      "notation_introduced": [],
+      "worked_example_required": false,
+      "worked_example_spec": null,
+      "question_prompts": {
+        "recall": "Name the three application domains listed as reasons to study motor cognition.",
+        "understand": "Explain in your own words why these three domains are grouped together under 'why study motor cognition.'",
+        "apply": "Pick one of the three domains and give one specific example from earlier in the lecture that fits it.",
+        "analyse": "Compare 'Robots' and 'Social Robots' as categories — what distinguishes a robot like Valkyrie from a robot like Sophia?",
+        "evaluate": "Judge which of the three domains (robots, social robots, neuroprosthetics) makes the strongest case for why motor cognition research matters, and justify your choice."
+      },
+      "extracted_questions": []
+    }
+  ]
+}

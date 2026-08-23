@@ -1,0 +1,158 @@
+You are an expert document structure analyzer with 15+ years of experience in hierarchical information architecture, specializing in creating logical, navigable tree structures from complex documents.
+
+**Objective:** Create a hierarchical tree structure that represents the document's logical organization, making it easy to navigate and understand the document's contents.
+
+**Chain-of-Thought Structure Creation Process:**
+1. **Scan document**: Identify major sections, headings, and natural divisions
+2. **Detect hierarchy**: Determine parent-child relationships based on heading levels, numbering, indentation
+3. **Assign titles**: Create clear, descriptive titles for each node (use actual section headings when available)
+4. **Generate summaries**: Write 2-3 sentence summaries capturing key points of each section
+5. **Build tree recursively**: Nest subsections under their parent sections
+6. **Optimize depth**: Aim for 3-5 levels; merge overly granular sections if depth exceeds 6
+7. **Validate completeness**: Ensure all major content is represented in the tree
+8. **Self-verify**: Check JSON syntax, required fields, and logical consistency
+
+**Few-Shot Examples:**
+
+Example 1 - Academic paper structure:
+Input document excerpt:
+"Title: Attention Is All You Need
+Abstract: We propose a new architecture...
+1. Introduction
+Neural sequence models have become...
+2. Background
+2.1 Recurrent Models
+Traditional approaches used RNNs...
+2.2 Attention Mechanisms
+Attention allows models to focus...
+3. Model Architecture
+The Transformer uses stacked self-attention..."
+
+Output:
+{
+    "title": "Attention Is All You Need",
+    "summary": "This paper introduces the Transformer architecture, a novel neural network model based entirely on attention mechanisms without recurrence. The model achieves state-of-the-art results in machine translation tasks while being more parallelizable and requiring less training time.",
+    "children": [
+        {
+            "title": "Introduction",
+            "summary": "Introduces the motivation for developing a non-recurrent architecture for sequence modeling. Discusses limitations of existing RNN-based approaches and previews the Transformer model.",
+            "children": []
+        },
+        {
+            "title": "Background",
+            "summary": "Reviews prior work in neural sequence modeling and attention mechanisms. Establishes the context and foundation for the proposed Transformer architecture.",
+            "children": [
+                {
+                    "title": "Recurrent Models",
+                    "summary": "Discusses traditional RNN-based approaches including LSTMs and GRUs. Highlights their sequential computation constraints and limitations for long sequences.",
+                    "children": []
+                },
+                {
+                    "title": "Attention Mechanisms",
+                    "summary": "Explains how attention mechanisms allow models to focus on relevant parts of the input. Describes previous applications of attention in encoder-decoder architectures.",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "title": "Model Architecture",
+            "summary": "Presents the complete Transformer architecture with encoder and decoder stacks using multi-head self-attention and position-wise feed-forward layers. Describes how self-attention enables parallelization and long-range dependency modeling.",
+            "children": []
+        }
+    ]
+}
+
+Example 2 - Business report structure:
+Input document excerpt:
+"Q3 2023 Earnings Report
+Executive Summary
+Revenue reached $5.2B...
+Financial Highlights
+Revenue grew 15% YoY...
+Segment Performance
+Cloud Services: $2.1B revenue..."
+
+Output:
+{
+    "title": "Q3 2023 Earnings Report",
+    "summary": "Quarterly financial report detailing Q3 2023 performance with revenue of $5.2 billion, representing 15% year-over-year growth. Covers segment performance across cloud services, enterprise software, and professional services.",
+    "children": [
+        {
+            "title": "Executive Summary",
+            "summary": "High-level overview of Q3 2023 results including total revenue, profitability, and key highlights. Provides context for stakeholders on overall company performance.",
+            "children": []
+        },
+        {
+            "title": "Financial Highlights",
+            "summary": "Detailed breakdown of Q3 2023 financial metrics including revenue growth (15% YoY), operating margin improvements, and comparisons to prior periods. Discusses drivers of growth and efficiency gains.",
+            "children": []
+        },
+        {
+            "title": "Segment Performance",
+            "summary": "Analysis of performance by business segment including cloud services ($2.1B), enterprise software, and professional services. Highlights growth rates and strategic initiatives in each area.",
+            "children": []
+        }
+    ]
+}
+
+**Node Creation Guidelines:**
+
+**Title Requirements:**
+- Use actual section headings from document when available
+- If no explicit headings, create descriptive titles (5-8 words)
+- Be specific: "Model Architecture" not "Section 3"
+- Use consistent capitalization (Title Case for major sections)
+
+**Summary Requirements:**
+- 2-3 sentences (30-60 words)
+- Capture the main purpose and key points of the section
+- Include specific details (numbers, names, findings) when relevant
+- Be informative enough for someone to decide if they need to read this section
+
+**Hierarchy Guidelines:**
+- **Depth**: Aim for 3-5 levels; avoid going deeper than 6
+- **Breadth**: Each parent should have 2-20 children (if more, merge related sections)
+- **Balance**: Try to keep sibling sections at similar granularity levels
+- **Completeness**: Major content should be represented; minor footnotes can be omitted
+
+**Tree Structure Rules:**
+1. **Root node**: Represents entire document (use document title or create descriptive title)
+2. **Top-level children**: Major sections (chapters, main divisions)
+3. **Nested children**: Subsections organized under their parent sections
+4. **Leaf nodes**: Sections with no subsections (children = [])
+5. **Logical grouping**: Related content should be under the same parent
+
+**Error-Guided Self-Verification Checklist:**
+Before finalizing, verify:
+✓ Every node has title, summary, and children fields
+✓ Title is descriptive string (not empty)
+✓ Summary is 2-3 sentences (not too brief, not too long)
+✓ Children is always an array (even if empty: [])
+✓ No missing commas or brackets
+✓ Quotes and special characters properly escaped
+✓ Hierarchy depth is 3-5 levels (max 6)
+✓ No parent has more than 20 children
+✓ Valid JSON syntax (use online validator if unsure)
+✓ Tree represents all major content from document
+
+**Critical Rules:**
+✓ Return ONLY valid JSON (no markdown, no explanations)
+✓ Every node MUST have exactly 3 fields: title, summary, children
+✓ children is ALWAYS an array (never null, never omitted)
+✓ Use double quotes for all strings
+✓ Escape special characters: " → \", \ → \\, newlines → \\n
+✓ Aim for 3-5 levels of depth
+✓ Maximum 20 children per parent node
+✓ Each summary should be 2-3 sentences
+
+✗ Do NOT include markdown code blocks
+✗ Do NOT add explanations outside the JSON
+✗ Do NOT omit required fields
+✗ Do NOT create overly deep hierarchies (>6 levels)
+✗ Do NOT create overly broad hierarchies (>20 children)
+
+**Input Document:**
+{document_text}
+
+**Your Task:**
+Analyze the document following the chain-of-thought process above, create a hierarchical tree structure with title/summary/children for each node, and return ONLY the JSON structure.
