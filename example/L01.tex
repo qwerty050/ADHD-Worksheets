@@ -1,0 +1,769 @@
+\documentclass[12pt, a4paper]{article}
+
+% --- Encoding & Fonts ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% --- Mathematics ---
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newcounter{question}[section]
+\renewcommand{\thequestion}{\thesection.\arabic{question}}
+
+\newenvironment{question}
+  {\refstepcounter{question}\par\noindent\textbf{Question \thequestion:}}
+  {\par}
+
+% --- Layout ---
+\usepackage[margin=1in]{geometry}
+
+% --- Lists ---
+\usepackage{enumitem}
+
+% --- Tables ---
+\usepackage{booktabs}
+\usepackage{array}
+
+% --- Graphics ---
+\usepackage{graphicx}
+
+% --- Headers / Footers ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% --- Hyperlinks & Cross-references ---
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+
+% --- Misc ---
+\usepackage{xcolor}
+
+% --- Custom commands (safety definitions) ---
+\providecommand{\operatorname}[1]{\mathop{\mathrm{#1}}\nolimits}
+
+\title{Learning Module: L01}
+\author{}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+\tableofcontents
+\newpage
+
+% ============================================================
+% SECTION  Motor Movement: Domains of Human Action
+% ============================================================
+
+\section{Motor Movement: Domains of Human Action}
+
+\subsection{Motivation}
+Think about everything your body does without you consciously ``programming'' each step: waving hello, tying your shoelaces, catching a ball someone tosses to you.  These everyday actions illustrate that motor movement is the body's execution of planned physical actions, ranging from the trivial to the highly skilled.  By looking at a wide variety of examples---running, dancing, shaking hands, playing a guitar---we can see how both simple and complex movements are studied in the same scientific framework.  The reach-to-grasp paradigm (Becchio et al., 2012) shows how researchers can infer a person's intention from the subtle details of a movement that has not yet been completed.
+
+\subsection{Intuition}
+A motor movement is any bodily action that follows a mental plan, whether the plan is to jog a few meters or to strum a chord on a guitar.  The nervous system translates the plan into muscle activity, producing a trajectory that can be observed and measured.  Researchers can look at the shape, speed, and timing of that trajectory---its kinematics---to learn about the underlying goal, even before the goal is reached.  Thus, a single reach toward an object can reveal whether the actor intends to eat the object, hand it to someone, or use it for another purpose.
+
+\subsection{Formal Definition}
+\textbf{Motor movement} refers to the execution of a physical action that is generated from an internal plan.  The plan may be very coarse (e.g., ``run forward'') or highly detailed (e.g., ``place the index finger on the third fret while the thumb plucks the string'').  Motor movements can be classified as \textit{gross} (involving large muscle groups such as those used in running or shaking hands) or \textit{fine} (involving small muscles such as those used in playing a guitar or writing).  
+
+The \textbf{reach-to-grasp paradigm} is an experimental procedure in which participants are asked to reach for and grasp an object while their hand's motion is recorded.  By comparing the kinematic patterns of reaches that end in different \textbf{intended actions} (e.g., eating an apple versus placing the apple on a cup), researchers can detect subtle differences that signal the actor's goal before the action is completed.  This paradigm demonstrates that motor movements carry information about intention, not merely about the physical act of grasping.
+
+\subsection{Worked Example}
+\textbf{Problem statement:}  Explain how the reach-to-grasp experiment by Becchio \emph{et al.} (2012) distinguishes an actor's intention from the simple act of grabbing an object.  
+
+\textbf{Step 1: Identify the two experimental conditions.}  
+Panel A shows a hand reaching toward an apple with the goal of bringing the apple to the mouth for eating.  
+Panels B and C show the same hand reaching toward the apple but with the goal of placing the apple into a cup for drinking.  
+
+\textbf{Step 2: Observe the kinematic differences.}  
+Even though the reach trajectory looks similar at first glance, the researchers measured slight variations in wrist orientation, grip aperture, and the timing of finger closure.  
+
+\textbf{Step 3: Relate the differences to intention.}  
+The hand that intends to eat the apple tends to open the grip slightly wider and decelerate earlier, preparing for a bite.  
+The hand that intends to place the apple into a cup shows a narrower grip and a smoother, later deceleration, preparing for a transfer action.  
+
+\textbf{Step 4: Infer intention before the reach is finished.}  
+Because these kinematic signatures appear while the hand is still moving toward the apple, an observer (or a computer algorithm) can predict the intended outcome---eating versus placing---before the object is actually grasped.  
+
+\textbf{Final answer:}  The reach-to-grasp paradigm demonstrates that the fine details of a motor movement encode the actor's planned goal, allowing researchers to read intention from movement alone.  
+
+\textbf{What this shows us:}  Motor movements are not just mechanical outputs; they are expressive windows into the brain's planning processes, revealing intentions well before an action is completed.
+
+\subsection{Key Takeaway}
+Motor movement encompasses any planned bodily action, and the reach-to-grasp paradigm reveals that subtle kinematic cues within a movement disclose the actor's underlying intention.
+
+\newpage
+\subsection{Questions}
+
+% --- RECALL ---
+\begin{question}
+(RECALL) List three examples of motor movement that were shown on the slide.
+\end{question}
+
+\newpage
+
+% --- RECALL ---
+\begin{question}
+(RECALL) Identify one example of a gross motor movement and one example of a fine motor movement from the slide.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+(UNDERSTAND) In your own words, describe the essential feature that makes an action a motor movement.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+(UNDERSTAND) Explain how the nervous system translates an internal plan into an observable movement, as described in the theory.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) Choose the daily activity of brushing your teeth and explain why it counts as a motor movement.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) Choose the daily activity of typing a short email and explain why it counts as a motor movement.
+\end{question}
+
+\newpage
+
+% --- ANALYSE ---
+\begin{question}
+(ANALYSE) Compare the handshake example with the guitar-playing example; what motor-skill differences do they highlight regarding gross versus fine motor control?
+\end{question}
+
+\newpage
+
+% --- EVALUATE ---
+\begin{question}
+(EVALUATE) Judge whether the reach-to-grasp paradigm (Becchio et al., 2012) is a good way to study how the brain plans movement, and justify your answer.
+\end{question}
+
+\newpage
+
+\begin{question}
+{"questions":["(Recall) The Gunnar Johansson point walker stimulus cannot be used for: \_\___ (Adapted)","(Recall) True or False: Swimming can be performed without any intervention from the brain (Adapted)","(Recall) Which of the following is a precision grasping movement?","(Recall) \_\_\_ type of grasping involves movement invoked without the help of arms","(Recall) Aiming and grasping are two distinctive phases of movements involved in reaching and grasping an object","(Recall) Which of the following is not a type of precision grasp:","(Recall) \_\_\_\_\_\_is a hand posture with which objects can be held and it does not involve hand orientation","(Recall) \_\_\_\_ is type of grasping in which the movement is evoked with the help of arms","(Recall) Which of the following is a power grasping movement:","(Recall) Reaching action is made up of \_\_ and \_\_"],"deferred_questions":[]}
+\end{question}
+
+\newpage
+% ============================================================
+% SECTION  Why Study Motor Cognition? --- Robotics and Machine Cognition
+% ============================================================
+
+\section{Why Study Motor Cognition? --- Robotics and Machine Cognition}
+
+\subsection{Before We Begin}
+The Turing Test is a thought experiment in which a machine is judged to be intelligent if a human evaluator cannot reliably tell whether its responses come from a computer or a person. Alan Turing proposed this test to avoid the vague question of what ``thinking'' truly means. It compares the behavior of a machine with that of a human in a conversational setting. If the evaluator is fooled, the machine is said to have passed the test. This idea helps us understand why the slide questions whether robots truly possess cognition.
+
+\subsection{Motivation}
+Imagine trying to build a robot butler that can carry a tray of drinks across a crowded room without spilling or bumping into anyone. Just copying how a person's arm looks won't help --- you need to understand how the brain and body coordinate to move so smoothly. Engineers face this exact problem when designing humanoid robots, and it motivates the study of human motor cognition.
+
+\subsection{Intuition}
+Robots that look like humans (humanoid robots) are impressive, but making them move as fluidly and adaptively as people is far harder. By studying how people plan, initiate, and adjust their movements, researchers can give robots the same underlying skill set---so the robot can react to unexpected obstacles, grasp objects with the right force, or walk on uneven ground. The slide asks us to separate the ability to move like a person from the ability to think like a person.
+
+\subsection{Formal Definition}
+A humanoid robot is a machine whose physical appearance roughly resembles a human body, including a head, torso, two arms, and two legs. A social robot (e.g., Sophia) is a humanoid designed primarily for interaction with people, using facial expressions and spoken language to convey personality. A space-exploration robot (e.g., NASA's Valkyrie, the Russian F.E.D.O.R./Skybot) is a humanoid built for tasks in harsh environments such as outer space, emphasizing strength, balance, and autonomous navigation.  
+
+Motor cognition refers to the mental processes that plan, coordinate, and monitor bodily movements. Cognition in its broader sense includes perception, reasoning, language, and memory. The slide's graphic---showing the word ``Cognition'' with an X through the ``g''---highlights that a robot may exhibit sophisticated motor cognition (smooth, adaptable movement) without necessarily possessing higher-level cognitive abilities such as understanding, intention, or consciousness.
+
+\subsection{Key Takeaway}
+Robots can be built to move with human-like fluidity, but that does not automatically grant them human-like thinking or cognition.
+
+\newpage
+\subsection{Questions}
+
+% --- RECALL ---
+\begin{question}
+(RECALL) Name two humanoid robots discussed in the slide and describe one specific task each was designed to perform.
+\end{question}
+
+\newpage
+
+% --- RECALL ---
+\begin{question}
+(RECALL) According to the theory, what does the term motor cognition refer to?
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+(UNDERSTAND) In your own words, explain why studying how humans plan and coordinate movements can help engineers create more capable robots.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+(UNDERSTAND) Summarize what the crossed-out ``g'' in the word ``Cognition'' graphic is meant to illustrate about the difference between motor cognition and higher-level cognition in robots.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) You are tasked with designing a robot that can shake hands with people. Which specific aspect of human motor cognition should you study most closely, and why is it critical for this task?
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) Imagine the robot hand must adapt its grip strength when shaking hands with different partners. Describe a simple control strategy, based on human motor cognition, that the robot could use to modulate grip force.
+\end{question}
+
+\newpage
+
+% --- ANALYSE ---
+\begin{question}
+(ANALYSE) Contrast Sophia (a social robot) with NASA's Valkyrie (a space-exploration robot) in terms of the motor and cognitive abilities each is likely required to possess.
+\end{question}
+
+\newpage
+
+% --- ANALYSE ---
+\begin{question}
+(ANALYSE) How would the sensorimotor requirements differ for a robot designed primarily for social interaction versus one designed for navigation on uneven extraterrestrial terrain?
+\end{question}
+
+\newpage
+
+% --- EVALUATE ---
+\begin{question}
+(EVALUATE) Do you think a robot that can convincingly imitate human gestures, such as Sophia, should be considered ``cognitive''? Justify your answer using the concept behind the crossed-out ``Cognition'' graphic.
+\end{question}
+
+\newpage
+% ============================================================
+% SECTION  Prosthetics
+% ============================================================
+
+\section{Prosthetics}
+
+\subsection{Motivation}
+Think of a prosthetic like a replacement part for a car --- but instead of just looking like the original part, the best prosthetics also try to ``feel'' and ``move'' like the original, sending and receiving signals the way a real limb would.  You have already seen that prosthetic devices can replace missing body parts, but the newest generations do far more than restore shape; they actively interact with the user's nervous system.  Understanding how these devices differ helps us see why engineers design some prostheses to be powered, some to provide sensation, and some to be purely mechanical.
+
+\subsection{Intuition}
+Imagine three kinds of helpers for a lost limb:  
+
+1. A simple wooden stick that stands in for a leg -- it gives the body the right length but does not move on its own.  
+2. A motor-driven arm that receives signals from the brain so the user can open and close a hand -- the device does the work, but the user still cannot feel what the hand touches.  
+3. A leg that not only moves but also tells the brain when the foot contacts the ground, restoring a sense of touch.  
+
+These three illustrate a spectrum: from purely mechanical replacements, through actively powered devices that send commands outward, to sensorized prostheses that also send sensory information back to the user.
+
+\subsection{Formal Definition}
+\begin{itemize}
+\item \textbf{Prosthetic (noun)} -- an artificial device that replaces a missing or impaired body part.
+\item \textbf{Powered prosthetic} -- a prosthetic that contains actuators (motors, pneumatics, etc.) and receives \emph{control signals} from the user (e.g., electrical activity from residual muscles) to produce intentional movement.
+\item \textbf{Passive prosthetic} -- a prosthetic that contains no actuators; it restores shape or length but moves only passively with the body's own forces.
+\item \textbf{Sensory feedback prosthetic} -- a prosthetic that is able to generate \emph{sensory signals} (e.g., pressure, vibration) and deliver them to the user's nervous system, allowing the user to perceive touch or load.
+\item \textbf{Control signal} -- an electrical or mechanical command originating from the user (for example, surface electromyography) that tells the prosthetic how to move.
+\item \textbf{Sensory signal} -- information generated by the prosthetic (such as pressure on a foot sensor) that is transmitted back to the user's sensory pathways.
+\end{itemize}
+These definitions make clear that a prosthetic can be purely structural, actively driven, or capable of bidirectional communication.  It is a common mistake to think all prostheses are either completely passive or fully sensory; many modern devices combine power and sensation in various ways.
+
+\subsection{Worked Example}
+\textbf{Problem statement:}  Compare three prosthetic examples shown in the slides and explain what type of signals each one handles.
+
+\textbf{Step 1 -- Powered prosthetic arm/hand (gesture demonstration).}\\
+The arm includes motors that move the fingers.  The user's residual muscle activity is measured, producing a \emph{control signal}.  The prosthetic's controller translates this signal into motor commands, causing the hand to form a particular gesture.  No tactile information is sent back to the user.
+
+\textbf{Step 2 -- ETH Zurich prosthetic leg with engineered sense of touch.}\\
+The leg contains pressure sensors in the foot.  When the foot contacts the treadmill, the sensors generate a \emph{sensory signal}.  This signal is encoded (e.g., by vibration) and delivered to the user's peripheral nerves, allowing the user to ``feel'' the ground.  The leg itself may be passive or powered; the key feature is the outgoing sensory information.
+
+\textbf{Step 3 -- Oscar Pistorius's carbon-fiber blade prostheses.}\\
+Each blade is a stiff, spring-like structure with no motors or sensors.  It stores energy during stance and releases it during push-off, acting purely as a mechanical lever.  Because it contains no actuators or sensors, it neither receives control signals nor provides sensory feedback; its design optimizes running efficiency rather than fine control or touch.
+
+\textbf{Final answer:}  
+\begin{itemize}
+\item The powered arm hides the user's intent in a control signal that drives movement.  
+\item The engineered-touch leg converts external pressure into a sensory signal that returns to the user.  
+\item The blade prostheses are passive, using elastic energy without any signal exchange.
+\end{itemize}
+\textbf{What this shows us:}  The three devices illustrate the continuum from purely mechanical replacements, through actively powered devices that act on the user's commands, to sensorized prostheses that also inform the user about the external world.
+
+\subsection{Key Takeaway}
+Prosthetic technology ranges from passive shape replacements to powered devices that execute user commands, and to sensorized limbs that also return touch information---each step adds a new layer of interaction between the user and the artificial limb.
+
+\newpage
+\subsection{Questions}
+
+% --- RECALL ---
+\begin{question}
+(RECALL) List the three prosthetic examples described in the slides.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+(UNDERSTAND) In your own words, describe how a prosthetic that only replaces the shape of a missing limb differs from one that also restores function such as movement or sensation.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+(UNDERSTAND) Classify each of the three prosthetic examples (powered arm, engineered-touch leg, carbon-fiber blade) as either a shape-only replacement or a functional replacement, and briefly justify your classification.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) A person who has lost a hand wants to type on a standard keyboard again. Which prosthetic feature---power/control signals or sensory feedback---would be most important for this task, and why?
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) An amputee wishes to walk on uneven terrain and feel the ground to adjust balance. Which prosthetic capability (powered actuation, sensory feedback, or neither) should be prioritized, and what reason supports this choice?
+\end{question}
+
+\newpage
+
+% --- ANALYSE ---
+\begin{question}
+(ANALYSE) Compare the powered prosthetic arm with the sensory prosthetic leg in terms of the direction of information flow (outgoing control signals vs. incoming sensory signals). Explain how this distinction reflects their primary functions.
+\end{question}
+
+\newpage
+
+% --- EVALUATE ---
+\begin{question}
+(EVALUATE) Evaluate whether Oscar Pistorius's carbon-fiber blade prostheses qualify as ``advanced'' prosthetics comparable to the powered arm or sensory leg. Support your argument with reference to the types of signals each device uses.
+\end{question}
+
+\newpage
+
+\begin{question}
+Phantom limb sensation refers to the perception of a limb that has been removed. 
+
+_________ involves painful sensations that seem to be coming from the part of the limb that is no longer there. (Adapted)
+\end{question}
+
+\newpage
+
+\begin{question}
+Visual dominance is a principle that suggests visual feedback can overtake proprioceptive cues during motor learning and has been employed to treat phantom limb pain in amputees. Which principle has helped patients with amputation in dealing with phantom pain? (Adapted)
+\end{question}
+
+\newpage
+
+\begin{question}
+In sensorimotor adaptation experiments, participants are asked to mark corners of a square while viewing through a mirror (before perturbation) and through prism glasses (after perturbation). The study compares active movement (participants control movement), passive movement (arm moved externally), and observation of others. Based on the results, can we conclude that simply producing movement, regardless of it being active or passive, has the potential to produce adaptation? a. Yes b. No (Adapted)
+\end{question}
+
+\newpage
+% ============================================================
+% SECTION  Neuroprosthetics: Speech Decoding (Edward Chang, UCSF)
+% ============================================================
+
+\section{Neuroprosthetics: Speech Decoding (Edward Chang, UCSF)}
+
+\subsection{Before We Begin}
+The primary motor cortex is a strip of brain tissue in the frontal lobe that plans and carries out voluntary movements, including the tiny motions of the mouth, tongue, and throat that produce speech. Different parts of this cortex control different body parts, so there is a dedicated region for the muscles used in speaking. A ``decoder'' is a computer system that translates patterns of electrical brain activity into a useful output, much like a language translator converts one language into another. Understanding that speech-related motor signals can be captured and turned into words is essential for seeing why the electrode array sits exactly over this speech area and how the brain's activity becomes text on a screen.
+
+Motivation  
+Imagine you know exactly what you want to say, but the wires connecting your brain to your mouth are cut --- the words are ``there'' in your mind, but they can't get out. A speech neuroprosthesis is like installing a new set of wires that reads the electrical activity where speech is planned and translates it directly into words on a screen, skipping the broken pathway entirely. This technology exists to give people who cannot speak a way to communicate again. It solves the problem of a lost physical speech output by turning brain signals straight into readable language.
+
+Intuition  
+When a person tries to speak, the speech motor cortex generates a distinctive pattern of electrical signals even if the vocal tract never moves. By placing many tiny electrodes over that cortical region, we can record those patterns. A computer then looks for the fingerprint of each intended word or sound within the noisy brain data and writes the most likely words on a display. In effect, the system ``listens'' to the brain's speech plan and turns it into text, bypassing the need for actual vocalization.
+
+Formal Definition  
+A speech neuroprosthesis consists of four linked components:
+
+1. Electrode array -- a grid of 128 small metal contacts placed on the surface of the speech motor cortex. Each contact records the local electrical voltage fluctuations (the cortical signals) that accompany attempted speech movements.  
+2. Cortical signals -- the time-varying voltage traces captured by the array; they encode the motor commands the brain would normally send to the speech muscles.  
+3. Neural processing system (decoder) -- a rack-mounted computer that receives the raw signals via a digital connector, extracts statistical features, and maps those features to a lexical output using a trained algorithm. The decoder does not read thoughts in general; it is tuned specifically to the patterns that arise when the speech motor cortex plans utterances.  
+4. Output display -- a monitor that shows the decoded text (or synthesized speech) so the user can see what the system has interpreted.
+
+The pipeline can be written conceptually as  
+
+\[
+\text{Electrode array} \;\rightarrow\; \text{Cortical signals} \;\rightarrow\; \text{Decoder} \;\rightarrow\; \text{Text output}.
+\]
+
+Because the array samples many locations simultaneously, the decoder relies on patterns across the whole set rather than a one-to-one mapping of a single electrode to a single word.
+
+Worked Example  
+Problem statement: Follow the full signal path shown in the slide when a patient uses the speech neuroprosthesis.
+
+Step 1 -- Prompt: The system displays the question ``How are you today?'' on the monitor.  
+Step 2 -- Intended response: The patient thinks ``I am very good'' and tries to say it, activating the speech motor cortex.  
+Step 3 -- Signal acquisition: The 128-electrode array over the speech motor cortex records the resulting cortical signals.  
+Step 4 -- Transmission: The recorded voltage traces travel through a digital connector to the Neural Processing System.  
+Step 5 -- Decoding: The decoder analyzes the patterns, matches them to the learned representation of the phrase ``I am very good'', and determines the most likely textual output.  
+Step 6 -- Display: The decoded text ``I am very good'' appears on the monitor for the patient to read.
+
+What this shows us: Every stage---from the cortical intention to the final text---depends on correctly placed electrodes, reliable signal transmission, and an algorithm that translates patterns into words. A failure at any point would break the communication loop.
+
+\subsection{Key Takeaway}
+A speech neuroprosthesis captures the intended speech pattern from the speech motor cortex with an electrode array, decodes it with a computer, and turns it into readable text, thereby restoring a channel of communication for people who cannot physically speak.
+
+\newpage
+\subsection*{Questions}
+
+% --- RECALL ---
+\begin{question}
+(RECALL) List the four main components of the speech neuroprosthesis pipeline shown in the diagram.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+(UNDERSTAND) In your own words, explain why the electrode array must be positioned over the speech motor cortex rather than another cortical region.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+(UNDERSTAND) Describe how the specific placement of the electrode array affects the decoder's ability to translate brain activity into the intended words.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) A patient decides to say the sentence $\text{``The sky is blue''}$. Which component of the speech neuroprosthesis must correctly interpret the new cortical pattern to produce the appropriate text on the monitor?
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) The decoder extracts $4$ statistical features from the signal of each of the $128$ electrodes for every time window. How many total feature values does the decoder process for one time window?
+\end{question}
+
+\newpage
+
+% --- ANALYSE ---
+\begin{question}
+(ANALYSE) Compare the speech neuroprosthesis to the powered prosthetic arm covered in the previous section. Both rely on cortical signals, but what is different about the function each device aims to restore?
+\end{question}
+
+\newpage
+
+% --- EVALUATE ---
+\begin{question}
+(EVALUATE) Evaluate whether this technology fully restores ``natural'' communication for the patient, or if it is best understood as an assistive workaround. Justify your view using the components and workflow described.
+\end{question}
+
+\newpage
+
+\begin{question}
+\text{Which of the following statements is correct about the Homunculus?}
+\end{question}
+
+\newpage
+
+\begin{question}
+\text{Which one has the direct control over voluntary muscle movements?}
+\end{question}
+
+\newpage
+
+\begin{question}
+\text{____________ has the direct control over voluntary muscle movements.}
+\end{question}
+
+\newpage
+
+\begin{question}
+\text{\underline{\kern1cm} is involved in preparing and organising movements and \underline{\kern1cm} is used to generate signals to direct the movement of the body.}
+\end{question}
+
+\newpage
+
+\begin{question}
+\text{\underline{\kern1cm} is responsible for planning and reaching.}
+\end{question}
+
+\newpage
+% ============================================================
+% SECTION  Limb Neuroprosthetics: Bidirectional Brain-Machine Interface
+% ============================================================
+
+\subsection*{Notation Used in This Section}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning \\ \midrule
+    $iBCI$ & intracortical Brain-Computer Interface --- reads neural activity from the brain to determine movement intent (the 'read'/upward signal) \\
+    $FES$ & Functional Electrical Stimulation --- electrical pulses delivered to muscles to produce movement (the 'write'/downward signal) \\
+\bottomrule
+\end{tabular}
+\vspace{1em}
+
+\section{Limb Neuroprosthetics: Bidirectional Brain-Machine Interface}
+
+\subsection{Before We Begin}
+An intracortical Brain-Computer Interface (iBCI) reads electrical activity directly from neurons in the motor cortex. Functional Electrical Stimulation (FES) does the opposite: it delivers small electrical pulses to muscles (or the nerves that control them) to make them contract. When a person cannot move a limb because the natural pathway from brain to muscle is damaged, iBCI can capture the intention to move and FES can replace the lost signal to the muscles. Both technologies require implanted hardware -- one in the brain and one in the forearm. Understanding these two opposite operations lets us see how a single system can both read and write motor commands.
+
+\section{Motivation}
+Picture a smart home system: a sensor reads that you want the lights dimmer (a ``read'' signal), a controller decides how much to dim them, and then the controller sends a ``write'' signal to the light bulb to actually change its brightness. This limb system works the same way --- it ``reads'' the brain's intention to move, and then ``writes'' a signal to the muscles to make the movement happen. Because paralysis breaks the natural brain-to-muscle link, we need both directions in order to restore functional movement. The closed-loop design also lets the system adjust its output based on how the limb actually moves.
+
+\subsection{Intuition}
+Think of the system as a messenger that first listens to what you want to do, translates that wish into an instruction, sends the instruction to the muscles, and then checks whether the muscles responded correctly. The brain-side hardware (recording array) captures the ``thought'' of moving; the decoder turns that pattern of brain spikes into a command like ``close hand''. The command travels to an external stimulator that flashes tiny electrical pulses through wires (lead and electrode array) into the forearm muscles, causing them to contract. A goniometer attached to the joint measures how much the finger actually flexed, feeding that information back so the decoder can fine-tune the next pulse. In this way the loop continuously reads, writes, and corrects.
+
+\subsection{Formal Definition}
+Let \textbf{iBCI} denote the intracortical Brain-Computer Interface that records neural activity from the motor cortex and conveys a digital representation of movement intent upward to a \textbf{Decoder}. The Decoder is a computational module that maps the recorded activity to a \textbf{Motor Command} (e.g., ``grasp'' or ``open hand''). The Decoder's output is sent downstream to an \textbf{External Stimulator}, which generates \textbf{FES} (Functional Electrical Stimulation) pulses. \textbf{FES} refers to the train of electrical pulses delivered through an \textbf{Implanted Lead} and an \textbf{Electrode Array} positioned in the forearm to activate the appropriate muscles.  
+
+Supporting hardware includes a \textbf{Percutaneous Lead Connector} that provides a physical link between the implanted forearm electrodes and the external stimulator, a \textbf{Mobile-Arm Support} that holds the external equipment, and an \textbf{Instrumented Goniometer} that measures joint angles (e.g., finger flexion) and returns this feedback to the Decoder. The overall architecture forms a bidirectional, closed-loop brain-machine interface:  
+
+\[
+\underbrace{\text{Brain activity}}_{\text{iBCI}} \xrightarrow{\text{upward}} \underbrace{\text{Decoder}}_{\text{interpretation}} \xrightarrow{\text{downward}} \underbrace{\text{FES}}_{\text{muscle activation}} \xrightarrow{\text{feedback}} \underbrace{\text{Goniometer}}_{\text{joint angle}} \xrightarrow{\text{loop back}} \underbrace{\text{Decoder}} .
+\]
+
+\subsection{Worked Example}
+\textbf{Problem statement:} A patient with a paralyzed hand wants to grasp a cup.
+
+\begin{enumerate}
+\item \textbf{Step 1 -- Record intent:} The \textbf{Recording Array} implanted in the motor cortex detects a pattern of spikes associated with the intention to grasp. This neural activity is transmitted by the \textbf{iBCI} to the Decoder.
+\item \textbf{Step 2 -- Decode intent:} The Decoder interprets the spike pattern as the command ``close hand for grasp.''
+\item \textbf{Step 3 -- Generate stimulation command:} The Decoder sends the command to the \textbf{External Stimulator}.
+\item \textbf{Step 4 -- Deliver FES:} The External Stimulator produces a train of \textbf{FES} pulses that travel through the \textbf{Implanted Lead} and \textbf{Electrode Array} in the forearm, activating the flexor muscles needed to close the hand.
+\item \textbf{Step 5 -- Measure outcome:} As the fingers close, the \textbf{Instrumented Goniometer} measures the resulting joint angle and sends this feedback back to the Decoder.
+\item \textbf{Step 6 -- Adjust stimulation:} If the measured angle indicates incomplete closure, the Decoder modifies the pulse parameters (e.g., amplitude or duration) and issues a new FES command, iterating until the desired grasp is achieved.
+\end{enumerate}
+\textbf{Final answer:} The system has read the brain's grasp intention, written stimulation to the muscles, and used joint-angle feedback to refine the movement, completing the read-decode-write-feedback loop.
+
+\subsection{Key Takeaway}
+The bidirectional limb neuroprosthetic reads movement intent with an iBCI, writes muscle activation with FES, and closes the loop using goniometer feedback to achieve purposeful, controlled motion.
+
+\newpage
+\subsection{Questions}
+
+% --- RECALL ---
+\begin{question}
+(RECALL) Identify the component that records neural activity from the motor cortex in the limb neuroprosthetic system.
+\end{question}
+
+\newpage
+
+% --- RECALL ---
+\begin{question}
+(RECALL) Identify the component that delivers electrical stimulation to the forearm muscles.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+(UNDERSTAND) In your own words, describe how the iBCI signal path differs from the FES signal path within the bidirectional limb neuroprosthetic.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+(UNDERSTAND) State the direction of each path (iBCI vs. FES) and explain the purpose of the upward and downward signal flows.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) A patient wishes to open a paralyzed hand. List the system components that must become active and place them in the correct sequential order from intention capture to feedback.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) The decoder commands the external stimulator to emit a train of 10 pulses, each pulse lasting $200\,\mu\text{s}$ at an amplitude of $2\,\text{mA}$. Calculate the total electric charge delivered by the train (in microcoulombs, $\mu\text{C}$).
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) If the instrumented goniometer reports a finger-flexion angle of $30^{\circ}$ when the desired angle is $45^{\circ}$, what parameter(s) might the decoder adjust in the next stimulation command?
+\end{question}
+
+\newpage
+
+% --- ANALYSE ---
+\begin{question}
+(ANALYSE) Compare the limb neuroprosthetic described here with the speech neuroprosthetic introduced earlier. Why does the limb system require an External Stimulator and an Instrumented Goniometer, whereas the speech system does not need a stimulator component?
+\end{question}
+
+\newpage
+
+% --- EVALUATE ---
+\begin{question}
+(EVALUATE) Assess the importance of the Instrumented Goniometer's joint-angle feedback for the overall system. Would the limb neuroprosthetic still work reasonably well without this feedback? Justify your answer.
+\end{question}
+
+\newpage
+
+\begin{question}
+\textbf{Question 1:} Gunnar Johansson point walker stimulus cannot be used for:
+    \begin{enumerate}[label=\Alph)]
+        \item Visual perception of dynamic motion
+        \item Studying visuomotor integration
+        \item Visual diagnosis of neurological disorders
+        \item Sensory motor learning
+    \end{enumerate}
+\textbf{(Adapted)}
+\end{question}
+
+\newpage
+
+\begin{question}
+\textbf{Question 2:} "\underline{Phantom limb} involves painful sensations that seem to be coming from the part of the limb that is no longer there."
+\end{question}
+
+\newpage
+
+\begin{question}
+\textbf{Question 3:} Which principle has helped patients with amputation in dealing with Phantom pain?
+    \begin{enumerate}[label=\Alph)]
+        \item Mirror therapy
+        \item Motor imagery
+        \item Visual dominance
+        \item Muscle re-education
+    \end{enumerate}
+\textbf{(Adapted)}
+\end{question}
+
+\newpage
+
+\begin{question}
+\textbf{Question 4:} In a bidirectional brain-machine interface system, what is the purpose of the instrumented goniometer?
+    \begin{enumerate}[label=\Alph)]
+        \item To record neural signals from the motor cortex
+        \item To deliver functional electrical stimulation to muscles
+        \item To provide joint-angle feedback for closed-loop control
+        \item To actuate a robotic limb
+    \end{enumerate}
+\textbf{(Adapted)}
+\end{question}
+
+\newpage
+% ============================================================
+% SECTION  Why Study Motor Cognition? --- Summary of Application Domains
+% ============================================================
+
+\section{Why Study Motor Cognition? --- Summary of Application Domains}
+
+\subsection{Motivation}
+In this short recap we bring together the three example domains that have repeatedly illustrated why motor cognition matters.  
+Seeing a generic humanoid robot, a socially interactive robot like Sophia, and a powered prosthetic arm helps you remember how our understanding of human movement can be transferred to machines that act, interact, or replace a lost limb.  
+By reviewing these concrete cases you can see the common thread: each relies on models of intention, planning, and execution that we have been studying.
+
+\subsection{Intuition}
+Imagine you have learned how the brain plans a reach, chooses a grasp, and fine-tunes the finger forces.  
+If you can capture that recipe, you can give it to a robot so it can pick up a cup, you can program a social robot to gesture naturally during conversation, and you can translate a person's neural signals into the movement of an artificial arm.  
+The slide simply reminds you that these three very different machines all depend on the same underlying motor-cognitive principles.
+
+\subsection{Formal Definition}
+\begin{itemize}
+  \item \textbf{Robots}: autonomous mechanical systems designed to perform tasks that may involve locomotion, manipulation, or whole-body movement.  In our course the representative example is a generic humanoid robot (e.g., a Valkyrie-type platform) whose control algorithms are built from human motor-control models.
+  \item \textbf{Social Robots}: a subclass of robots whose primary purpose is to engage with people on a social level, expressing emotions, speech, and socially appropriate gestures.  The slide shows Sophia as an example; her facial expressions and conversational gestures are shaped by motor-cognitive insights.
+  \item \textbf{Neuroprosthetics}: devices that replace lost motor function by interfacing directly with the user's nervous system.  The powered prosthetic arm displayed is a limb neuroprosthesis that uses decoded motor intent to drive joint motors and provides sensory feedback to the brain.
+\end{itemize}
+These three categories are not new material; they are the concrete applications you have already examined while learning about intention, planning, and sensorimotor feedback.  Remember that ``Robots'' refer to general purpose machines, whereas ``Social Robots'' are specifically engineered for human interaction, so the two are distinct.
+
+\subsection{Key Takeaway}
+The three motivating domains---general robots, socially interactive robots, and neuroprosthetic limbs---are all built on the same motor-cognition foundations you have studied, and this slide simply reminds you of the concrete examples that illustrate those links.
+
+\newpage
+\subsection*{Questions}
+
+% --- RECALL ---
+\begin{question}
+(RECALL) List the three application domains presented as motivations for studying motor cognition.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+(UNDERSTAND) In your own words, describe why the domains of general robots, social robots, and neuroprosthetic limbs are grouped together when explaining the importance of motor cognition.
+\end{question}
+
+\newpage
+
+% --- UNDERSTAND ---
+\begin{question}
+(UNDERSTAND) Identify and explain the common motor-cognitive principles (e.g., intention, planning, execution) that underlie all three domains.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) Choose the domain "Robots" and provide a specific example of a robot discussed earlier in the course that illustrates this category.
+\end{question}
+
+\newpage
+
+% --- APPLY ---
+\begin{question}
+(APPLY) Choose the domain "Neuroprosthetics" and give a concrete example of a neuroprosthetic device mentioned in the lectures that exemplifies this category.
+\end{question}
+
+\newpage
+
+% --- ANALYSE ---
+\begin{question}
+(ANALYSE) Compare the categories "Robots" and "Social Robots": what key characteristics differentiate a general humanoid robot such as Valkyrie from a socially interactive robot like Sophia?
+\end{question}
+
+\newpage
+
+% --- EVALUATE ---
+\begin{question}
+(EVALUATE) Argue which of the three domains---general robots, social robots, or neuroprosthetic limbs---provides the strongest justification for motor cognition research, and support your position with reasons.
+\end{question}
+
+\newpage
+
+\begin{question}
+The following figures depict the results of an experiment that studied sensorimotor adaptation. Participants were asked to mark the corners of a square while looking through a mirror (\textit{Before}), then a prism (\textit{After}). The two conditions were: an active movement (B) where participants had control over how they could move their arm, a passive movement (A) where their arm movement was controlled externally, and a third condition (C) where participants watched others move the arm. Based on the results, answer the question:  
+
+\textbf{Can we conclude that simply producing movement, regardless of it being active or passive, has the potential to produce adaptation?}
+\end{question}
+
+\newpage
+
+\begin{question}
+Gunnar Johansson point walker stimulus cannot be used for:
+\end{question}
+
+\newpage
+
+\begin{question}
+Gunnar Johansson point walker stimulus cannot be used for:
+\end{question}
+
+\newpage
+
+\begin{question}
+Gunnar Johansson point walker stimulus cannot be used for:
+\end{question}
+
+\end{document}
