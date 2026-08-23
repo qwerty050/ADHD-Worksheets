@@ -1,0 +1,1806 @@
+[
+  {
+    "title": "Mid-sem exam",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Functionally isolating the spinal cord from the brain stem and the brain results in",
+        "options": {},
+        "answer": "B) Fictive locomotion"
+      },
+      {
+        "id": 2,
+        "question": "A slight depression in the eye where the sharpest image is produced is called the _____",
+        "options": {},
+        "answer": "Fovea"
+      },
+      {
+        "id": 3,
+        "question": "Interneurons are exclusively found in the peripheral nervous system",
+        "options": {},
+        "answer": "False"
+      },
+      {
+        "id": 4,
+        "question": "The rate of blinking is indicative of one’s",
+        "options": {},
+        "answer": "C) Cognitive state"
+      },
+      {
+        "id": 5,
+        "question": "Which part of the neuron is responsible for the speed of neural transmission?",
+        "options": {},
+        "answer": "B) Myelin sheath"
+      },
+      {
+        "id": 6,
+        "question": "The pupil reflexively dilates when exposed to bright light",
+        "options": {},
+        "answer": "False"
+      },
+      {
+        "id": 7,
+        "question": "When a baby turns their head and arm in a particular position while lying down, it is called",
+        "options": {},
+        "answer": "B) Tonic neck reflex"
+      },
+      {
+        "id": 8,
+        "question": "The condition in which both of the eyes do not line up in the same direction is called",
+        "options": {},
+        "answer": "Strabismus"
+      },
+      {
+        "id": 9,
+        "question": "The following figure depicts the hypothesized circuit for cockroach locomotion. The arrow represents a",
+        "options": {},
+        "answer": "B) Interneuron"
+      },
+      {
+        "id": 10,
+        "question": "Compared to EEGs, MRI scans are",
+        "options": {},
+        "answer": "C) more expensive and provide better spatial resolution."
+      },
+      {
+        "id": 11,
+        "question": "Which imaging technique is best suited for investigating an active brain?",
+        "options": {},
+        "answer": "D) fMRI"
+      },
+      {
+        "id": 12,
+        "question": "Looking at the figure, answer the following question: In the experiment done by Marino et al, where they measured the fMRI activity while participants (expert Ballet, expert Capoeira and controls with no dancing background) were watching videos of either ballet/ capoeira dance forms: Ballet dancers show significant change in signal when they are shown ballet dances whereas capoeira dancers show significant change in signal when they are shown capoeira dance. The reason for this is due to presence of__________",
+        "options": {},
+        "answer": "the following question: In the experiment done by Marino et al, where they measured the fMRI activity while participants (expert Ballet, expert Capoeira and controls with no dancing background) were watching videos of either ballet/ capoeira dance forms: Ballet dancers show significant change in signal when they are shown ballet dances whereas capoeira dancers show significant change in signal when they are shown capoeira dance. The reason for this is due to presence of__________ Ans: Mirror neurons"
+      },
+      {
+        "id": 13,
+        "question": "Name the neurotransmitter that act as a bridge in passing information from motor neurons to muscle for contraction",
+        "options": {},
+        "answer": "Acetylcholine"
+      },
+      {
+        "id": 14,
+        "question": "Which of the following statements is correct about Homunculus",
+        "options": {},
+        "answer": "A) areas of precise motor control are given a larger representation."
+      },
+      {
+        "id": 15,
+        "question": "_____is the disorder in which the brain knows what it wants to speak but faces difficulty in planning and sequencing the speech movements.",
+        "options": {},
+        "answer": "Apraxia/ apraxia of speech"
+      },
+      {
+        "id": 16,
+        "question": "Which of the following is involved in initiating and planning movements",
+        "options": {},
+        "answer": "C) Frontal lobe"
+      },
+      {
+        "id": 17,
+        "question": "Coarticulation can help in increasing speed of response but body parts used for movement may show relatively slow movements",
+        "options": {},
+        "answer": "True"
+      },
+      {
+        "id": 18,
+        "question": "_______ is commonly used for diagnosing neuromuscular disorders",
+        "options": {},
+        "answer": "Electromyogram/EMG"
+      },
+      {
+        "id": 19,
+        "question": "Which of the following is true for intracellular recording",
+        "options": {},
+        "answer": "B) It can be used for studying neuronal morphology"
+      },
+      {
+        "id": 20,
+        "question": "________ is the  physiological and psychological study of movement",
+        "options": {},
+        "answer": "Kinesiology"
+      },
+      {
+        "id": 21,
+        "question": "Temporal lobe is involved in preparing and organizing movements and actions",
+        "options": {},
+        "answer": "False"
+      },
+      {
+        "id": 22,
+        "question": "True or False: Muscles are always found in antagonistic pairs",
+        "options": {},
+        "answer": "True"
+      },
+      {
+        "id": 23,
+        "question": "Energy consumption in light jogging is ____ than that in brisk walking.",
+        "options": {},
+        "answer": "Less"
+      },
+      {
+        "id": 24,
+        "question": "While one set of muscles are moving, the inhibitions of the antagonistic muscles is known as",
+        "options": {},
+        "answer": "Innervation law/Sherrington Law of innervation/ Principle of reciprocity"
+      },
+      {
+        "id": 25,
+        "question": "In stance phase, which type of muscle group are activated",
+        "options": {},
+        "answer": "Extensors"
+      },
+      {
+        "id": 26,
+        "question": "In fictive locomotion, there is",
+        "options": {},
+        "answer": "C) Neither Feedforward or feedbackward"
+      },
+      {
+        "id": 27,
+        "question": "Visual Acuity is the highest when the retinal eccentricity is at the _________",
+        "options": {},
+        "answer": "Fovea/ 0°"
+      },
+      {
+        "id": 28,
+        "question": "If the firing rate of a neuron is highest at the movement at an angle of 180°, at what angle of the movement will the firing rate be minimum?",
+        "options": {},
+        "answer": "C) 360°"
+      },
+      {
+        "id": 29,
+        "question": "The neuron responsible for performing the reflex action in a reflex arc is called ___",
+        "options": {},
+        "answer": "Relay neuron"
+      },
+      {
+        "id": 30,
+        "question": "As cognitive load increases, pupil diameter",
+        "options": {},
+        "answer": "A) Increases"
+      },
+      {
+        "id": 31,
+        "question": "State True or False: Optic Flow can be used for information coding",
+        "options": {},
+        "answer": "True"
+      },
+      {
+        "id": 32,
+        "question": "You are doing your CMM Assignment, but you are stressed that you might not be able to finish it on time. This is making you anxious. In such a situation, the blinking of your eyes",
+        "options": {},
+        "answer": "A) Increases"
+      },
+      {
+        "id": 33,
+        "question": "State True or False: In the early years of development, in an infant, the neural maturation is from medial to peripheral.",
+        "options": {},
+        "answer": "True"
+      },
+      {
+        "id": 34,
+        "question": "Gunnar Johansson point walker stimulus cannot be used for:",
+        "options": {},
+        "answer": "C) Visual diagnosis"
+      },
+      {
+        "id": 35,
+        "question": "In Apraxia, if a person can verbally tell but can’t execute the same, it is known as:",
+        "options": {},
+        "answer": "B) Ideomotor"
+      },
+      {
+        "id": 36,
+        "question": "Correcting errors in a negative feedback loop are termed as servomechanism",
+        "options": {},
+        "answer": "True"
+      }
+    ]
+  },
+  {
+    "title": "End-semester exam",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Small eye movements help with",
+        "options": {
+          "1": "Retinal Stabilization",
+          "2": "Fatigue Prevention",
+          "3": "Both",
+          "4": "None of the above"
+        },
+        "answer": "3) Both"
+      },
+      {
+        "id": 2,
+        "question": "Voluntary attention is also known as ________ attention",
+        "options": {},
+        "answer": "Top-down"
+      },
+      {
+        "id": 3,
+        "question": "Robust relationship between geometrical and temporal aspects of human movement is described by–",
+        "options": {
+          "A": "Hook’s Law",
+          "B": "Fitt’s Law",
+          "C": "⅔ Power Law",
+          "D": "Law of Reciprocity"
+        },
+        "answer": "C) ⅔ Power Law"
+      },
+      {
+        "id": 4,
+        "question": "Which of the following is responsible for Attentional Control",
+        "options": {
+          "A": "Straite Cortex",
+          "B": "Calcarine Sulcus",
+          "C": "Medulla Oblongata",
+          "D": "Posterior Parietal Cortex"
+        },
+        "answer": "D) Posterior Parietal Cortex"
+      },
+      {
+        "id": 5,
+        "question": "In the stop signal task, what is the participant’s goal?",
+        "options": {
+          "A": "To stop executing an action as quickly as possible only when instructed to do so",
+          "B": "To stop executing an action as quickly as possible",
+          "C": "To stop executing an action consecutive times",
+          "D": "To stop the signal only when instructed to do so"
+        },
+        "answer": "A) To stop executing an action as quickly as possible only when instructed to do so"
+      },
+      {
+        "id": 6,
+        "question": "Choice RT decreases linearly with an increase in the number of stimulus-response alternatives",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "B) False"
+      },
+      {
+        "id": 7,
+        "question": "___________ involves painful sensations that seems to be coming from the part of the limb that is no longer there.",
+        "options": {},
+        "answer": "Phantom Limb"
+      },
+      {
+        "id": 8,
+        "question": "Visual information enhances cross-modal perception",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "A) True"
+      },
+      {
+        "id": 9,
+        "question": "Amplitude errors are more difficult to correct than directional errors",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "B) False"
+      },
+      {
+        "id": 10,
+        "question": "Humans are monocular. We see slightly different images from our left and right eye. This phenomenon is called",
+        "options": {
+          "A": "Post Saccadic oscillation",
+          "B": "Retinal disparity",
+          "C": "Attentional blink",
+          "D": "Reduced Sensitivity"
+        },
+        "answer": "B) Retinal disparity"
+      },
+      {
+        "id": 11,
+        "question": "A patient is getting tested for any possible visual impairments and is shown a cylindrical drum with rotating stripes. They report that they are unable to see the stripes. Can it be concluded that the patient has the presence of optokinetic nystagmus (OKN)?",
+        "options": {
+          "A": "Yes",
+          "B": "No"
+        },
+        "answer": "B) No"
+      },
+      {
+        "id": 12,
+        "question": "Both saccades and smooth pursuit eye movements reflect the cognitive state of an individual",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "A) True"
+      },
+      {
+        "id": 13,
+        "question": "Which of the following is a precision grasping movement:",
+        "options": {
+          "A": "Holding a coin",
+          "B": "Holding a cup",
+          "C": "Holding a knife",
+          "D": "None of the above"
+        },
+        "answer": "A) Holding a coin"
+      },
+      {
+        "id": 14,
+        "question": "If the target is moving towards the viewer, eyes move",
+        "options": {
+          "A": "Towards each other",
+          "B": "Away from each other",
+          "C": "Remain at the same position"
+        },
+        "answer": "A) Towards each other"
+      },
+      {
+        "id": 15,
+        "question": "What is the correct flow of Reaction Time",
+        "options": {
+          "A": "Stimulus -> Decision -> Perception -> Response Programming -> Response",
+          "B": "Stimulus -> Response Programming ->Decision -> Perception-> Response",
+          "C": "Stimulus ->Perception -> Response programming ->Decision ->Response",
+          "D": "Stimulus -> Perception -> Decision -> Response Programming -> Response"
+        },
+        "answer": "D) Stimulus -> Perception -> Decision -> Response Programming -> Response"
+      },
+      {
+        "id": 16,
+        "question": "Which of the following statements is incorrect regarding vergence?",
+        "options": {
+          "A": "Retinal disparity is the main stimulus for vergence movements",
+          "B": "Line of sight is crossed in vergence eye movements",
+          "C": "Skewed eye movements are called conjugate",
+          "D": "Vergence and accommodation usually co-occur"
+        },
+        "answer": "C) Skewed eye movements are called conjugate"
+      },
+      {
+        "id": 17,
+        "question": "Which theory states that the movements of both attention and saccades are mediated by the same neural circuit?",
+        "options": {
+          "A": "Oculomotor readiness theory",
+          "B": "Target acquisition theory",
+          "C": "Woodworth’s Law",
+          "D": "Saccadic sensitivity hypothesis"
+        },
+        "answer": "A) Oculomotor readiness theory"
+      },
+      {
+        "id": 18,
+        "question": "What kind of vision is necessary for MicroSaccades?",
+        "options": {
+          "A": "Astigmatism vision",
+          "B": "Presbyopia vision",
+          "C": "Foveal Vision",
+          "D": "Farsightedness vision"
+        },
+        "answer": "C) Foveal Vision"
+      },
+      {
+        "id": 19,
+        "question": "Saccades and Smooth Pursuit eye movements use the same set of muscles, and their mode of operation is also simple",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "B) False"
+      },
+      {
+        "id": 20,
+        "question": "The following graph depicts results from an experiment that studied the relation of rapid eye and arm movements with respect to a target visual stimuli. This figure depicts the mean reaction time (RT) for eye movement, hand movement, and EMG activity for two conditions. Refer to the figure below for the following question. Which conclusion from the study is incorrect ?",
+        "options": {
+          "A": "A positive correlation is observed between onset latencies for eye movement and limb EMG activity",
+          "B": "Gap effects are observed for limb EMG onset",
+          "C": "Limb EMG onset co-occurs with saccade initiation",
+          "D": "Gap effect for arm movement is not dependent on prior saccade movement"
+        },
+        "answer": "C) Limb EMG onset co-occurs with saccade initiation"
+      },
+      {
+        "id": 21,
+        "question": "Choice RTs increases linearly with the weighted mean to the base of the number of stimulus response alternatives. This law is known as the-",
+        "options": {
+          "A": "Hick-Hayman Law",
+          "B": "Hook’s Law",
+          "C": "Fitt’s Law",
+          "D": "None of the above"
+        },
+        "answer": "D) None of the above"
+      },
+      {
+        "id": 22,
+        "question": "Movement planning (Saccade latency) is _____________________ proportional to spatial attention.",
+        "options": {},
+        "answer": "Directly proportional"
+      },
+      {
+        "id": 23,
+        "question": "Babies, at the age of 4 months, have full development of hand and space orientation",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "B) False"
+      },
+      {
+        "id": 24,
+        "question": "The visual stimulus can be processed when saccade is being planned",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "A) True"
+      },
+      {
+        "id": 25,
+        "question": "Which one  have the direct control over voluntary muscle movements",
+        "options": {
+          "A": "Pre-motor cortex",
+          "B": "Posterior parietal cortex",
+          "C": "Supplementary motor cortex",
+          "D": "Primary motor cortex"
+        },
+        "answer": "A) Pre-motor cortex"
+      },
+      {
+        "id": 26,
+        "question": "The type of vision in which your eyes are not focused on the target is called",
+        "options": {
+          "A": "Covert vision",
+          "B": "Overt vision"
+        },
+        "answer": "A) Covert vision"
+      },
+      {
+        "id": 27,
+        "question": "As the number of tasks, to which a participant needs to respond to, increases, the reaction time:",
+        "options": {
+          "A": "Increases",
+          "B": "Decreases",
+          "C": "Remains the same",
+          "D": "None of the above"
+        },
+        "answer": "A) Increases"
+      },
+      {
+        "id": 28,
+        "question": "Which activity is the most preferred to improve eye-hand coordination?",
+        "options": {
+          "A": "Playing football",
+          "B": "Juggling",
+          "C": "Running a marathon",
+          "D": "Wall climbing"
+        },
+        "answer": "B) Juggling"
+      },
+      {
+        "id": 29,
+        "question": "Saccades occur when an individual is dreaming",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "A) True"
+      },
+      {
+        "id": 30,
+        "question": "Which of the following sensory stimuli is the McGurke effect involved in?",
+        "options": {
+          "A": "Proprioception",
+          "B": "Auditory",
+          "C": "Smell",
+          "D": "Tactile"
+        },
+        "answer": "B) Auditory"
+      },
+      {
+        "id": 31,
+        "question": "The stop-signal task is often used to test response inhibition",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "A) True"
+      },
+      {
+        "id": 32,
+        "question": "Which theory states that seeing a movement that is similar to the movement that is to be generated will facilitate the generation of that movement?",
+        "options": {},
+        "answer": "Ideo-motor theory"
+      },
+      {
+        "id": 33,
+        "question": "Individuals who write with an inverted or ‘hooked’ hand have their language center controlled in the left hemisphere",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "B) False"
+      },
+      {
+        "id": 34,
+        "question": "A study was conducted by Hoffman & Subramaniam (1995) to explore the relationship between visual attention and saccadic eye movements. From their results, the following graph depicts the relationship of eye movement latencies from two conditions: movement only and dual-task blocks. With reference to the graph, answer the following question: Which conclusion is incorrect ?",
+        "options": {
+          "A": "Saccades can be predicted before initiation of target",
+          "B": "Spatial attention is used in programming saccadic movements",
+          "C": "The results are consistent with the cost-benefit paradigm",
+          "D": "In dual task saccade latencies are larger because of SOA."
+        },
+        "answer": "the following question: Which conclusion is incorrect ? a. Saccades can be predicted before initiation of target b. Spatial attention is used in programming saccadic movements c. The results are consistent with the cost-benefit paradigm d. In dual task saccade latencies are larger because of SOA."
+      },
+      {
+        "id": 35,
+        "question": "Differences in absolute timing may explain why one person’s writing looks different from another’s.",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "A) True"
+      },
+      {
+        "id": 36,
+        "question": "To maintain a stable perception of the world around us while we engage in normal movements throughout our day, such as walking, we use",
+        "options": {
+          "A": "Vestibular Ocular Reflex",
+          "B": "Smooth pursuit",
+          "C": "Retinal disparity",
+          "D": "Nystagmus eye movement"
+        },
+        "answer": "A) Vestibular Ocular Reflex"
+      },
+      {
+        "id": 37,
+        "question": "Which area of the brain is not involved in the production of saccades",
+        "options": {
+          "A": "Somatosensory cortex",
+          "B": "Superior colliculi",
+          "C": "Occipital lobe",
+          "D": "Pre-Motor Cortex"
+        },
+        "answer": "C) Occipital lobe"
+      },
+      {
+        "id": 38,
+        "question": "The constant k in the 2/3rd Power law increases as arc length increases/widens",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "A) True"
+      },
+      {
+        "id": 39,
+        "question": "Donders Law states that the orientation of the eye is always the same when the eye is aimed in a particular direction irrespective of how the eye was brought to this position, given the head is upright and stationary.",
+        "options": {
+          "A": "True",
+          "B": "False",
+          "C": "Not complete definition"
+        },
+        "answer": "A) True"
+      },
+      {
+        "id": 40,
+        "question": "Involuntary fixation on things that are moving with respect to the head is called",
+        "options": {},
+        "answer": "Optokinetic nystagmus"
+      },
+      {
+        "id": 41,
+        "question": "The disorder where children have sentence-forming difficulties is called",
+        "options": {
+          "A": "Apraxia",
+          "B": "Broca’s aphasia",
+          "C": "Aggramatic aphasia",
+          "D": "Wernicke’s aphasia"
+        },
+        "answer": "C) Aggramatic aphasia"
+      },
+      {
+        "id": 42,
+        "question": "The McGurke effect is a phenomenon in which people perceive a sound as coming from a different location other than the source",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "B) False"
+      },
+      {
+        "id": 43,
+        "question": "Can visual information influence Pain perception?",
+        "options": {
+          "A": "Yes",
+          "B": "No"
+        },
+        "answer": "A) Yes"
+      },
+      {
+        "id": 44,
+        "question": "Which of the following is not a small eye movement:",
+        "options": {
+          "A": "Microsaccade",
+          "B": "Saccade",
+          "C": "Tremor",
+          "D": "All of the above"
+        },
+        "answer": "A) Microsaccade"
+      },
+      {
+        "id": 45,
+        "question": "In the two visual system hypothesis, the ‘Where’ system is known as the ___ pathway.",
+        "options": {},
+        "answer": "Dorsal"
+      },
+      {
+        "id": 46,
+        "question": "Small eye movements help with retinal stabilization",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "A) True"
+      },
+      {
+        "id": 47,
+        "question": "Which model(s) explain the 2/3rd power law?",
+        "options": {
+          "A": "Oscillator model",
+          "B": "Minimum jerk model",
+          "C": "Both",
+          "D": "None of the above"
+        },
+        "answer": "C) Both"
+      },
+      {
+        "id": 48,
+        "question": "In planning of movements, both hands and joints can move in a straight line simultaneously.",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "B) False"
+      },
+      {
+        "id": 49,
+        "question": "Occipital lobe of the brain helps in motion planning",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "B) False"
+      },
+      {
+        "id": 50,
+        "question": "A patient is getting tested for any possible visual impairments and is shown a cylindrical drum with rotating vertical stripes. If the patient had the presence of optokinetic nystagmus (OKN), they would",
+        "options": {
+          "A": "Be able to see the stripes",
+          "B": "Report seeing different colored stripes",
+          "C": "See the stripes horizontally",
+          "D": "Be unable to see stripes"
+        },
+        "answer": "A) Be able to see the stripes"
+      },
+      {
+        "id": 51,
+        "question": "Smooth eye movements and saccades are controlled by different neural systems",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "A) True"
+      },
+      {
+        "id": 52,
+        "question": "Hook’s law describes the relationship between the geometrical and temporal aspects of human movement",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "B) False"
+      },
+      {
+        "id": 53,
+        "question": "____________ type of grasping involves movement invoked without the help of arms",
+        "options": {},
+        "answer": "Precision grasping"
+      },
+      {
+        "id": 54,
+        "question": "A neuropsychological syndrome related to saccades is",
+        "options": {
+          "A": "Parkinson’s disease",
+          "B": "Blind sight",
+          "C": "Night blindness",
+          "D": "Astigmatism"
+        },
+        "answer": "B) Blind sight"
+      },
+      {
+        "id": 55,
+        "question": "Which of the following is not a general rule based on children drawing strokes",
+        "options": {
+          "A": "Start at topmost point",
+          "B": "Drawing a triangle, start with the bottom and move up",
+          "C": "Start at the leftmost point",
+          "D": "Draw horizontal lines from left to right"
+        },
+        "answer": "B) Drawing a triangle, start with the bottom and move up"
+      },
+      {
+        "id": 56,
+        "question": "The following figures depict the results of an experiment that studied sensorimotor adaptation. Participants were asked to mark the corners of a square while looking through a mirror (Before), then a prism (After). The two conditions were: an active movement (B) where participants had control over how they could move their arm, and passive movement (A), where their arm movement was controlled externally and thirdly when they watch others move the arm (C). Based on the results, answer the question: (A) (B) (C) Can we conclude that simply producing movement, regardless of it being active or passive, has the potential to produce adaptation?",
+        "options": {
+          "A": "Yes",
+          "B": "No"
+        },
+        "answer": "the question: (A) (B) (C) Can we conclude that simply producing movement, regardless of it being active or passive, has the potential to produce adaptation? a. Yes b. No"
+      },
+      {
+        "id": 57,
+        "question": "Antagonists are activated simultaneously in smooth pursuit movements, but are activated asynchronously during saccades.",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "A) True"
+      },
+      {
+        "id": 58,
+        "question": "“The eye can point to the target and the hand can then move to the target, drawing on information about where the gaze is directed in space. ” This statement talks about which phenomenon:",
+        "options": {
+          "A": "Saccadic suppression",
+          "B": "Vestibular ocular reflex",
+          "C": "Ideomotor phenomenon",
+          "D": "Eye-hand coordination"
+        },
+        "answer": "D) Eye-hand coordination"
+      },
+      {
+        "id": 59,
+        "question": "The following figure depicts the results of an experiment conducted by Woodsworth where he measured the mean absolute error made by participants with the their eyes closed and open. State true or false: As velocity increases, the mean absolute error remains somewhat constant in participants who had their eyes closed.",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "A) True"
+      },
+      {
+        "id": 60,
+        "question": "The minimum jerk model can be used as an explanation for Hook’s Law",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "B) False"
+      },
+      {
+        "id": 61,
+        "question": "Aiming and grasping are two distinctive phases of movements involved in reaching and grasping an object",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "B) False"
+      },
+      {
+        "id": 62,
+        "question": "According to the isogeny principle, equal angles are described in equal times",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "A) True"
+      },
+      {
+        "id": 63,
+        "question": "Frontal eye field is responsible for saccade control",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "A) True"
+      },
+      {
+        "id": 64,
+        "question": "The age of an individual is a factor that affects simple reaction time",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "A) True"
+      }
+    ]
+  },
+  {
+    "title": "Quiz 1",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Alex said “A well-boiled icicle” instead of “Well-boiled bicycle”. This kind of error is called ____________",
+        "options": {},
+        "answer": "Spoonerism"
+      },
+      {
+        "id": 2,
+        "question": "Which eye region is responsible for seeing and gathering information?",
+        "options": {},
+        "answer": "Fovea"
+      },
+      {
+        "id": 3,
+        "question": "Which one is not an example of saccadic eye movement?",
+        "options": {},
+        "answer": "(b) Rotate the mirror left & right, don't move your head, just rotate your eyes along the mirror."
+      },
+      {
+        "id": 4,
+        "question": "A monkey named ‘Tom’ is trained to play football kicks. One day Tom saw another monkey Jerry playing the same football kick. At that moment, which kind of neuron will fire in Tom’s head",
+        "options": {},
+        "answer": "B) Mirror Neuron"
+      },
+      {
+        "id": 5,
+        "question": "A Tendon is a fibrous connectivity tissue that attaches bone to bone",
+        "options": {},
+        "answer": "B) False"
+      },
+      {
+        "id": 6,
+        "question": "Which Neurotransmitter is responsible for transmitting information from motor neurons to muscle to contract?",
+        "options": {},
+        "answer": "D) Acetylcholine"
+      },
+      {
+        "id": 7,
+        "question": "Which of this is true for extracellular recording",
+        "options": {},
+        "answer": "C) Restricted to very low number of neurons in an area of the brain like 3, 4"
+      },
+      {
+        "id": 8,
+        "question": "Give an example of a motor protein which helps in muscle contraction",
+        "options": {},
+        "answer": "Myosin"
+      },
+      {
+        "id": 9,
+        "question": "Golgi tendon organs are known to be involved in providing ___________ information.",
+        "options": {},
+        "answer": "Proprioceptive/ kinesthesis"
+      },
+      {
+        "id": 10,
+        "question": "____________states that there are multiple ways for humans or animals to perform a movement to achieve the same goal, leaving the question of how the brain chooses a course of action among infinite ones",
+        "options": {},
+        "answer": "B) Degree of Freedom problem"
+      },
+      {
+        "id": 11,
+        "question": "A Doctor asked one of his patients who is suffering from brain damage to draw a clock. He is able to draw only a half part of the clock. This kind of condition is called?",
+        "options": {},
+        "answer": "Hemi-spatial neglect/ hemi-neglect/ spatial-neglect"
+      },
+      {
+        "id": 12,
+        "question": "40% of the gait cycle is the ___________________ phase.",
+        "options": {},
+        "answer": "Swing"
+      },
+      {
+        "id": 13,
+        "question": "State true or false: Swimming can be performed without any intervention from the brain",
+        "options": {},
+        "answer": "A) True"
+      },
+      {
+        "id": 14,
+        "question": "State whether following statements are true or false about extracellular recording",
+        "options": {
+          "1": "Extracellular recording is used for studying neuronal morphology",
+          "2": "Neuronal activity corresponds to small number of neurons in area of brain"
+        },
+        "answer": "C) False, True"
+      },
+      {
+        "id": 15,
+        "question": "Which of the following is false for EMG (Electromyogram):",
+        "options": {},
+        "answer": "B) It’s a non-invasive process"
+      },
+      {
+        "id": 16,
+        "question": "Bradykinesia is a cardinal symptom of:",
+        "options": {},
+        "answer": "D) Parkinson’s Disorder"
+      },
+      {
+        "id": 17,
+        "question": "Learning without feedback is more effective",
+        "options": {},
+        "answer": "B) False"
+      },
+      {
+        "id": 18,
+        "question": "Which one of the following is not a way of walking?",
+        "options": {},
+        "answer": "D) Kneeling"
+      },
+      {
+        "id": 19,
+        "question": "The tract that connects the left and right cerebral hemispheres of the brain is called the ______",
+        "options": {},
+        "answer": "Corpus callosum"
+      },
+      {
+        "id": 20,
+        "question": "____________ has the direct control over voluntary muscle movements",
+        "options": {},
+        "answer": "A) Pre-motor cortex"
+      },
+      {
+        "id": 21,
+        "question": "In the midbrain, match the following with what is processes:",
+        "options": {},
+        "answer": "B) Superior colliculus-Visual signals, Inferior colliculus- Audio signals"
+      },
+      {
+        "id": 22,
+        "question": "Can feedforward be inferred only by removing feedback?",
+        "options": {},
+        "answer": "B) No"
+      },
+      {
+        "id": 23,
+        "question": "A scientist wishes to investigate which area of the brain has been affected most after an epileptic attack. What would be the best non-invasive technique the scientist can use:",
+        "options": {},
+        "answer": "C) MRI"
+      },
+      {
+        "id": 24,
+        "question": "Which one of the following shows exponential relation between speed and power?",
+        "options": {},
+        "answer": "A) Walking"
+      },
+      {
+        "id": 25,
+        "question": "It is the key characteristics of ____________  that their activity is modulated both by action execution and action observation.",
+        "options": {},
+        "answer": "Mirror neurons"
+      },
+      {
+        "id": 26,
+        "question": "_________________ is a quick, simultaneous movement of both eyes between two or more phases of fixation in the same direction.",
+        "options": {},
+        "answer": "Saccade suppression"
+      },
+      {
+        "id": 27,
+        "question": "__________ is known as relay centre of the human brain",
+        "options": {},
+        "answer": "B) Thalamus"
+      },
+      {
+        "id": 28,
+        "question": "___________ is a disorder of the brain and nervous system in which a person is unable to perform tasks or movements when asked, even though they understand the commands",
+        "options": {},
+        "answer": "B) Apraxia"
+      },
+      {
+        "id": 29,
+        "question": "___________________is involved in preparing and organising movements and actions and _________is used to generate signals to direct the movement of the body",
+        "options": {},
+        "answer": "C) Premotor cortex, motor cortex"
+      },
+      {
+        "id": 30,
+        "question": "Which lobe is responsible for eye movement?",
+        "options": {},
+        "answer": "C) Parietal lobe"
+      },
+      {
+        "id": 31,
+        "question": "Choose the correct statement: FMRI corresponds to",
+        "options": {},
+        "answer": "C) Good spatial resolution, bad temporal resolution"
+      },
+      {
+        "id": 32,
+        "question": "Perception of body movements and body positions is known as ___________",
+        "options": {},
+        "answer": "Proprioception"
+      },
+      {
+        "id": 33,
+        "question": "Which part of the Hind-brain is responsible for the signal transmission between the brain and the spinal cord?",
+        "options": {},
+        "answer": "B) Medulla Oblongata"
+      },
+      {
+        "id": 34,
+        "question": "___________ is used for kinesiology",
+        "options": {},
+        "answer": "D) EMG"
+      },
+      {
+        "id": 35,
+        "question": "Coarticulation is seen in:",
+        "options": {},
+        "answer": "D) Both A and B"
+      },
+      {
+        "id": 36,
+        "question": "Walking in the dark is an example _______________ movement.",
+        "options": {},
+        "answer": "Feedforward"
+      },
+      {
+        "id": 37,
+        "question": "Efferent signals are signals that go from:",
+        "options": {},
+        "answer": "B) Central Nervous System to the Peripheral Nervous System"
+      },
+      {
+        "id": 38,
+        "question": "According to this figure, we can say that when the length of the muscle is very long, appropriate amount of active-tension develops",
+        "options": {},
+        "answer": "B) False"
+      },
+      {
+        "id": 39,
+        "question": "If the firing rate of a neuron is highest at the movement at an angle of 45°, at what angle of the movement will the firing rate be minimum?",
+        "options": {},
+        "answer": "C) 225°"
+      },
+      {
+        "id": 40,
+        "question": "According to the uncanny valley effect, with increase in similarity to humans,",
+        "options": {},
+        "answer": "C) There is a dip in the graph, to indicate a point where it gets uncanny"
+      },
+      {
+        "id": 41,
+        "question": "Which part of the brain is damaged the most in Huntington’s disease",
+        "options": {},
+        "answer": "C) Basal ganglia"
+      },
+      {
+        "id": 42,
+        "question": "The potential difference generated between the cell membrane and the region outside the membrane while a stimulus is being transferred is called __________",
+        "options": {},
+        "answer": "Action potential"
+      },
+      {
+        "id": 43,
+        "question": "Axon Hillock is:",
+        "options": {},
+        "answer": "B) The part of neuron where soma (cell body) meets the axon"
+      },
+      {
+        "id": 44,
+        "question": "The tract of nerve fibres for information flow between the left and the right hemispheres is called _____________",
+        "options": {},
+        "answer": "Corpus callosum"
+      },
+      {
+        "id": 45,
+        "question": "The Eye movement and Attention is a function of which part of the brain?",
+        "options": {},
+        "answer": "C) Parietal Lobe"
+      },
+      {
+        "id": 46,
+        "question": "A single unit of skeletal muscle is called _________________",
+        "options": {},
+        "answer": "Motor neuron"
+      },
+      {
+        "id": 47,
+        "question": "Choose the correct option",
+        "options": {},
+        "answer": "B) Synergy reduces the degrees of freedom"
+      },
+      {
+        "id": 48,
+        "question": "Which of this is true for fMRI (Functional Magnetic Resonance Imaging):",
+        "options": {},
+        "answer": "C) Bad Temporal Resolution because blood flow is slow"
+      }
+    ]
+  },
+  {
+    "title": "Quiz 2",
+    "questions": [
+      {
+        "id": 1,
+        "question": "___________________accounts for different images of visual space formed on retina.",
+        "options": {},
+        "answer": "Retinal disparity"
+      },
+      {
+        "id": 2,
+        "question": "Retinal disparity provides important cues for depth perception.",
+        "options": {},
+        "answer": "True"
+      },
+      {
+        "id": 3,
+        "question": "Both Saccade and  Smooth pursuit eye movement use same set of muscles and same mode of operation",
+        "options": {},
+        "answer": "False"
+      },
+      {
+        "id": 4,
+        "question": "The automatic capture of attention due to an non-informative stimulus/cue is referred to as __.",
+        "options": {},
+        "answer": "Bottom Up Attention"
+      },
+      {
+        "id": 5,
+        "question": "The following figure depicts an experiment that studied the contrast in perception of ‘looking’ and ‘reaching’. Looking at the figures, answer the following question. It can be concluded that the grip aperture changed according to the perceived size differences.",
+        "options": {},
+        "answer": "the following question. It can be concluded that the grip aperture changed according to the perceived size differences. Ans: False"
+      },
+      {
+        "id": 6,
+        "question": "________ Refers to perception of speech sounds as coming from a direction other than their true direction, due to the influence of visual stimuli from an apparent speaker.",
+        "options": {},
+        "answer": "Ventriloquist effect"
+      },
+      {
+        "id": 7,
+        "question": "_________ helps and facilitates focusing on particular input for processing and suppress irrelevant information",
+        "options": {},
+        "answer": "Cues"
+      },
+      {
+        "id": 8,
+        "question": "If the target is moving away from the viewer, eyes move",
+        "options": {},
+        "answer": "B) Away from each other"
+      },
+      {
+        "id": 9,
+        "question": "The following graph depicts results from an experiment that studied the relation of rapid eye and arm movements with respect to a target visual stimuli. This figure depicts the mean reaction time (RT) for eye movement, hand movement, and EMG activity for two conditions. Refer to the figure below for the following question. What can we conclude from the following figure?",
+        "options": {
+          "B": "Reaction time was less for the gap condition compared to the overlap condition for all three variables"
+        },
+        "answer": "B) Reaction time was less for the gap condition compared to the overlap condition for all three variables"
+      },
+      {
+        "id": 10,
+        "question": "We process visual information when saccade is being planned",
+        "options": {},
+        "answer": "True"
+      },
+      {
+        "id": 11,
+        "question": "Saccades are slower than smooth pursuit eye movement:",
+        "options": {},
+        "answer": "False"
+      },
+      {
+        "id": 12,
+        "question": "Donders Law states that the orientation of the eye is always the same when the eye is aimed in a particular direction",
+        "options": {},
+        "answer": "C) Not complete definition"
+      },
+      {
+        "id": 13,
+        "question": "The ability for the eyes to remain on the target even when our head moves is called __________",
+        "options": {},
+        "answer": "Vestibular Ocular Reflex"
+      },
+      {
+        "id": 14,
+        "question": "The type of vision in which your eyes are not focused on the target is called",
+        "options": {},
+        "answer": "Covert vision"
+      },
+      {
+        "id": 15,
+        "question": "Knowing where a target is approaching us (for example cricket) rather than not knowing the direction of approach of the target (for example dodge-ball) reduces the time to focus.",
+        "options": {},
+        "answer": "True"
+      },
+      {
+        "id": 16,
+        "question": "Type/stage of sleep, accompanied by low muscle tone throughout the body is _____",
+        "options": {},
+        "answer": "REM Sleep/Rapid Eye Movement Sleep"
+      },
+      {
+        "id": 17,
+        "question": "When aiming for targets, amplitude errors tend to be larger than directional errors.",
+        "options": {},
+        "answer": "True"
+      },
+      {
+        "id": 18,
+        "question": "Vision has a greater alerting capacity than touch.",
+        "options": {},
+        "answer": "False"
+      },
+      {
+        "id": 19,
+        "question": "When the number of tasks increases, the saccadic latency also increases.",
+        "options": {},
+        "answer": "True"
+      },
+      {
+        "id": 20,
+        "question": "If the target path follows the same trajectory, the saccadic latency",
+        "options": {},
+        "answer": "B) Decreases"
+      },
+      {
+        "id": 21,
+        "question": "If two targets are shown simultaneously, the saccadic latency is _______ rather when one target is extinguished before the next one is shown",
+        "options": {},
+        "answer": "A) Higher"
+      },
+      {
+        "id": 22,
+        "question": "Which of the following statements is correct regarding optokinetic nystagmus (OKN)?",
+        "options": {},
+        "answer": "B) The saccades correspond to the fast phase eye movement of the OKN"
+      },
+      {
+        "id": 23,
+        "question": "Which of the following brain part is responsible for saccade control",
+        "options": {},
+        "answer": "B) Frontal Eye Field"
+      },
+      {
+        "id": 24,
+        "question": "We use the same set of muscles to execute Saccadic and Smooth pursuit eye movements",
+        "options": {},
+        "answer": "True"
+      },
+      {
+        "id": 25,
+        "question": "Which part of the brain is responsible for “vision-for-action”",
+        "options": {},
+        "answer": "C) Dorsal pathway"
+      },
+      {
+        "id": 26,
+        "question": "Which of the following is a miniature eye movement",
+        "options": {},
+        "answer": "D) Tremor"
+      },
+      {
+        "id": 27,
+        "question": "We see slightly different images from our left and right eye. This phenomenon is called",
+        "options": {},
+        "answer": "B) Retinal disparity"
+      },
+      {
+        "id": 28,
+        "question": "The ability of the lens to change its shape in order to focus on the objects that are nearby is called __________",
+        "options": {},
+        "answer": "Lens elasticity/ elasticity/Accommodation"
+      },
+      {
+        "id": 29,
+        "question": "Listing's law states that the eye achieves all possible 3D orientations.",
+        "options": {},
+        "answer": "False"
+      },
+      {
+        "id": 30,
+        "question": "We perform Saccadic eye movements to increase the distance between the object and the fovea",
+        "options": {},
+        "answer": "False"
+      },
+      {
+        "id": 31,
+        "question": "Smooth Pursuit eye movement can occurs at the time of REM",
+        "options": {},
+        "answer": "True"
+      },
+      {
+        "id": 32,
+        "question": "Visual information influences Auditory perception?",
+        "options": {},
+        "answer": "True"
+      },
+      {
+        "id": 33,
+        "question": "A participant watches a video of a speaker’s lips mouthing the syllable “pa”. However, the accompanying soundtrack is of the syllable “ma”. The participant reports hearing “ma”. This is due to the",
+        "options": {},
+        "answer": "B) McGurke effect"
+      },
+      {
+        "id": 34,
+        "question": "As cognitive load increases, iris",
+        "options": {},
+        "answer": "D) Expands, increasing pupil diameter"
+      },
+      {
+        "id": 35,
+        "question": "____________part of brain is responsible for visual perception of shapes/color.",
+        "options": {},
+        "answer": "D) Ventral"
+      },
+      {
+        "id": 36,
+        "question": "In ‘Drift” the eye movements are very Rapid",
+        "options": {},
+        "answer": "False"
+      },
+      {
+        "id": 37,
+        "question": "Suppose two objects are presented on your laptop screen. You are looking at any of the objects, and now you are mentally shifting focus without moving the eyes. This is known as _________",
+        "options": {},
+        "answer": "Covert Orienting"
+      },
+      {
+        "id": 38,
+        "question": "Which of the following is not is type of precision grasp:",
+        "options": {},
+        "answer": "C) Hook"
+      },
+      {
+        "id": 39,
+        "question": "Which principle has helped patients with amputation in dealing with Phantom pain?",
+        "options": {},
+        "answer": "C) Visual dominance"
+      },
+      {
+        "id": 40,
+        "question": "A prism can be used as a rehabilitation tool for someone with hemispatial neglect",
+        "options": {},
+        "answer": "true"
+      },
+      {
+        "id": 41,
+        "question": "If retinal shift, which is a natural phenomenon, were prevented, individual’s would be able to see objects more clearly than before.",
+        "options": {},
+        "answer": "B) False"
+      },
+      {
+        "id": 42,
+        "question": "The following figure depicts the accuracy of reaches made in the light or darkness in babies aged 5-11 months. Looking at the graph, answer the following question. Babies at the age of 5 months are able to reach objects better in light than in darkness.",
+        "options": {},
+        "answer": "the following question. Babies at the age of 5 months are able to reach objects better in light than in darkness. Ans: False"
+      },
+      {
+        "id": 43,
+        "question": "Which of the following is not an advantage of miniature eye movements",
+        "options": {},
+        "answer": "C) Seeing objects clearly"
+      },
+      {
+        "id": 44,
+        "question": "Autokinetic illusions occur due to miniature eye movements",
+        "options": {},
+        "answer": "True"
+      }
+    ]
+  },
+  {
+    "title": "Quiz 3",
+    "questions": [
+      {
+        "id": 1,
+        "question": "Which of the following is NOT a factor influencing simple reaction time",
+        "options": {
+          "A": "Familiarity of signal",
+          "B": "Gender",
+          "C": "Age",
+          "D": "Alertness level"
+        },
+        "answer": "B"
+      },
+      {
+        "id": 2,
+        "question": "Choice RTs are longer than simple RTs",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "True"
+      },
+      {
+        "id": 3,
+        "question": "Drawing can be an indicator of the cognitive level of a child",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "True"
+      },
+      {
+        "id": 4,
+        "question": "Despite its later contradictions, which theory was consistent with Hick-Hyman's law?",
+        "options": {
+          "A": "Computational learning theory",
+          "B": "Automata theory",
+          "C": "Information theory",
+          "D": "Coding theory"
+        },
+        "answer": "C information theory"
+      },
+      {
+        "id": 5,
+        "question": "S-R compatibility is defined by the relation between the stimulus location and the anatomical identity of the hand making the response.",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "False"
+      },
+      {
+        "id": 6,
+        "question": "The principle that states that equal angles are drawn in equal times is called ________ principle.",
+        "options": {},
+        "answer": "Isogeny"
+      },
+      {
+        "id": 7,
+        "question": "According to the 2/3rd Power Law, when we draw a curve, the angular velocity of the pen increases linearly with the curvature",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "False"
+      },
+      {
+        "id": 8,
+        "question": "The ______________ hemisphere of the brain is specialized for language, in general",
+        "options": {},
+        "answer": "Left"
+      },
+      {
+        "id": 9,
+        "question": "Which Hemisphere is responsible for Intuitive and non-verbal thoughts______",
+        "options": {},
+        "answer": "Right"
+      },
+      {
+        "id": 10,
+        "question": "According to the rate scaling principle, writing rate is directly proportional to the writing speed",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "False"
+      },
+      {
+        "id": 11,
+        "question": "Which of the following is not a writing stage?",
+        "options": {
+          "A": "Phoneme",
+          "B": "Grapheme",
+          "C": "Allographs",
+          "D": "Words"
+        },
+        "answer": "Phoneme"
+      },
+      {
+        "id": 12,
+        "question": "Which of the following explains the ⅔ power law?",
+        "options": {
+          "A": "Oscillation model",
+          "B": "Angular velocity theory",
+          "C": "Cognitive processing theory",
+          "D": "Anatomical curvature model"
+        },
+        "answer": "A"
+      },
+      {
+        "id": 13,
+        "question": "“Marco treams of going abroad” represents which error?",
+        "options": {
+          "A": "Lexical",
+          "B": "Letter substitution",
+          "C": "Allographic error",
+          "D": "Letter repetition"
+        },
+        "answer": "B"
+      },
+      {
+        "id": 14,
+        "question": "According to the rate scaling hypothesis, writing rate is directly proportional to",
+        "options": {
+          "A": "Writing speed",
+          "B": "Dominant hand",
+          "C": "Precision grasp",
+          "D": "Writing size"
+        },
+        "answer": "d"
+      },
+      {
+        "id": 15,
+        "question": "The iterative corrections model can be used to explain Fitts law",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "True"
+      },
+      {
+        "id": 16,
+        "question": "Medial temporal region of the brain help on motion planning",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "False"
+      },
+      {
+        "id": 17,
+        "question": "“Its two hard to understand”--- What kind of writing error is associated with “two”",
+        "options": {},
+        "answer": "Lexical/Word"
+      },
+      {
+        "id": 18,
+        "question": "Robust relationship between geometrical and temporal aspects of human movement is described by–",
+        "options": {
+          "A": "Hook’s Law",
+          "B": "Fitt’s Law",
+          "C": "⅔ Power Law",
+          "D": "Law of Reciprocity 2/3"
+        },
+        "answer": "C 2/3"
+      },
+      {
+        "id": 19,
+        "question": "What is ‘A’ in ⅔ Power Law: A(t) = kC(t) ?",
+        "options": {
+          "A": "Curvature",
+          "B": "Power Unit",
+          "C": "Empirical Constant",
+          "D": "Angular Velocity"
+        },
+        "answer": "D"
+      },
+      {
+        "id": 20,
+        "question": "Hick-Hayman law describes how much decision time it takes for a person to make a decision as a result of the possible choices,",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "True"
+      },
+      {
+        "id": 21,
+        "question": "According to the SNARC effect, we can respond first to the smaller number with our right hand",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "False"
+      },
+      {
+        "id": 22,
+        "question": "The difficulty with using basic grammar and syntax, or word order and sentence structure known as________________",
+        "options": {},
+        "answer": "Agrammatism"
+      },
+      {
+        "id": 23,
+        "question": "______________________ is responsible for planning and reaching",
+        "options": {},
+        "answer": "parietal reach region/Pre-motor cortex /Motor cortex"
+      },
+      {
+        "id": 24,
+        "question": "Can we calculate Movement Time from the given equation? a + b log2 (2 D (Distance)/ W (Width)",
+        "options": {
+          "A": "Yes",
+          "B": "No"
+        },
+        "answer": "Yes"
+      },
+      {
+        "id": 25,
+        "question": "___________is a hand posture with which objects can be held and it does not involve hand orientation",
+        "options": {},
+        "answer": "Grasping"
+      },
+      {
+        "id": 26,
+        "question": "Depending on how the image is perceived the rules pertaining to starting stroke may change",
+        "options": {
+          "A": "True",
+          "B": "False Ans True"
+        },
+        "answer": "True"
+      },
+      {
+        "id": 27,
+        "question": "Depending on how we plan a trajectory using hand space, joint space changes",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "True"
+      },
+      {
+        "id": 28,
+        "question": "________________ is learning ability disorder that mainly results in impaired writing ability",
+        "options": {},
+        "answer": "Dysgraphia"
+      },
+      {
+        "id": 29,
+        "question": "Perception precedes response selection",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "true"
+      },
+      {
+        "id": 30,
+        "question": "Response selection precede response programming",
+        "options": {
+          "A": "True",
+          "B": "False"
+        },
+        "answer": "True"
+      },
+      {
+        "id": 31,
+        "question": "___________________involves distinguishing among two or more stimuli and choosing the response according to stimuli",
+        "options": {},
+        "answer": "Choice reaction time"
+      },
+      {
+        "id": 32,
+        "question": "Select correct option Choice RT _________ with the increase in number of stimuli-responses",
+        "options": {
+          "A": "increases",
+          "B": "decreases",
+          "C": "does not change"
+        },
+        "answer": "Increases"
+      },
+      {
+        "id": 33,
+        "question": "When two stimuli of the same category are presented and mapped to the same response, then it involves",
+        "options": {
+          "A": "Response processing",
+          "B": "Stimulus processing Ans Response processing"
+        },
+        "answer": "Response processing"
+      },
+      {
+        "id": 34,
+        "question": "____________ effect suggests that left hand response is faster to smaller numbers and right hand response is faster to larger numbers Ans SNARC effect",
+        "options": {},
+        "answer": "SNARC effect"
+      },
+      {
+        "id": 35,
+        "question": "______________ is type of grasping in which the movement is evoked with the help of arms",
+        "options": {
+          "A": "precision grasping",
+          "B": "intermediate grasping",
+          "C": "Power grasping"
+        },
+        "answer": "C) Power grasping"
+      },
+      {
+        "id": 36,
+        "question": "Simple Reaction Time tasks involve mapping of single stimulus to a single response",
+        "options": {
+          "A": "True",
+          "B": "False Ans True"
+        },
+        "answer": "True"
+      },
+      {
+        "id": 37,
+        "question": "What parts of the cortex or stream is responsible for visually guided actions _________",
+        "options": {},
+        "answer": "Dorsal pathway"
+      },
+      {
+        "id": 38,
+        "question": "True or False: While doing a motion, it takes less time for eyes to form a saccade in comparison to muscle movement",
+        "options": {},
+        "answer": "True"
+      },
+      {
+        "id": 39,
+        "question": "Reaction times are _____ when individual stimuli and responses match than when they do not match.",
+        "options": {},
+        "answer": "Faster/Lower"
+      },
+      {
+        "id": 40,
+        "question": "The extent of movement is planned in advance of the movement itself. ○ True ○ False",
+        "options": {},
+        "answer": "True"
+      },
+      {
+        "id": 41,
+        "question": "Choose the correct order between stimulus and response",
+        "options": {
+          "A": "Response Selection->Perception->Response Programming",
+          "B": "Perception->Response Selection->Response Programming",
+          "C": "Response Programming->Response Selection->Perception",
+          "D": "Perception->Response Programming->Response Selection-"
+        },
+        "answer": "B Perception->Response Selection->Response Programming"
+      },
+      {
+        "id": 42,
+        "question": "What is the approximate time for performing an action with visual feedback and taking advantage of it",
+        "options": {
+          "A": "~100ms",
+          "B": "~220ms",
+          "C": "~200ms",
+          "D": "~150ms"
+        },
+        "answer": "C 200ms"
+      },
+      {
+        "id": 43,
+        "question": "According to Fitt’s law, movement time is _________ proportional to the size of the target and ______ proportional to its distance.",
+        "options": {
+          "A": "Directly, Inversely",
+          "B": "Directly, Directly",
+          "C": "Inversely, Inversely",
+          "D": "Inversely, Directly"
+        },
+        "answer": "Inversely, Directly"
+      },
+      {
+        "id": 44,
+        "question": "Which of the following is a power grasping movement:",
+        "options": {
+          "A": "Holding a pen",
+          "B": "Holding a cup",
+          "C": "Holding a coin",
+          "D": "None of the above"
+        },
+        "answer": "Holding a cup"
+      },
+      {
+        "id": 45,
+        "question": "Reaching action is made up of _______ and ________",
+        "options": {},
+        "answer": "Transport/movement, Grasping"
+      },
+      {
+        "id": 46,
+        "question": "As the number of choices increases, the reaction time increases:",
+        "options": {
+          "A": "Linearly",
+          "B": "Quadratically",
+          "C": "Logarithmically",
+          "D": "None of the above"
+        },
+        "answer": "C) Logarithmically"
+      }
+    ]
+  }
+]
