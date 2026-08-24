@@ -65,6 +65,36 @@ Here is how a student typically uses the pipeline over the course of a semester.
 
 ---
 
+## 🚀 How to Run
+
+### 1. Backend Setup
+Create a virtual environment and install the required dependencies:
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### 2. Start the Application
+This project includes a fully-featured local Web App (React + FastAPI) that provides a user-friendly GUI to manage your workflow.
+
+Start the FastAPI backend (in terminal 1):
+```bash
+uvicorn api.server:app --reload --port 8000
+```
+
+Start the React frontend (in terminal 2):
+```bash
+cd web
+npm install
+npm run dev
+```
+Then, open `http://localhost:5173` in your browser to create your knowledge base, upload lectures, and generate worksheets visually!
+
+> **Prefer the Terminal?** If you want to run pipelines autonomously or prefer using the command line, check out the CLI instructions in [docs/usage.md](docs/usage.md).
+
+---
+
 ## 📚 Documentation
 
 For technical details, setup instructions, and CLI usage, refer to the documentation:
