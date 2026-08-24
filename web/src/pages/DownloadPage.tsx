@@ -36,6 +36,10 @@ export const DownloadPage: React.FC = () => {
           <Button onClick={() => downloadFile('tex')}>Download .tex File</Button>
           <Button variant="accent" onClick={() => downloadFile('cmkb')}>Download KB</Button>
         </div>
+
+        <p style={{ marginTop: '2rem', fontSize: '0.9rem', fontWeight: 'bold', borderTop: '2px solid black', paddingTop: '1rem' }}>
+          * In the meantime, you can paste that raw .tex file into Overleaf or run it through pdflatex to actually turn it into a beautiful PDF. We clearly couldn't afford the server costs to compile it for you.
+        </p>
       </div>
 
       <div style={{ textAlign: 'center', marginTop: '2rem' }}>
