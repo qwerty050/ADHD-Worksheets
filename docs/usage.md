@@ -1,7 +1,19 @@
 # Usage Guide
 
-The ADHD Worksheets generator is operated entirely via a central Command Line Interface (CLI): `main_cli.py`.
+The ADHD Worksheets generator can be operated using either the **Web App (UI)** or the **Command Line Interface (CLI)**.
 
+## Web App (UI)
+The easiest way to use the pipeline is via the included React + FastAPI web application, which provides a full GUI for creating knowledge bases, uploading lectures, and generating worksheets.
+
+1. Start the FastAPI backend: `uvicorn api.server:app --reload --port 8000`
+2. Start the React frontend: `cd web && npm run dev`
+3. Open `http://localhost:5173` in your browser.
+
+---
+
+## Command Line Interface (CLI)
+
+For automation or terminal enthusiasts, you can use the central CLI: `main_cli.py`.
 The CLI provides commands for both the generation pipeline (Extract -> Generate) and managing the underlying Course Memory Knowledge Base (CMKB).
 
 ## End-to-End Generation

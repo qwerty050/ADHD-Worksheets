@@ -56,7 +56,11 @@ def main():
             pedagogical_json = json.load(f)
 
         kb = KnowledgeBase.load(str(args.kb)) if args.kb else None
-        cache = PipelineCache(args.json_file)
+        cache = PipelineCache(
+            args.json_file, 
+            kb_id=str(args.kb) if args.kb else None, 
+            lecture_id=args.lecture_id
+        )
 
         run_generation_pipeline(
             pedagogical_json=pedagogical_json,
@@ -72,7 +76,11 @@ def main():
 
     elif args.command == "run":
         # Extract -> generate
-        cache = PipelineCache(args.pdf_file)
+        cache = PipelineCache(
+            args.pdf_file, 
+            kb_id=str(args.kb) if args.kb else None, 
+            lecture_id=args.lecture_id
+        )
         
         extraction_data = run_extraction_pipeline(
             pdf_path=args.pdf_file, 

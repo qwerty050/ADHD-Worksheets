@@ -5,10 +5,17 @@ from pathlib import Path
 class PipelineCache:
     """File-backed cache for pipeline progress."""
 
-    def __init__(self, input_file_path: Path):
+    def __init__(self, input_file_path: Path, kb_id: str = None, lecture_id: str = None):
         self.cache_dir = Path(".pipeline_cache")
         self.cache_dir.mkdir(exist_ok=True)
-        self.cache_file = self.cache_dir / f"{input_file_path.name}.cache.json"
+        
+        suffix = ""
+        if kb_id:
+            suffix += f"_kb-{Path(kb_id).stem}"
+        if lecture_id:
+            suffix += f"_lec-{lecture_id}"
+            
+        self.cache_file = self.cache_dir / f"{input_file_path.name}{suffix}.cache.json"
 
         if self.cache_file.exists():
             with open(self.cache_file, "r", encoding="utf-8") as f:

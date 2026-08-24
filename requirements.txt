@@ -6,3 +6,8 @@ numpy
 openai
 anthropic
 scikit-learn
+fastapi
+uvicorn
+python-multipart
+sse-starlette
+fastapi-cors

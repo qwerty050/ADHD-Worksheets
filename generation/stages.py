@@ -155,3 +155,23 @@ def generate_context_summary(
         model_name=MODEL_CONTEXT_SUMMARY,
         system=SYSTEM_PROMPT_CONTEXT_SUMMARIZER,
     )
+
+
+def generate_section_summary(
+    section_title: str,
+    section_raw_content: str,
+    section_theory: str,
+) -> str:
+    print("  Generating Section Summary for Memory...")
+    prompt = (
+        f"SECTION TITLE: {section_title}\n\n"
+        f"SECTION RAW CONTENT:\n{section_raw_content}\n\n"
+        f"SECTION THEORY:\n{section_theory}\n\n"
+        "Provide a concise summary (max 3-4 sentences) of exactly what was taught in this specific section. "
+        "Do not include information from previous sections."
+    )
+    return get_llm_client().generate(
+        prompt=prompt,
+        model_name=MODEL_CONTEXT_SUMMARY,
+        system="You are an expert summarizer. Extract and summarize the key concepts taught in this section alone.",
+    )

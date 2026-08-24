@@ -51,12 +51,12 @@ The application acts as a curriculum designer. For each section, it generates a 
 
 ## 📅 A Student's Weekly Workflow
 
-Here is how a student typically uses the pipeline over the course of a semester:
+Here is how a student typically uses the pipeline over the course of a semester. You can run this process via our **Command Line Interface (CLI)** or through the included **local Web App (React + FastAPI)**.
 
 1. 📥 **Gather Materials**: At the start of the course, gather past exam papers (PYQs), practice assignments, and reference textbooks.
 2. 🤖 **Digitize Questions**: Using web chatbots (like Claude or ChatGPT) and our pre-written prompts, quickly convert raw PDFs of old exams into structured JSON files.
 3. 🗄️ **Build the Knowledge Base**: Create your Course Memory (`course.cmkb`) and ingest the textbooks and structured PYQ files into it.
-4. ⚙️ **Weekly Generation**: Every week, when a new lecture is released, run the lecture PDF through the generator CLI alongside your Knowledge Base.
+4. ⚙️ **Weekly Generation**: Every week, when a new lecture is released, run the lecture PDF through the generator (via CLI or the Web App UI) alongside your Knowledge Base.
 5. 🔄 **Continuous Learning**: The pipeline produces that week's worksheet (pulling in relevant textbook excerpts and PYQs) and *automatically updates the Knowledge Base* with your progress. Next week's worksheet will organically remember what was already covered!
 
 ---

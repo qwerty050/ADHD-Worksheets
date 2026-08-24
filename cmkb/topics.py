@@ -202,7 +202,7 @@ def resolve_topics(db_manager, topic_strings: list[str]) -> dict[str, list[int]]
     for query in topic_strings:
         matched_cluster_ids = []
         lexical_hits = _lexical_match_clusters(query, topic_meta)
-        for cid, name, matched in lexical_hits[:1]: # pick best lexical
+        for cid, name, matched in lexical_hits: # Return all matching lexical hits
             matched_cluster_ids.append(cid)
             
         if not matched_cluster_ids:
@@ -210,7 +210,6 @@ def resolve_topics(db_manager, topic_strings: list[str]) -> dict[str, list[int]]
             for cid, name, matched, dist in candidates:
                 if dist <= TOPIC_MATCH_THRESHOLD:
                     matched_cluster_ids.append(cid)
-                    break # pick best embedding match under threshold
                     
         results[query] = matched_cluster_ids
     return results

@@ -9,6 +9,7 @@ from generation.stages import (
     filter_extracted_questions,
     review_section,
     generate_context_summary,
+    generate_section_summary,
 )
 
 
@@ -127,7 +128,20 @@ def run_generation_pipeline(
         else:
             # Merge lecture-internal questions with PYQs from memory
             lecture_internal_questions = section.get("extracted_questions", [])
-            merged_candidate_questions = lecture_internal_questions + memory_questions
+            
+            flat_memory_questions = []
+            for mq in memory_questions:
+                for match in mq.get("matches", []):
+                    flat_memory_questions.append({
+                        "text": match.get("question", ""),
+                        "source": match.get("source", f"Memory ({mq.get('canonical_topic', 'Unknown')})"),
+                        "answer": match.get("answer", ""),
+                        "type": "PYQ",
+                        "topic": mq.get("canonical_topic", ""),
+                        "qid": match.get("qid", "")
+                    })
+                    
+            merged_candidate_questions = lecture_internal_questions + flat_memory_questions
             merged_candidate_questions.extend(deferred_questions)
 
             extracted_questions_list, deferred_questions = filter_extracted_questions(
@@ -217,10 +231,19 @@ def run_generation_pipeline(
                 print("  Memory update already committed ✓")
             else:
                 print("  Updating memory store...")
+                section_summary = cache.get_section_step(i, "section_summary")
+                if not section_summary:
+                    section_summary = generate_section_summary(
+                        section_title=section_title,
+                        section_raw_content=section_raw_content,
+                        section_theory=section_theory,
+                    )
+                    cache.set_section_step(i, "section_summary", section_summary)
+                    
                 kb.update(
                     lecture_id=lecture_id,
                     section_json=section,
-                    summary=rolling_context,  # Stage 2.5 summary serves well as section summary
+                    summary=section_summary,  # Use section specific summary instead of rolling_context
                     latex=compiled_text,
                     topics=topics + subtopics,
                 )
