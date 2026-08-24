@@ -26,7 +26,7 @@ export const DownloadPage: React.FC = () => {
   return (
     <div style={{ display: 'flex', gap: '2rem', flexDirection: 'column' }}>
       <div className="brutalist-card" style={{ textAlign: 'center' }}>
-        <ExcuseBanner role="The team responsible for the PDF compiler, Authentication, and Database" />
+        <ExcuseBanner role="The team responsible for generating the PDF and storing your data" />
         
         <p style={{ marginBottom: '1rem' }}>
           Here is your generated worksheet and updated memory. Since we don't have a backend to store your memory or a compiler to build your PDF, please download them below and keep them safe!
@@ -38,7 +38,7 @@ export const DownloadPage: React.FC = () => {
         </div>
 
         <p style={{ marginTop: '2rem', fontSize: '0.9rem', fontWeight: 'bold', borderTop: '2px solid black', paddingTop: '1rem' }}>
-          * In the meantime, you can paste that raw .tex file into Overleaf or run it through pdflatex to actually turn it into a beautiful PDF. We clearly couldn't afford the server costs to compile it for you.
+          In the meantime, you can paste that raw .tex file into Overleaf or run it through pdflatex to actually turn it into a beautiful PDF. We clearly couldn't afford the server costs to compile it for you.
         </p>
       </div>
 
