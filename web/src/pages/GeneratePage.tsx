@@ -72,11 +72,23 @@ export const GeneratePage: React.FC = () => {
     <div className="brutalist-card">
       <h2 style={{ textAlign: 'center' }}>Generate + Options</h2>
       
-      <div style={{ margin: '2rem auto', display: 'flex', flexDirection: 'column', width: 'fit-content' }}>
-        <Toggle label="Objective / MCQ mode" checked={objective} onChange={setObjective} />
-        <Toggle label="Review pass" checked={review} onChange={setReview} />
-        <Toggle label="New page per question" checked={newpage} onChange={setNewpage} />
-        <Toggle label="Update memory after generation" checked={updateMemory} onChange={setUpdateMemory} />
+      <div style={{ margin: '2rem auto', display: 'flex', flexDirection: 'column', gap: '1.5rem', width: 'fit-content', textAlign: 'left' }}>
+        <div>
+          <Toggle label="Objective / MCQ mode" checked={objective} onChange={setObjective} />
+          <p style={{ margin: '0.25rem 0 0 3.5rem', fontSize: '0.85rem', color: '#555' }}>Converts all generated questions into 4-option MCQs. (For those who hate writing out long answers).</p>
+        </div>
+        <div>
+          <Toggle label="Review pass" checked={review} onChange={setReview} />
+          <p style={{ margin: '0.25rem 0 0 3.5rem', fontSize: '0.85rem', color: '#555' }}>Runs a final LLM-based QA pass over the worksheet. Turn it off if you want to save tokens and live dangerously.</p>
+        </div>
+        <div>
+          <Toggle label="New page per question" checked={newpage} onChange={setNewpage} />
+          <p style={{ margin: '0.25rem 0 0 3.5rem', fontSize: '0.85rem', color: '#555' }}>Forces the compiler to put every question on a shiny new page so you have plenty of room to scribble.</p>
+        </div>
+        <div>
+          <Toggle label="Update memory after generation" checked={updateMemory} onChange={setUpdateMemory} />
+          <p style={{ margin: '0.25rem 0 0 3.5rem', fontSize: '0.85rem', color: '#555' }}>Commits the parsed lecture back into the knowledge base so it organically remembers it next week. Turn off for dry runs.</p>
+        </div>
       </div>
 
       {!isGenerating && !isDone && (

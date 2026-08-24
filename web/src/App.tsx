@@ -5,6 +5,7 @@ import { Settings } from 'lucide-react';
 
 import { LandingPage } from './pages/LandingPage';
 import { ConfigPage } from './pages/ConfigPage';
+import { SelectKBPage } from './pages/SelectKBPage';
 import { CreateKBPage } from './pages/CreateKBPage';
 import { GuidePage } from './pages/GuidePage';
 import { UploadLecturePage } from './pages/UploadLecturePage';
@@ -40,6 +41,7 @@ export const App = () => {
         <Layout>
           <Routes>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/select-kb" element={<SelectKBPage />} />
             <Route path="/config" element={<ConfigPage />} />
             <Route path="/create-kb" element={<CreateKBPage />} />
             <Route path="/guide" element={<GuidePage />} />

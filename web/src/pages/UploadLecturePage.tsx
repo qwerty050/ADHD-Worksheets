@@ -58,6 +58,10 @@ export const UploadLecturePage: React.FC = () => {
         <Button variant="secondary" onClick={() => navigate(-1)}>Back</Button>
       </div>
       
+      <div style={{ fontSize: '1rem', marginBottom: '2rem', lineHeight: '1.5', textAlign: 'left', border: '2px solid black', padding: '1rem', backgroundColor: '#fafafa', boxShadow: '4px 4px 0px #000' }}>
+        Just upload the lecture PDF you want to turn into a worksheet. It's really that simple. (If you want to skip the automatic PDF parsing, you can cheat and paste the extracted JSON directly below).
+      </div>
+      
       <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem' }}>Lecture ID</label>
       <input 
         type="text" 

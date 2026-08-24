@@ -75,6 +75,10 @@ export const CreateKBPage: React.FC = () => {
         <h2>Create Knowledge Base</h2>
         <Button variant="secondary" onClick={() => navigate(-1)}>Back</Button>
       </div>
+      
+      <div style={{ fontSize: '1rem', marginBottom: '2rem', lineHeight: '1.5', textAlign: 'left', border: '2px solid black', padding: '1rem', backgroundColor: '#fafafa', boxShadow: '4px 4px 0px #000' }}>
+        Oh no, you don't have a knowledge base already? Don't worry, we'll build a fresh one for you. Just dump your reference books and past questions below. (If your questions aren't in the correct JSON format, try clicking the AI guide instead of just staring blankly at the screen).
+      </div>
       <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem' }}>KB Name</label>
       <input 
         type="text" 
