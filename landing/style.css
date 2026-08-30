@@ -1,0 +1,249 @@
+@import url('https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,500,700,400&f[]=satoshi@900,700,500,400&display=swap');
+
+:root {
+  --color-primary: #ffe17c;
+  --color-dark: #171e19;
+  --color-accent: #b7c6c2;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-bg: #f5f5f5;
+
+  --border-width: 2px;
+  --border-radius: 8px;
+
+  --shadow-small: 4px 4px 0px #000;
+  --shadow-large: 8px 8px 0px #000;
+  --shadow-none: 0px 0px 0px #000;
+
+  --font-heading: 'Cabinet Grotesk', sans-serif;
+  --font-body: 'Satoshi', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  color: var(--color-black);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+.app-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 4rem 1rem;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.main-title {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #333;
+}
+
+p {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+.brutalist-card {
+  background-color: var(--color-white);
+  border: var(--border-width) solid var(--color-black);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-large);
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.benefits-grid {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.benefit-item {
+  flex: 1;
+  min-width: 250px;
+  border: var(--border-width) solid var(--color-black);
+  padding: 1.5rem;
+  background-color: #fafafa;
+  box-shadow: var(--shadow-small);
+  border-radius: var(--border-radius);
+  text-align: left;
+}
+
+.benefit-item h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+}
+
+.brutalist-list {
+  list-style: none;
+  font-size: 1.1rem;
+}
+
+.brutalist-list li {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.brutalist-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55rem;
+  width: 10px;
+  height: 10px;
+  background-color: var(--color-primary);
+  border: 2px solid var(--color-black);
+}
+
+.keywords-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.keyword-badge {
+  background-color: var(--color-accent);
+  border: var(--border-width) solid var(--color-black);
+  padding: 0.5rem 1rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-small);
+}
+
+.brutalist-btn {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 1rem 2rem;
+  background-color: var(--color-primary);
+  color: var(--color-black);
+  border: var(--border-width) solid var(--color-black);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-small);
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.brutalist-btn:hover {
+  transform: translate(4px, 4px);
+  box-shadow: var(--shadow-none);
+}
+
+.brutalist-btn-large {
+  font-size: 1.25rem;
+  padding: 1.25rem 2.5rem;
+}
+
+/* Before / After Transformation Block */
+.before-after-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2.5rem;
+}
+
+@media (min-width: 768px) {
+  .before-after-container {
+    flex-direction: row;
+  }
+}
+
+.before-block, .after-block {
+  flex: 1;
+  border: var(--border-width) solid var(--color-black);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  text-align: left;
+  position: relative;
+  box-shadow: var(--shadow-small);
+}
+
+.before-block {
+  background-color: var(--color-white);
+}
+
+.after-block {
+  background-color: var(--color-primary);
+}
+
+.block-label {
+  position: absolute;
+  top: -14px;
+  left: 1rem;
+  background-color: var(--color-dark);
+  color: var(--color-white);
+  padding: 0.15rem 0.75rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: var(--border-width) solid var(--color-black);
+}
+
+.dense-text {
+  font-family: monospace;
+  line-height: 1.4;
+  font-size: 0.95rem;
+  color: #444;
+  text-align: justify;
+}
+
+.structured-text p {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.structured-text strong {
+  display: block;
+  margin-top: 1rem;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+}
+
+.structured-text strong:first-child {
+  margin-top: 0;
+}
+
+.q-block {
+  margin-top: 1.25rem;
+  padding: 0.75rem;
+  background-color: var(--color-white);
+  border: var(--border-width) solid var(--color-black);
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-weight: 500;
+}

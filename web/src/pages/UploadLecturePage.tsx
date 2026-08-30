@@ -71,7 +71,13 @@ export const UploadLecturePage: React.FC = () => {
       />
 
       <h3 style={{ marginTop: '1rem' }}>PDF Upload</h3>
-      <Dropzone label="Lecture PDF" file={pdfFile} onFileSelect={setPdfFile} accept=".pdf" />
+      <Dropzone 
+        label="Lecture PDF" 
+        files={pdfFile ? [pdfFile] : []} 
+        onFilesSelect={(files) => setPdfFile(files.length > 0 ? files[0] : null)} 
+        accept=".pdf" 
+        multiple={false}
+      />
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '2rem 0 1rem' }}>
         <div>

@@ -121,11 +121,11 @@ def compile_section(
 
             # Extract (LEVEL) tag if present and place as LaTeX comment
             level = None
-            level_match = re.match(r'^\((\w+)\)\s*', cleaned_q)
+            level_match = re.match(r'^\(([^)]+)\)\s*', cleaned_q)
             if level_match:
-                level = level_match.group(1).upper()
+                level = level_match.group(1)
                 cleaned_q = cleaned_q[level_match.end():]
-                parts.append(f"% --- {level} ---")
+                parts.append(f"% --- {level.upper()} ---")
 
             parts.append("\\begin{question}")
             if level:

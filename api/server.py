@@ -108,30 +108,40 @@ def create_kb(session_id: str, name: str = Form(...)):
     return {"status": "success"}
 
 @app.post("/api/sessions/{session_id}/kb/ingest_questions")
-async def ingest_questions(session_id: str, file: UploadFile = File(...)):
+async def ingest_questions(session_id: str, files: list[UploadFile] = File(...)):
     session = SESSIONS.get(session_id)
     if not session or not session["kb"]:
         raise HTTPException(status_code=404, detail="Session or KB not found")
     
-    q_path = session["dir"] / file.filename
-    with open(q_path, "wb") as f:
-        f.write(await file.read())
+    for file in files:
+        q_path = session["dir"] / file.filename
+        with open(q_path, "wb") as f:
+            f.write(await file.read())
+        session["kb"].ingest_questions(q_path)
         
-    session["kb"].ingest_questions(q_path)
-    session["kb"].cluster()
     return {"status": "success"}
 
 @app.post("/api/sessions/{session_id}/kb/ingest_pdf")
-async def ingest_pdf(session_id: str, mode: str = Form("chunking"), file: UploadFile = File(...)):
+async def ingest_pdf(session_id: str, mode: str = Form("chunking"), files: list[UploadFile] = File(...)):
     session = SESSIONS.get(session_id)
     if not session or not session["kb"]:
         raise HTTPException(status_code=404, detail="Session or KB not found")
     
-    pdf_path = session["dir"] / file.filename
-    with open(pdf_path, "wb") as f:
-        f.write(await file.read())
+    for file in files:
+        pdf_path = session["dir"] / file.filename
+        with open(pdf_path, "wb") as f:
+            f.write(await file.read())
+        session["kb"].ingest_pdf(pdf_path, mode=mode)
         
-    session["kb"].ingest_pdf(pdf_path, mode=mode)
+    return {"status": "success"}
+
+@app.post("/api/sessions/{session_id}/kb/cluster")
+def cluster_kb(session_id: str):
+    session = SESSIONS.get(session_id)
+    if not session or not session["kb"]:
+        raise HTTPException(status_code=404, detail="Session or KB not found")
+    
+    session["kb"].cluster()
     return {"status": "success"}
 
 @app.post("/api/sessions/{session_id}/extract")

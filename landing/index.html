@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ADHD Worksheets</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="app-container">
+    <header class="brutalist-card text-center">
+      <h1 class="main-title">ADHD Worksheets</h1>
+      <p class="subtitle">Personalized, focus-friendly learning materials generated from your documents.</p>
+    </header>
+
+    <section class="brutalist-card text-center">
+      <h2>What This Project Does</h2>
+      <p>This tool takes the very <strong>lectures you are currently studying from</strong>, along with your dense reference materials and past questions, and automatically forges them into highly structured, easy-to-digest worksheets. It breaks down overwhelming blocks of text into bite-sized, accessible learning modules tailored exactly to your curriculum.</p>
+    </section>
+
+    <section class="brutalist-card text-center">
+      <h2>The Transformation</h2>
+      <div class="before-after-container">
+        <div class="before-block">
+          <div class="block-label">BEFORE: The Wall of Text</div>
+          <div class="dense-text">
+            "The rapid processing capabilities of the prefrontal cortex can become bottlenecked when faced with continuous unstructured data streams, leading to executive dysfunction in working memory allocation. Therefore, to mitigate cognitive overload, students must actively categorize inputs and seek scaffolded repetition to ensure retention..."
+          </div>
+        </div>
+        
+        <div class="after-block">
+          <div class="block-label">AFTER: Scaffolded Module</div>
+          <div class="structured-text">
+            <strong>Motivation</strong>
+            <p>Why do we lose focus? Our brain's working memory gets bottlenecked by messy data.</p>
+            <strong>The Strategy</strong>
+            <p>Actively categorize your inputs to prevent cognitive overload.</p>
+            <div class="q-block">
+              <em>(APPLY)</em> If you are reading a 50-page document, how should you process it to avoid a working memory bottleneck?
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="brutalist-card text-center">
+      <h2>Why I Built This</h2>
+      <p>Traditional academic materials are often walls of text that can be incredibly hostile to neurodivergent learners. I wanted a tool that respects how neurodivergent minds process information: providing immediate structure, clear boundaries, and scaffolded questions that guide the learner step-by-step rather than dropping them into the deep end.</p>
+    </section>
+
+    <section class="brutalist-card text-center">
+      <h2>The Focus-Driven Edge</h2>
+      <div class="benefits-grid">
+        <div class="benefit-item">
+          <h3>No Context Switching</h3>
+          <p>Everything you need—theory, examples, and questions—is bundled into single modules. Say goodbye to juggling 15 open browser tabs just to finish one topic.</p>
+        </div>
+        <div class="benefit-item">
+          <h3>Zero Distractions</h3>
+          <p>Clean, predictable formatting focuses entirely on the content. No cluttered sidebars, no flashing animations, just pure, structured knowledge.</p>
+        </div>
+        <div class="benefit-item">
+          <h3>Scaffolded Learning</h3>
+          <p>We break overwhelming concepts into stepping stones, guiding you from basic recall up to complex application seamlessly.</p>
+        </div>
+        <div class="benefit-item">
+          <h3>Active Practice & PYQs</h3>
+          <p>Instead of passively reading, apply what you learn instantly. We map previous year questions (PYQs) directly alongside the theory, so you get complete, topic-wise practice exactly how it will be tested.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="brutalist-card text-center">
+      <h2>Who This Is Helpful For</h2>
+      <div style="display: inline-block; text-align: left; margin-top: 1rem;">
+        <ul class="brutalist-list">
+          <li><strong>Neurodivergent Students:</strong> Anyone who gets overwhelmed by unstructured reading assignments.</li>
+          <li><strong>Self-Learners:</strong> People tackling complex subjects on their own who need a guided path.</li>
+          <li><strong>Educators:</strong> Teachers looking to quickly generate accessible, scaffolded practice materials.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="brutalist-card text-center">
+      <h2>How It Works</h2>
+      
+      <!-- SVG Flowchart Illustration -->
+      <svg viewBox="0 0 800 380" class="flowchart-svg" style="width: 100%; max-width: 700px; margin: 2rem auto; display: block; font-family: 'Cabinet Grotesk', sans-serif; font-weight: 800;">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#000"/>
+          </marker>
+        </defs>
+
+        <!-- Input Nodes -->
+        <g transform="translate(20, 20)">
+          <!-- Box 1 -->
+          <rect x="0" y="0" width="160" height="60" rx="8" fill="#ffffff" stroke="#000" stroke-width="4" style="filter: drop-shadow(4px 4px 0 #000);"/>
+          <text x="80" y="37" text-anchor="middle" font-size="18">Messy PDFs</text>
+          <path d="M 160 30 C 220 30, 230 135, 275 135" fill="none" stroke="#000" stroke-width="3" marker-end="url(#arrow)"/>
+
+          <!-- Box 2 -->
+          <rect x="0" y="85" width="160" height="60" rx="8" fill="#ffffff" stroke="#000" stroke-width="4" style="filter: drop-shadow(4px 4px 0 #000);"/>
+          <text x="80" y="122" text-anchor="middle" font-size="18">Lecture PDFs</text>
+          <path d="M 160 115 C 210 115, 230 150, 275 150" fill="none" stroke="#000" stroke-width="3" marker-end="url(#arrow)"/>
+
+          <!-- Box 3 -->
+          <rect x="0" y="170" width="160" height="60" rx="8" fill="#ffffff" stroke="#000" stroke-width="4" style="filter: drop-shadow(4px 4px 0 #000);"/>
+          <text x="80" y="207" text-anchor="middle" font-size="18">Books</text>
+          <path d="M 160 200 C 210 200, 230 165, 275 165" fill="none" stroke="#000" stroke-width="3" marker-end="url(#arrow)"/>
+
+          <!-- Box 4 -->
+          <rect x="0" y="255" width="160" height="60" rx="8" fill="#ffffff" stroke="#000" stroke-width="4" style="filter: drop-shadow(4px 4px 0 #000);"/>
+          <text x="80" y="292" text-anchor="middle" font-size="18">PYQs</text>
+          <path d="M 160 285 C 220 285, 230 180, 275 180" fill="none" stroke="#000" stroke-width="3" marker-end="url(#arrow)"/>
+        </g>
+        
+        <!-- Center Node -->
+        <rect x="305" y="135" width="210" height="80" rx="8" fill="#ffe17c" stroke="#000" stroke-width="4" style="filter: drop-shadow(6px 6px 0 #000);"/>
+        <text x="410" y="170" text-anchor="middle" font-size="20">ADHD Worksheets</text>
+        <text x="410" y="195" text-anchor="middle" font-size="14" fill="#333" font-family="'Satoshi', sans-serif" font-weight="700">(Parsing & Structuring)</text>
+        
+        <path d="M 520 175 L 575 175" fill="none" stroke="#000" stroke-width="3" marker-end="url(#arrow)"/>
+
+        <!-- Right Node -->
+        <rect x="590" y="135" width="190" height="80" rx="8" fill="#b7c6c2" stroke="#000" stroke-width="4" style="filter: drop-shadow(6px 6px 0 #000);"/>
+        <text x="685" y="170" text-anchor="middle" font-size="20">Clean Worksheet</text>
+        <text x="685" y="195" text-anchor="middle" font-size="14" fill="#333" font-family="'Satoshi', sans-serif" font-weight="700">(LaTeX Formatting)</text>
+      </svg>
+
+      <div class="keywords-container" style="justify-content: center;">
+        <span class="keyword-badge">Parsing</span>
+        <span class="keyword-badge">Understanding</span>
+        <span class="keyword-badge">Structuring</span>
+        <span class="keyword-badge">Scaffolding</span>
+        <span class="keyword-badge">Formatting</span>
+      </div>
+      <p style="margin-top: 1.5rem;">It extracts knowledge from your PDFs, builds a structured knowledge base of the content, creates pedagogical summaries, and deterministically formats it all into structured documents.</p>
+    </section>
+
+    <div style="text-align: center; margin-top: 3rem;">
+      <a href="https://github.com/qwerty050/ADHD-Worksheets" class="brutalist-btn brutalist-btn-large">
+        Try It Out Yourself
+      </a>
+    </div>
+  </div>
+</body>
+</html>

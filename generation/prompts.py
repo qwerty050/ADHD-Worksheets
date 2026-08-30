@@ -29,12 +29,13 @@ book context, previous context, or already covered context.
 STRUCTURE — follow this order exactly:
 
 1. PREREQUISITE BRIDGE (only if prerequisite_bridge.needed is true)
-   \\\\subsection*{Before We Begin}
+   \subsection{Before We Begin}
    Cover the concept described in prerequisite_bridge.covers.
    Maximum 5 sentences. Plain English only, no new notation.
    End with a sentence that connects naturally to the section topic.
 
 2. MOTIVATION
+   \subsection{Motivation} 
    Open with the teach_approach specified in the metadata (or a recap if \
 topics are already covered).
    If an opening_analogy is provided, use it verbatim as your opening \
@@ -43,11 +44,13 @@ sentence or work it into your opening paragraph.
    Length: 2-4 sentences. No formulas here.
 
 3. INTUITION
+   \subsection{Intuition}
    Explain the core idea in plain English before introducing any mathematics. \
 A student who has never seen this topic should be able to describe the idea \
 after reading this subsection, even if they cannot use the formula yet.
 
 4. FORMAL DEFINITION
+   \subsection{Formal Definition}
    Now introduce notation and formulas.
    Define every symbol inline the first time it appears.
    Use the notation_introduced list from the metadata — do not introduce \
@@ -56,6 +59,7 @@ symbols not in that list without defining them explicitly.
 write in a way that preempts them.
 
 5. WORKED EXAMPLE
+\subsection{Worked Example}
    If worked_example_required is true, include a fully solved example \
 following the worked_example_spec.
    Structure: Problem statement → Step 1 → Step 2 → ... → Final answer → \
@@ -63,7 +67,7 @@ following the worked_example_spec.
    Every step must be shown. No skipped arithmetic.
 
 6. KEY TAKEAWAY
-   \\\\subsection*{Key Takeaway}
+   \subsection{Key Takeaway}
    1-2 sentences. What is the one thing the student must remember from this \
 section?
 
@@ -186,17 +190,17 @@ just make it accessible.
 STEP 3 — FORMAT:
 - If IS OBJECTIVE MODE is true, convert to 4-option MCQ. Wrong options \
 must represent realistic misconceptions.
-- ALWAYS append the original `source` of the question to the end of the \
-question text in italics (e.g., "\\textit{[Source: 2023 Midterm]}"). \
-If the question was adapted in Step 2, indicate this \
-(e.g., "\\textit{[Adapted from: 2023 Midterm]}"). You must always \
-include the source for every question!
+- Do not include the Bloom taxonomy level (e.g. ANALYSE, APPLY) for these extracted \
+questions. Instead, simply prefix the question with its source in parentheses. \
+For example, write `(Source: 2023 Midterm)`. If the question was adapted in \
+Step 2, write `(Adapted from: 2023 Midterm)`. Do not append it to the end of \
+the question text.
 
 OUTPUT FORMAT:
 Return a JSON object with keys "questions" and "deferred_questions".
 "questions" and "deferred_questions" are arrays of strings.
 Each string is one question in LaTeX format.
-Prefix each question with its original type/Bloom level in parentheses if possible.
+Prefix each question with its source (and indicate if adapted) in parentheses.
 Keep questions concise and readable. Add LaTeX commands, numbering, \
 or bold formatting and wrap math symbols in $...$ or $$...$$ as appropriate.
 One question per array element.
