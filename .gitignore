@@ -48,3 +48,6 @@ venv.bak/
 output/
 *.tex
 *.pdf
+
+# ZCode agent workspace
+.zcode/
