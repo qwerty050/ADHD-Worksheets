@@ -1,53 +1,52 @@
+import hashlib
 import json
 from pathlib import Path
 
+CACHE_VERSION = 2  # bump to invalidate every existing cache file
+
 
 class PipelineCache:
-    """File-backed cache for pipeline progress."""
+    """
+    File-backed cache for pipeline progress.
 
-    def __init__(self, input_file_path: Path, kb_id: str = None, lecture_id: str = None):
+    Cache files are keyed by input filename + content hash + kb/lecture suffix
+    + cache version, so changed inputs or pipeline upgrades never serve stale
+    results. Pass fresh=True to ignore any existing cache for this run.
+    """
+
+    def __init__(self, input_file_path: Path, kb_id: str = None, lecture_id: str = None, fresh: bool = False):
         self.cache_dir = Path(".pipeline_cache")
         self.cache_dir.mkdir(exist_ok=True)
-        
+
         suffix = ""
         if kb_id:
             suffix += f"_kb-{Path(kb_id).stem}"
         if lecture_id:
             suffix += f"_lec-{lecture_id}"
-            
-        self.cache_file = self.cache_dir / f"{input_file_path.name}{suffix}.cache.json"
 
-        if self.cache_file.exists():
+        content_hash = "nohash"
+        try:
+            content_hash = hashlib.sha1(Path(input_file_path).read_bytes()).hexdigest()[:8]
+        except OSError:
+            pass
+
+        self.cache_file = (
+            self.cache_dir
+            / f"{Path(input_file_path).name}_{content_hash}{suffix}_v{CACHE_VERSION}.cache.json"
+        )
+
+        if self.cache_file.exists() and not fresh:
             with open(self.cache_file, "r", encoding="utf-8") as f:
                 self.data = json.load(f)
-            # Ensure required keys exist (older caches may lack them)
-            if "sections" not in self.data:
-                self.data["sections"] = {}
-            if "finalization" not in self.data:
-                self.data["finalization"] = None
+            self.data.setdefault("sections", {})
         else:
-            self.data = {
-                "extraction": None,
-                "question_extraction": None,
-                "pedagogical": None,
-                "sections": {},
-                "finalization": None,
-            }
+            self.data = {"extraction": None, "sections": {}}
 
     def save(self):
         with open(self.cache_file, "w", encoding="utf-8") as f:
             json.dump(self.data, f, indent=2)
 
-    def has_cached_progress(self) -> bool:
-        return (
-            self.data.get("extraction") is not None
-            or self.data.get("question_extraction") is not None
-            or self.data.get("pedagogical") is not None
-            or len(self.data.get("sections", {})) > 0
-            or self.data.get("finalization") is not None
-        )
-
-    # --- Stage 1 ---
+    # --- Stage 1: section map ---
     def get_extraction(self):
         return self.data.get("extraction")
 
@@ -55,23 +54,7 @@ class PipelineCache:
         self.data["extraction"] = data
         self.save()
 
-    # --- Stage 1.5a ---
-    def get_question_extraction(self):
-        return self.data.get("question_extraction")
-
-    def set_question_extraction(self, data):
-        self.data["question_extraction"] = data
-        self.save()
-
-    # --- Stage 1.5b ---
-    def get_pedagogical(self):
-        return self.data.get("pedagogical")
-
-    def set_pedagogical(self, data):
-        self.data["pedagogical"] = data
-        self.save()
-
-    # --- Per-section ---
+    # --- Per-section steps: annotate / writer / questions / compiled / memory_updated ---
     def get_section_step(self, section_idx: int, step: str):
         sec_idx_str = str(section_idx)
         if sec_idx_str in self.data["sections"]:
@@ -84,22 +67,3 @@ class PipelineCache:
             self.data["sections"][sec_idx_str] = {}
         self.data["sections"][sec_idx_str][step] = content
         self.save()
-
-    # --- Finalization ---
-    def get_finalization(self):
-        return self.data.get("finalization")
-
-    def set_finalization(self, result: dict):
-        self.data["finalization"] = result
-        self.save()
-
-    def clear(self):
-        if self.cache_file.exists():
-            self.cache_file.unlink()
-        self.data = {
-            "extraction": None,
-            "question_extraction": None,
-            "pedagogical": None,
-            "sections": {},
-            "finalization": None,
-        }

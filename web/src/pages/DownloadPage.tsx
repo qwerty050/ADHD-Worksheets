@@ -4,7 +4,7 @@ import { Button } from '../components/Button';
 import { ExcuseBanner } from '../components/ExcuseBanner';
 import { useAppContext } from '../context/AppContext';
 
-const API_BASE = 'http://localhost:8000/api';
+import { API_BASE, apiFetch } from '../api';
 
 export const DownloadPage: React.FC = () => {
   const navigate = useNavigate();
@@ -17,7 +17,9 @@ export const DownloadPage: React.FC = () => {
 
   const handleStartOver = async () => {
     if (sessionId) {
-      await fetch(`${API_BASE}/sessions/${sessionId}`, { method: 'DELETE' });
+      try {
+        await apiFetch(`/sessions/${sessionId}`, { method: 'DELETE' });
+      } catch { /* session may already be gone */ }
     }
     navigate('/');
     window.location.reload();

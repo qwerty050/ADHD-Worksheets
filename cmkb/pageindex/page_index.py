@@ -215,7 +215,7 @@ def toc_extractor(page_list, toc_page_list, model):
 
 def toc_index_extractor(toc, content, model=None):
     print('start toc_index_extractor')
-    from pageindex.prompt_loader import format_prompt_by_use_case
+    from .prompt_loader import format_prompt_by_use_case
     
     prompt = format_prompt_by_use_case('toc.index_extractor', toc=str(toc), content=content)
     response = Ollama_API(model=model, prompt=prompt)
@@ -226,7 +226,7 @@ def toc_index_extractor(toc, content, model=None):
 
 def _toc_transformer_single(toc_content, model=None):
     """Transform a single TOC chunk that fits within token limits"""
-    from pageindex.prompt_loader import format_prompt_by_use_case
+    from .prompt_loader import format_prompt_by_use_case
 
     def _parse_toc_payload(payload):
         parsed = extract_json(payload)
@@ -323,7 +323,7 @@ def _split_toc_by_chapters(toc_content, max_chunk_chars=None):
 
 def toc_transformer(toc_content, model=None):
     print('start toc_transformer')
-    from pageindex.prompt_loader import format_prompt_by_use_case
+    from .prompt_loader import format_prompt_by_use_case
 
     # Get adaptive chunking config based on model
     config = get_chunking_config_for_model(model)
@@ -1047,7 +1047,7 @@ async def check_toc_async(page_list, opt=None):
 
 ################### fix incorrect toc #########################################################
 def single_toc_item_index_fixer(section_title, content, model="mistral24b-16k"):
-    from pageindex.prompt_loader import format_prompt_by_use_case
+    from .prompt_loader import format_prompt_by_use_case
     
     prompt = format_prompt_by_use_case('toc.item_index_fixer', section_title=str(section_title), content=content)
     response = Ollama_API(model=model, prompt=prompt)

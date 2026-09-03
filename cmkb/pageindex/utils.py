@@ -28,7 +28,7 @@ from types import SimpleNamespace as config
 logger = logging.getLogger(__name__)
 
 # Import credential management system
-from pageindex.credentials import (
+from .credentials import (
     get_api_key,
     set_api_key,
     get_ollama_model,
@@ -37,10 +37,10 @@ from pageindex.credentials import (
 )
 
 # Import prompt loader for registry-based prompts
-from pageindex.prompt_loader import format_prompt_by_use_case
+from .prompt_loader import format_prompt_by_use_case
 
 # Import response handlers for provider-agnostic finish reason handling
-from pageindex.response_handlers import ResponseHandler, FinishReason
+from .response_handlers import ResponseHandler, FinishReason
 
 # Initialize API key using credential manager
 # Maintains backward compatibility with CHATGPT_API_KEY constant
@@ -116,7 +116,7 @@ def validate_model_config(model: str, provider: str) -> bool:
         True if valid or unknown (permissive), False if explicit mismatch
     """
     try:
-        from pageindex.model_capabilities import get_model_capabilities
+        from .model_capabilities import get_model_capabilities
         caps = get_model_capabilities(model)
         
         # If model is unknown (caps.provider == "unknown"), be permissive
@@ -198,7 +198,7 @@ def _call_ollama_with_finish_reason(model, messages, ollama_url=None):
     """Call Ollama API and extract finish reason with optimized timeout and error handling"""
     
     if ollama_url is None:
-        ollama_url = os.getenv("OLLAMA_URL", "http://localhost:11434")
+        ollama_url = os.getenv("OLLAMA_BASE", "http://localhost:11434")
     
     # Validate endpoint first
     if not _validate_ollama_endpoint(ollama_url):
@@ -326,7 +326,7 @@ def Ollama_API_with_finish_reason(model, prompt, api_key=None, chat_history=None
                 return content, finish_reason
             
             elif config_provider == "ollama":
-                ollama_url = os.getenv("OLLAMA_URL")
+                ollama_url = os.getenv("OLLAMA_BASE")
                 content, finish_reason = _call_ollama_with_finish_reason(model, messages, ollama_url)
                 return content, finish_reason
             
@@ -448,7 +448,7 @@ def _call_ollama_sync(model, messages, ollama_url=None):
     """Synchronous Ollama call (used by async wrapper via executor) with optimized timeout"""
     
     if ollama_url is None:
-        ollama_url = os.getenv("OLLAMA_URL", "http://localhost:11434")
+        ollama_url = os.getenv("OLLAMA_BASE", "http://localhost:11434")
     
     url = f"{ollama_url}/api/chat"
     

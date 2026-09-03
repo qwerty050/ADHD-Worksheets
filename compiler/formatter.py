@@ -20,12 +20,13 @@ def strip_markdown_artifacts(text: str) -> str:
     # Remove markdown code fences (```latex ... ``` or just ``` ... ```)
     text = re.sub(r'```(?:latex|tex)?\s*\n?', '', text)
 
-    # Remove standalone markdown bold markers only when they wrap text
-    # but NOT inside LaTeX commands.
-    text = re.sub(r'(?<![\\\*])\*\*([^*]+)\*\*', r'\1', text)
+    # Remove standalone markdown bold/italic markers only when they wrap text,
+    # but never inside LaTeX commands. A `*` immediately following a word
+    # character is a LaTeX starred command (\subsection*), not emphasis.
+    text = re.sub(r'(?<![\w\\\*])\*\*([^*]+?)\*\*(?![\w*])', r'\1', text)
 
     # Remove markdown italic markers (single *)
-    text = re.sub(r'(?<![\\\*])\*([^*]+)\*(?!\*)', r'\1', text)
+    text = re.sub(r'(?<![\w\\\*])\*([^*]+?)\*(?![\w*])', r'\1', text)
 
     # Remove leading "Corrected LaTeX document" or similar LLM preamble lines
     text = re.sub(
@@ -77,69 +78,97 @@ def build_notation_table(notation_list: list[dict]) -> str:
 # Section compilation (replaces the old LLM-based Stage 2.4)
 # ---------------------------------------------------------------------------
 
+def _render_question(text: str, options: Optional[list[str]] = None, note: Optional[str] = None) -> list[str]:
+    """Render one question environment, optionally with MCQ options and a source note."""
+    lines = ["\\begin{question}"]
+    cleaned_q = strip_markdown_artifacts(text)
+    lines.append(cleaned_q)
+    if options:
+        lines.append(r"\begin{enumerate}[label=\Alph*,itemsep=1pt]")
+        for opt in options:
+            lines.append(f"  \\item {strip_markdown_artifacts(str(opt))}")
+        lines.append(r"\end{enumerate}")
+    lines.append("\\end{question}")
+    if note:
+        lines.append(r"\par\smallskip\noindent\textit{" + strip_markdown_artifacts(note) + "}")
+        lines.append("")
+    return lines
+
+
 def compile_section(
     section_title: str,
     theory_text: str,
-    hots_questions: list[str],
-    extracted_questions: list[str],
+    practice_questions: list[dict],
+    pyq_questions: list[dict],
+    notation: Optional[list[dict]] = None,
     newpage_per_question: bool = True,
-) -> str:
+) -> tuple[str, list[str]]:
     """
-    Deterministically assemble theory and questions into a single LaTeX section.
+    Deterministically assemble theory and questions into LaTeX for one section.
+
+    Each section renders as: Theory, Practice Questions, Past-Year Questions.
+    Also returns the per-section answer-key lines (question numbers follow the
+    LaTeX question counter, which is sequential per section).
 
     Args:
         section_title:        Title for the ``\\section{}`` heading.
-        theory_text:          LaTeX string produced by Stage 2.1.
-        hots_questions:       List of LaTeX question strings from Stage 2.2.
-        extracted_questions:  List of LaTeX question strings from Stage 2.3.
+        theory_text:          LaTeX theory from the Section Writer (uses \\subsubsection).
+        practice_questions:   [{level, text, answer, options?}] from the Question Set Builder.
+        pyq_questions:        [{text, source, adapted, answer, options?}] curated candidates.
+        notation:             [{symbol, meaning}] reported by the writer.
         newpage_per_question: If True, insert ``\\newpage`` after each question.
 
     Returns:
-        A LaTeX string for the entire section.
+        (section_latex, answer_key_lines)
     """
     parts: list[str] = []
+    answer_key: list[str] = []
+    qnum = 0
 
-    # --- Section heading ---
+    # --- Section heading + Theory ---
     parts.append(f"\\section{{{section_title}}}")
     parts.append("")
-
-    # --- Theory ---
-    cleaned_theory = strip_markdown_artifacts(theory_text)
-    parts.append(cleaned_theory)
+    parts.append("\\subsection{Theory}")
+    parts.append("")
+    parts.append(strip_markdown_artifacts(theory_text))
     parts.append("")
 
-    # --- Questions ---
-    all_questions = list(hots_questions) + list(extracted_questions)
-
-    if all_questions:
+    # --- Practice Questions ---
+    if practice_questions:
         parts.append("\\newpage")
-        parts.append("\\subsection*{Questions}")
+        parts.append("\\subsection*{Practice Questions}")
         parts.append("")
 
-        for idx, q in enumerate(all_questions):
-            cleaned_q = strip_markdown_artifacts(q)
-
-            # Extract (LEVEL) tag if present and place as LaTeX comment
-            level = None
-            level_match = re.match(r'^\(([^)]+)\)\s*', cleaned_q)
-            if level_match:
-                level = level_match.group(1)
-                cleaned_q = cleaned_q[level_match.end():]
-                parts.append(f"% --- {level.upper()} ---")
-
-            parts.append("\\begin{question}")
-            if level:
-                parts.append(f"({level}) {cleaned_q}")
-            else:
-                parts.append(cleaned_q)
-            parts.append("\\end{question}")
+    for idx, q in enumerate(practice_questions):
+        qnum += 1
+        level = str(q.get("level", "")).upper()
+        parts.append(f"% --- {level} ---")
+        parts.extend(_render_question(q.get("text", ""), q.get("options")))
+        answer_key.append(f"{qnum}. {q.get('answer') or '(see theory)'}")
+        parts.append("")
+        if newpage_per_question and idx < len(practice_questions) + len(pyq_questions) - 1:
+            parts.append("\\newpage")
             parts.append("")
 
-            if newpage_per_question and idx < len(all_questions) - 1:
-                parts.append("\\newpage")
-                parts.append("")
+    # --- Past-Year Questions ---
+    if pyq_questions:
+        if practice_questions:
+            parts.append("\\newpage")
+        parts.append("\\subsection*{Past-Year Questions}")
+        parts.append("")
 
-    return "\n".join(parts)
+    for idx, q in enumerate(pyq_questions):
+        qnum += 1
+        source = str(q.get("source") or "past exam")
+        note = f"(Adapted from: {source})" if q.get("adapted") else f"(Source: {source})"
+        parts.extend(_render_question(q.get("text", ""), q.get("options"), note=note))
+        answer_key.append(f"{qnum}. {q.get('answer') or '(see theory)'}")
+        parts.append("")
+        if newpage_per_question and idx < len(pyq_questions) - 1:
+            parts.append("\\newpage")
+            parts.append("")
+
+    return "\n".join(parts), answer_key
 
 
 # ---------------------------------------------------------------------------
@@ -151,6 +180,7 @@ def format_document(
     section_titles: list[str],
     metadata: dict = None,
     notation_data: Optional[list[list[dict]]] = None,
+    answer_key_blocks: Optional[list[dict]] = None,
 ) -> str:
     """
     Assemble a complete, compilable LaTeX document from compiled sections.
@@ -160,6 +190,7 @@ def format_document(
         section_titles:    List of section titles, parallel to compiled_sections.
         metadata:          Optional dict with keys 'title', 'author', 'date'.
         notation_data:     Optional list of lists of notation dicts per section.
+        answer_key_blocks: Optional list of {"section_title", "answers": [str]}.
 
     Returns:
         A single string containing the full LaTeX document.
@@ -263,6 +294,23 @@ def format_document(
         body_parts.append(cleaned)
         body_parts.append("")
 
+    # --- ANSWER KEY ---
+    if answer_key_blocks:
+        has_answers = any(block.get("answers") for block in answer_key_blocks)
+        if has_answers:
+            body_parts.append(r"\newpage")
+            body_parts.append(r"\section*{Answer Key}")
+            body_parts.append("")
+            for block in answer_key_blocks:
+                if not block.get("answers"):
+                    continue
+                body_parts.append(f"\\textbf{{{sanitize_latex(block['section_title'])}}}")
+                body_parts.append(r"\begin{itemize}[itemsep=0pt]")
+                for answer in block["answers"]:
+                    body_parts.append(f"  \\item {strip_markdown_artifacts(str(answer))}")
+                body_parts.append(r"\end{itemize}")
+                body_parts.append("")
+
     # --- END DOCUMENT ---
     body_parts.append(r"\end{document}")
 
@@ -273,33 +321,6 @@ def format_document(
     full_document = sanitize_latex(full_document)
 
     return full_document
-
-
-# ---------------------------------------------------------------------------
-# Context summary (deterministic, no LLM)
-# ---------------------------------------------------------------------------
-
-def generate_context_summary(
-    section_titles: list[str],
-    section_topics: list[list[str]],
-) -> str:
-    """Generate a simple programmatic context summary."""
-    lines = [
-        "Context Summary",
-        "=" * 40,
-        f"Total sections covered: {len(section_titles)}",
-        "",
-    ]
-    for i, (title, topics) in enumerate(zip(section_titles, section_topics)):
-        lines.append(f"Section {i + 1}: {title}")
-        if topics:
-            lines.append(f"  Topics: {', '.join(topics)}")
-    lines.append("")
-    lines.append(
-        "This context can be passed as input to the next session "
-        "to maintain continuity."
-    )
-    return "\n".join(lines)
 
 
 # ---------------------------------------------------------------------------

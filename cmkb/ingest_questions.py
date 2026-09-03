@@ -41,7 +41,17 @@ def ingest_questions(db_manager, json_path: str):
         questions = exam["questions"]
 
         pks_by_local_id = {}
+        skipped = 0
+        new_questions = []
         for q in questions:
+            existing = conn.execute(
+                "SELECT pk FROM questions WHERE exam = ? AND qid = ?",
+                (exam_title, str(q["id"])),
+            ).fetchone()
+            if existing:
+                skipped += 1
+                continue
+
             cur = conn.execute(
                 "INSERT INTO questions (exam, qid, question, answer, options_json) "
                 "VALUES (?, ?, ?, ?, ?)",
@@ -55,6 +65,7 @@ def ingest_questions(db_manager, json_path: str):
             )
             pk = cur.lastrowid
             pks_by_local_id[q["id"]] = pk
+            new_questions.append(q)
 
             vec = ollama_embed(question_text_for_embedding(q))
             question_vectors.append(vec)
@@ -63,11 +74,16 @@ def ingest_questions(db_manager, json_path: str):
                 "question": q["question"], "answer": q.get("answer", ""),
             })
 
+        if skipped:
+            print(f"  Skipped {skipped} questions already ingested from '{exam_title}'.")
+        if not new_questions:
+            continue
+
         conn.commit()
 
         tag_input = [
             {"id": q["id"], "question": q["question"], "answer": q.get("answer", "")}
-            for q in questions
+            for q in new_questions
         ]
         print(f"Tagging {len(tag_input)} questions from '{exam_title}'...")
         

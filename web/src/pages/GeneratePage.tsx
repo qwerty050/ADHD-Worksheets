@@ -4,16 +4,16 @@ import { Button } from '../components/Button';
 import { Toggle } from '../components/Toggle';
 import { useAppContext } from '../context/AppContext';
 
-const API_BASE = 'http://localhost:8000/api';
+import { API_BASE } from '../api';
 
 export const GeneratePage: React.FC = () => {
   const navigate = useNavigate();
   const { sessionId } = useAppContext();
   
   const [objective, setObjective] = useState(false);
-  const [review, setReview] = useState(true);
   const [newpage, setNewpage] = useState(true);
   const [updateMemory, setUpdateMemory] = useState(true);
+  const [noReuse, setNoReuse] = useState(false);
   
   const [isGenerating, setIsGenerating] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
@@ -33,16 +33,16 @@ export const GeneratePage: React.FC = () => {
     try {
       const queryParams = new URLSearchParams({
         objective: objective.toString(),
-        review: review.toString(),
         newpage_per_question: newpage.toString(),
-        update_memory: updateMemory.toString()
+        update_memory: updateMemory.toString(),
+        reuse: noReuse ? 'never' : 'prefer'
       });
 
       // Start SSE listening
       const evtSource = new EventSource(`${API_BASE}/sessions/${sessionId}/generate?${queryParams.toString()}`);
       evtSource.onmessage = (event) => {
         const msg = event.data;
-        if (msg.includes('Processing Section') || msg.includes('Generation complete!')) {
+        if (['Processing Section', 'Generation complete', 'deferred', 'ERROR'].some((f) => msg.includes(f))) {
           setLogs(prev => [...prev, msg.replace(/---/g, '').trim()]);
         }
         if (msg === 'None' || msg.includes('ERROR:')) {
@@ -78,8 +78,8 @@ export const GeneratePage: React.FC = () => {
           <p style={{ margin: '0.25rem 0 0 3.5rem', fontSize: '0.85rem', color: '#555' }}>Converts all generated questions into 4-option MCQs. (For those who hate writing out long answers).</p>
         </div>
         <div>
-          <Toggle label="Review pass" checked={review} onChange={setReview} />
-          <p style={{ margin: '0.25rem 0 0 3.5rem', fontSize: '0.85rem', color: '#555' }}>Runs a final LLM-based QA pass over the worksheet. Turn it off if you want to save tokens and live dangerously.</p>
+          <Toggle label="Never repeat PYQs" checked={noReuse} onChange={setNoReuse} />
+          <p style={{ margin: '0.25rem 0 0 3.5rem', fontSize: '0.85rem', color: '#555' }}>Strictly excludes past-year questions the memory has already served in a previous worksheet. Off (default), used PYQs only come back once a topic's fresh pool runs dry.</p>
         </div>
         <div>
           <Toggle label="New page per question" checked={newpage} onChange={setNewpage} />

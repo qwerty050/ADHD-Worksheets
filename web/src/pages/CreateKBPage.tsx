@@ -4,7 +4,7 @@ import { Button } from '../components/Button';
 import { Dropzone } from '../components/Dropzone';
 import { useAppContext } from '../context/AppContext';
 
-const API_BASE = 'http://localhost:8000/api';
+import { API_BASE, apiFetch, apiPostForm } from '../api';
 
 export const CreateKBPage: React.FC = () => {
   const navigate = useNavigate();
@@ -20,20 +20,16 @@ export const CreateKBPage: React.FC = () => {
   const initSessionAndKb = async () => {
     let sid = sessionId;
     if (!sid) {
-      const res = await fetch(`${API_BASE}/sessions`, { method: 'POST' });
-      const data = await res.json();
+      const data = await apiFetch('/sessions', { method: 'POST' });
       sid = data.session_id;
       setSessionId(sid);
     }
 
     if (!kbName) {
       const formData = new FormData();
-      formData.append('name', localKbName || 'New_KB');
-      await fetch(`${API_BASE}/sessions/${sid}/kb/create`, {
-        method: 'POST',
-        body: formData
-      });
-      setKbName(localKbName || 'New_KB');
+      formData.append('name', localKbName);
+      await apiPostForm(`/sessions/${sid}/kb/create`, formData);
+      setKbName(localKbName);
     }
     return sid;
   };
@@ -45,77 +41,28 @@ export const CreateKBPage: React.FC = () => {
       setProgressMessage('Waking up the server hamsters...');
       const sid = await initSessionAndKb();
 
-      if (qFiles.length > 0) {
-        for (let i = 0; i < qFiles.length; i++) {
-          let qCount = 'some';
-          try {
-            const text = await qFiles[i].text();
-            const json = JSON.parse(text);
-            if (Array.isArray(json)) qCount = json.length.toString();
-            else if (json.questions && Array.isArray(json.questions)) qCount = json.questions.length.toString();
-            else qCount = Object.keys(json).length.toString();
-          } catch(e) {}
-
-          const messages = [
-            `Source ${i + 1}/${qFiles.length}: found ${qCount} questions from ${qFiles[i].name}`,
-            `Source ${i + 1}/${qFiles.length}: reading`,
-            `Source ${i + 1}/${qFiles.length}: judging your question quality`,
-            `Source ${i + 1}/${qFiles.length}: adding to KB`
-          ];
-          
-          let msgIdx = 0;
-          setProgressMessage(messages[0]);
-          const timer = setInterval(() => {
-            msgIdx = (msgIdx + 1) % messages.length;
-            setProgressMessage(messages[msgIdx]);
-          }, 1500);
-
-          const qForm = new FormData();
-          qForm.append('files', qFiles[i]);
-          await fetch(`${API_BASE}/sessions/${sid}/kb/ingest_questions`, {
-            method: 'POST',
-            body: qForm
-          });
-          clearInterval(timer);
-        }
+      for (let i = 0; i < qFiles.length; i++) {
+        setProgressMessage(`Question source ${i + 1}/${qFiles.length}: tagging topics in ${qFiles[i].name}...`);
+        const qForm = new FormData();
+        qForm.append('files', qFiles[i]);
+        await apiPostForm(`/sessions/${sid}/kb/ingest_questions`, qForm);
       }
 
-      if (pdfFiles.length > 0) {
-        for (let i = 0; i < pdfFiles.length; i++) {
-          const messages = [
-            `Source ${i + 1}/${pdfFiles.length}: analyzing ${pdfFiles[i].name}`,
-            `Source ${i + 1}/${pdfFiles.length}: reading`,
-            `Source ${i + 1}/${pdfFiles.length}: pretending to understand`,
-            `Source ${i + 1}/${pdfFiles.length}: adding to KB`
-          ];
-
-          let msgIdx = 0;
-          setProgressMessage(messages[0]);
-          const timer = setInterval(() => {
-            msgIdx = (msgIdx + 1) % messages.length;
-            setProgressMessage(messages[msgIdx]);
-          }, 1500);
-
-          const pdfForm = new FormData();
-          pdfForm.append('files', pdfFiles[i]);
-          pdfForm.append('mode', mode);
-          await fetch(`${API_BASE}/sessions/${sid}/kb/ingest_pdf`, {
-            method: 'POST',
-            body: pdfForm
-          });
-          clearInterval(timer);
-        }
+      for (let i = 0; i < pdfFiles.length; i++) {
+        setProgressMessage(`Reference ${i + 1}/${pdfFiles.length}: chunking + embedding ${pdfFiles[i].name}...`);
+        const pdfForm = new FormData();
+        pdfForm.append('files', pdfFiles[i]);
+        pdfForm.append('mode', mode);
+        await apiPostForm(`/sessions/${sid}/kb/ingest_pdf`, pdfForm);
       }
 
-      setProgressMessage('Clustering the chaos into a structured knowledge base');
-      await fetch(`${API_BASE}/sessions/${sid}/kb/cluster`, {
-        method: 'POST'
-      });
+      setProgressMessage('Clustering topics (embedding + aliasing)...');
+      await apiFetch(`/sessions/${sid}/kb/cluster`, { method: 'POST' });
 
       setIsSuccess(true);
     } catch (err) {
       console.error(err);
-      alert('Failed to initialize KB. The hamsters might be on strike.');
+      alert('Failed to initialize KB: ' + (err as Error).message);
     } finally {
       setIsProcessing(false);
       setProgressMessage('');
@@ -133,8 +80,8 @@ export const CreateKBPage: React.FC = () => {
           <Button variant="secondary" onClick={() => window.open(`${API_BASE}/sessions/${sessionId}/download/cmkb`, '_blank')}>
             Download this KB
           </Button>
-          <Button variant="primary" onClick={() => navigate('/lecture')}>
-            Use this KB to generate worksheet
+          <Button variant="primary" onClick={() => navigate('/kb/manage')}>
+            Manage this KB
           </Button>
         </div>
       </div>

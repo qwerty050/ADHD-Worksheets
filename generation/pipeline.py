@@ -1,16 +1,105 @@
 import json
+import logging
 from pathlib import Path
 
 from shared.cache import PipelineCache
 from compiler.formatter import compile_section, format_document
 from generation.stages import (
-    generate_theory,
-    generate_questions_hots,
-    filter_extracted_questions,
-    review_section,
-    generate_context_summary,
-    generate_section_summary,
+    write_section,
+    build_question_set,
+    WriterOutput,
+    QuestionSet,
 )
+
+log = logging.getLogger("pipeline")
+
+MAX_PREP_QUESTIONS = 10   # cap on prepare-for questions shown to the writer
+MAX_CANDIDATES = 15       # cap on candidates judged by the question builder
+PROFILE_WORD_CAP = 600    # student-profile budget in words
+
+
+def _build_student_profile(already_covered: list, run_summaries: list) -> str:
+    """One merged knowledge block: past-lecture snippets + this run's section summaries."""
+    parts = []
+    if already_covered:
+        snippets = [a.get("summary_snippet", "") for a in already_covered if a.get("summary_snippet")]
+        if snippets:
+            parts.append("From earlier worksheets:\n- " + "\n- ".join(snippets))
+    if run_summaries:
+        parts.append("From earlier sections of this worksheet:\n- " + "\n- ".join(run_summaries))
+
+    profile = "\n\n".join(parts)
+    if not profile:
+        return "The student has not covered any prior material."
+
+    words = profile.split()
+    if len(words) > PROFILE_WORD_CAP:
+        # Keep the most recent knowledge (tail); drop the oldest overflow.
+        profile = " ".join(words[-PROFILE_WORD_CAP:])
+    return profile
+
+
+def _question_text(q) -> str:
+    if isinstance(q, dict):
+        return q.get("text") or q.get("question") or ""
+    return str(q or "")
+
+
+def _build_candidates(section_idx: int, section: dict, memory_questions: list, deferred: list, seen_keys: set):
+    """
+    Flatten PYQs, lecture-embedded questions and carried deferred items into one
+    candidate list with stable ids. PYQs come first (primary material), then
+    deferred rescues, then lecture questions.
+
+    Returns (candidates, kb_by_id). seen_keys dedupes by (source, qid) within
+    the run so two similar sections cannot both claim the same PYQ.
+    """
+    candidates = []
+    kb_by_id = {}
+
+    for mq in memory_questions:
+        canonical = mq.get("canonical_topic", "")
+        for m in mq.get("matches", []):
+            key = (m.get("source"), str(m.get("qid")))
+            if key in seen_keys:
+                continue
+            cid = f"kb:{m.get('pk')}"
+            if cid in kb_by_id:
+                continue
+            entry = {
+                "id": cid,
+                "kind": "pyq",
+                "text": m.get("question", ""),
+                "source": m.get("source") or canonical,
+                "answer": m.get("answer", ""),
+                "options": m.get("options"),
+                "topic": canonical,
+                "repeat": bool(m.get("repeat", False)),
+            }
+            candidates.append(entry)
+            kb_by_id[cid] = {"pk": m.get("pk"), "exam": m.get("source"), "qid": m.get("qid")}
+
+    for d in deferred:
+        candidates.append({
+            "id": d.get("id") or f"def:{section_idx}:{len(candidates)}",
+            "kind": "deferred",
+            "text": d.get("text", ""),
+            "source": d.get("source", ""),
+            "answer": d.get("answer", ""),
+            "options": None,
+        })
+
+    for j, q in enumerate(section.get("extracted_questions", []) or []):
+        candidates.append({
+            "id": f"lec:{section_idx}:{j}",
+            "kind": "lecture",
+            "text": _question_text(q),
+            "source": "lecture slide",
+            "answer": "",
+            "options": None,
+        })
+
+    return candidates[:MAX_CANDIDATES], kb_by_id
 
 
 def run_generation_pipeline(
@@ -21,239 +110,155 @@ def run_generation_pipeline(
     cache: PipelineCache,
     update_memory: bool = True,
     is_objective: bool = False,
-    review: bool = True,
     newpage_per_question: bool = True,
+    reuse: str = "prefer",
 ) -> dict:
     """
-    Run Stages 2 and 3: per-section content generation with memory integration,
-    followed by deterministic document formatting.
+    Two LLM calls per section: the Section Writer (theory, notation, summary)
+    and the Question Set Builder (practice ladder + PYQ curation + deferral).
+    Everything else — rolling context, compilation, the answer key, memory
+    commits — is deterministic.
     """
     if isinstance(pedagogical_json, dict):
         pedagogical_json = pedagogical_json.get("section_map", [])
 
     compiled_sections = []
     section_titles = []
-    section_topics_list = []
     notation_data_list = []
-    total_sections = len(pedagogical_json)
-    rolling_context = ""
+    answer_key_blocks = []
+    run_summaries: list[str] = []
     deferred_questions: list = []
+    seen_keys: set = set()
+    total_sections = len(pedagogical_json)
 
     for i, section in enumerate(pedagogical_json):
         section_title = section.get("section_title", f"Section {i + 1}")
-        section_raw_content = section.get("section_content", "")
-        
-        # Everything else goes to metadata
-        section_metadata = {
-            k: v for k, v in section.items()
-            if k not in (
-                "section_title", "section_content", "topics", "subtopics", "dependency_order"
-            )
-        }
+        section_content = section.get("section_content", "")
+
+        log.info("--- Processing Section %d/%d: %s ---", i + 1, total_sections, section_title)
 
         topics = section.get("topics", [])
         subtopics = section.get("subtopics", [])
-        
-        print(f"\n--- Processing Section {i + 1}/{total_sections}: {section_title} ---")
 
-        # Memory Query Hook
+        # ----- Memory query -----
         if kb:
-            # Query memory before generation
-            memory_results = kb.query(topics=topics + subtopics, lecture_id=lecture_id, k=5)
+            memory_results = kb.query(topics=topics + subtopics, lecture_id=lecture_id, reuse=reuse)
             memory_questions = memory_results.get("questions", [])
             book_context = memory_results.get("book_context", [])
             already_covered = memory_results.get("already_covered", [])
         else:
-            memory_questions = []
-            book_context = []
-            already_covered = []
+            memory_questions, book_context, already_covered = [], [], []
 
-        # ----- Step 2.1: Theory Generation -----
-        section_theory = cache.get_section_step(i, "theory")
-        if section_theory:
-            print("  Theory cached ✓")
+        candidates, kb_by_id = _build_candidates(i, section, memory_questions, deferred_questions, seen_keys)
+
+        # ----- Call A: Section Writer -----
+        writer_cached = cache.get_section_step(i, "writer")
+        if writer_cached:
+            log.info("  Theory cached")
+            writer_output = WriterOutput.model_validate_json(writer_cached)
         else:
-            section_theory = generate_theory(
-                section_raw_content=section_raw_content,
-                section_metadata=section_metadata,
-                rolling_context=rolling_context,
+            # Safeguarded prepare-for list: question text + topic only —
+            # answers/options stripped so they cannot leak into the theory.
+            prep_questions = [
+                {"source": c["source"], "topic": c.get("topic", ""), "question": c["text"]}
+                for c in candidates if c["kind"] in ("pyq", "deferred")
+            ][:MAX_PREP_QUESTIONS]
+
+            writer_output = write_section(
+                section_content=section_content,
                 book_context=book_context,
-                already_covered=already_covered,
+                student_profile=_build_student_profile(already_covered, run_summaries),
+                prep_questions=prep_questions,
+                learning_objectives=section.get("learning_objectives", []),
+                key_misconceptions=section.get("key_misconceptions", []),
             )
-            cache.set_section_step(i, "theory", section_theory)
+            cache.set_section_step(i, "writer", writer_output.model_dump_json())
 
-        # ----- Step 2.2: HOTS Questions -----
-        hots_questions = cache.get_section_step(i, "hots")
-        if hots_questions:
-            print("  HOTS Questions cached ✓")
-            if isinstance(hots_questions, str):
-                try:
-                    parsed = json.loads(hots_questions)
-                    hots_questions = parsed.get("questions", [parsed] if isinstance(parsed, str) else [])
-                except json.JSONDecodeError:
-                    hots_questions = [hots_questions]
+        # ----- Call B: Question Set Builder -----
+        questions_cached = cache.get_section_step(i, "questions")
+        if questions_cached:
+            log.info("  Question set cached")
+            question_set = QuestionSet.model_validate_json(questions_cached)
         else:
-            question_prompts = section.get("question_prompts", {})
-            hots_questions = generate_questions_hots(
-                section_raw_content=section_raw_content,
-                section_theory=section_theory,
-                question_prompts=question_prompts,
-                rolling_context=rolling_context,
+            question_set = build_question_set(
+                section_theory=writer_output.theory,
+                candidates=candidates,
+                student_profile=_build_student_profile(already_covered, run_summaries),
                 is_objective=is_objective,
             )
-            cache.set_section_step(i, "hots", hots_questions)
+            cache.set_section_step(i, "questions", question_set.model_dump_json())
 
-        # ----- Step 2.3: Extracted Questions Filter + Adaptation -----
-        extracted_questions_list = cache.get_section_step(i, "extracted_questions")
-        if extracted_questions_list:
-            print("  Extracted questions cached ✓")
-            if isinstance(extracted_questions_list, str):
-                try:
-                    parsed = json.loads(extracted_questions_list)
-                    extracted_questions_list = parsed.get("questions", [])
-                except json.JSONDecodeError:
-                    extracted_questions_list = (
-                        [extracted_questions_list]
-                        if extracted_questions_list.strip()
-                        and not extracted_questions_list.startswith("% No Extracted")
-                        else []
-                    )
-            cached_deferred = cache.get_section_step(i, "deferred_questions")
-            if cached_deferred:
-                deferred_questions = (
-                    json.loads(cached_deferred)
-                    if isinstance(cached_deferred, str)
-                    else cached_deferred
-                )
-        else:
-            # Merge lecture-internal questions with PYQs from memory
-            lecture_internal_questions = section.get("extracted_questions", [])
-            
-            flat_memory_questions = []
-            for mq in memory_questions:
-                for match in mq.get("matches", []):
-                    flat_memory_questions.append({
-                        "text": match.get("question", ""),
-                        "source": match.get("source", f"Memory ({mq.get('canonical_topic', 'Unknown')})"),
-                        "answer": match.get("answer", ""),
-                        "type": "PYQ",
-                        "topic": mq.get("canonical_topic", ""),
-                        "qid": match.get("qid", "")
-                    })
-                    
-            merged_candidate_questions = lecture_internal_questions + flat_memory_questions
-            merged_candidate_questions.extend(deferred_questions)
+        # Bookkeeping: included PYQs are consumed for the rest of this run.
+        included_pyqs = [p for p in question_set.pyq if p.id and p.id.startswith("kb:")]
+        for p in included_pyqs:
+            info = kb_by_id.get(p.id)
+            if info:
+                seen_keys.add((info.get("exam"), str(info.get("qid"))))
+        deferred_questions = [d.model_dump() for d in question_set.deferred]
 
-            extracted_questions_list, deferred_questions = filter_extracted_questions(
-                section_raw_content=section_raw_content,
-                section_questions=merged_candidate_questions,
-                rolling_context=rolling_context,
-                is_objective=is_objective,
-            )
-            cache.set_section_step(i, "extracted_questions", extracted_questions_list)
-            cache.set_section_step(i, "deferred_questions", json.dumps(deferred_questions))
-
-        # ----- Step 2.4: Compile (deterministic) -----
+        # ----- Deterministic compilation -----
         compiled_text = cache.get_section_step(i, "compiled")
         if compiled_text:
-            print("  Compiled module cached ✓")
+            log.info("  Compiled section cached")
+            answer_key = cache.get_section_step(i, "answer_key") or []
         else:
-            print("  Compiling Module (deterministic)...")
-            compiled_text = compile_section(
+            log.info("  Compiling section...")
+            compiled_text, answer_key = compile_section(
                 section_title=section_title,
-                theory_text=section_theory,
-                hots_questions=hots_questions,
-                extracted_questions=extracted_questions_list,
+                theory_text=writer_output.theory,
+                practice_questions=[q.model_dump() for q in question_set.practice],
+                pyq_questions=[q.model_dump() for q in question_set.pyq],
+                notation=[n.model_dump() for n in writer_output.notation],
                 newpage_per_question=newpage_per_question,
             )
             cache.set_section_step(i, "compiled", compiled_text)
-
-        # ----- Step 2.6: Review Pass (optional) -----
-        if review:
-            review_result = cache.get_section_step(i, "review")
-            if review_result:
-                print("  Review cached ✓")
-                if isinstance(review_result, str):
-                    try:
-                        review_result = json.loads(review_result)
-                    except json.JSONDecodeError:
-                        review_result = {"status": "pass", "flags": [], "summary": "Cached (unparseable)."}
-            else:
-                review_result = review_section(
-                    compiled_text=compiled_text,
-                    section_metadata=section_metadata,
-                    rolling_context=rolling_context,
-                )
-                cache.set_section_step(i, "review", review_result)
-
-            status = review_result.get("status", "pass")
-            flags = review_result.get("flags", [])
-            summary = review_result.get("summary", "")
-
-            if status == "flag":
-                print(f"  ⚠ Review FLAGGED: {summary}")
-                for flag in flags:
-                    print(f"    - [{flag.get('type', '?')}] {flag.get('suggestion', flag.get('term', flag.get('missing_level', '')))}")
-                
-                critical_types = {"undefined_term", "knowledge_assumption"}
-                critical_flags = [f for f in flags if f.get("type") in critical_types]
-                if critical_flags:
-                    banner_lines = [f"% !!!  REVIEW FLAG: {section_title}  !!!"]
-                    for cf in critical_flags:
-                        banner_lines.append(f"% [{cf.get('type')}] {cf.get('suggestion', cf.get('term', ''))}")
-                    banner_lines.append("% !!! END REVIEW FLAGS !!!")
-                    compiled_text = "\n".join(banner_lines) + "\n" + compiled_text
-            else:
-                print(f"  ✓ Review passed: {summary}")
+            cache.set_section_step(i, "answer_key", answer_key)
 
         compiled_sections.append(compiled_text)
         section_titles.append(section_title)
-        section_topics_list.append(topics)
-        notation_data_list.append(section.get("notation_introduced", []))
+        notation_data_list.append([n.model_dump() for n in writer_output.notation])
+        answer_key_blocks.append({"section_title": section_title, "answers": answer_key})
 
-        # ----- Step 2.5: Update Rolling Context -----
-        cached_context = cache.get_section_step(i, "context")
-        if cached_context:
-            print("  Rolling Context updated natively ✓")
-            rolling_context = cached_context
-        else:
-            rolling_context = generate_context_summary(
-                rolling_context=rolling_context,
-                section_title=section_title,
-                section_topics=topics,
-            )
-            cache.set_section_step(i, "context", rolling_context)
+        # ----- Rolling context: deterministic append of writer summaries -----
+        run_summaries.append(writer_output.summary)
 
-        # ----- Memory Update Hook -----
+        # ----- Memory commit -----
         if kb and update_memory:
-            memory_updated = cache.get_section_step(i, "memory_updated")
-            if memory_updated:
-                print("  Memory update already committed ✓")
+            if cache.get_section_step(i, "memory_updated"):
+                log.info("  Memory update already committed")
             else:
-                print("  Updating memory store...")
-                section_summary = cache.get_section_step(i, "section_summary")
-                if not section_summary:
-                    section_summary = generate_section_summary(
-                        section_title=section_title,
-                        section_raw_content=section_raw_content,
-                        section_theory=section_theory,
-                    )
-                    cache.set_section_step(i, "section_summary", section_summary)
-                    
+                log.info("  Updating memory store...")
                 kb.update(
                     lecture_id=lecture_id,
                     section_json=section,
-                    summary=section_summary,  # Use section specific summary instead of rolling_context
+                    summary=writer_output.summary,
                     latex=compiled_text,
                     topics=topics + subtopics,
                 )
+                if included_pyqs:
+                    kb.mark_questions_used(
+                        [
+                            {
+                                "pk": kb_by_id[p.id]["pk"],
+                                "exam": kb_by_id[p.id]["exam"],
+                                "qid": kb_by_id[p.id]["qid"],
+                                "action": "adapted" if p.adapted else "included",
+                            }
+                            for p in included_pyqs if p.id in kb_by_id
+                        ],
+                        lecture_id=lecture_id,
+                    )
                 cache.set_section_step(i, "memory_updated", True)
 
+    if deferred_questions:
+        log.warning("Questions deferred by every section (still unused in memory, will resurface next run):")
+        for d in deferred_questions:
+            log.warning("  - [%s] %s — reason: %s", d.get("source", "?"), d.get("text", "")[:100], d.get("reason", ""))
 
     # =================================================================
     # STAGE 3: DETERMINISTIC FORMATTING
     # =================================================================
-    print("\nStage 3: Formatting Document (deterministic)...")
+    log.info("Stage 3: Formatting document (deterministic)...")
 
     module_name = output_tex_path.stem.replace("_", " ").replace("-", " ").title()
     metadata = {
@@ -265,12 +270,12 @@ def run_generation_pipeline(
     latex = format_document(
         compiled_sections, section_titles, metadata,
         notation_data=notation_data_list,
+        answer_key_blocks=answer_key_blocks,
     )
-    
-    # Save final latex
+
     output_tex_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_tex_path, "w", encoding="utf-8") as f:
         f.write(latex)
 
-    print(f"\nGeneration complete! LaTeX saved to: {output_tex_path}")
-    return {"latex": latex, "context": rolling_context}
+    log.info("Generation complete! LaTeX saved to: %s", output_tex_path)
+    return {"latex": latex, "summaries": run_summaries}

@@ -5,6 +5,7 @@ Replaces problematic Unicode characters with LaTeX-safe equivalents and
 strips non-printable characters that would break pdflatex/xelatex.
 """
 
+import logging
 import re
 import unicodedata
 
@@ -144,7 +145,14 @@ def sanitize_latex(latex_code: str) -> str:
     for char, replacement in UNICODE_LATEX_MAP.items():
         latex_code = latex_code.replace(char, replacement)
 
-    # 3. Remove remaining non-ASCII characters that slipped through
+    # 3. Remove remaining non-ASCII characters that slipped through —
+    #    but say what was dropped instead of deleting silently.
+    dropped = set(re.findall(r"[^\x09\x0A\x0D\x20-\x7E]", latex_code))
+    if dropped:
+        logging.getLogger("pipeline").warning(
+            "sanitize_latex: dropping %d unmapped non-ASCII character(s): %s",
+            len(dropped), " ".join(sorted(dropped)),
+        )
     latex_code = re.sub(r"[^\x09\x0A\x0D\x20-\x7E]", "", latex_code)
 
     return latex_code

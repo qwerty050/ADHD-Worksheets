@@ -3,41 +3,44 @@ import requests
 import numpy as np
 from .config import OLLAMA_BASE, EMBED_MODEL, TAG_MODEL
 
-def ollama_embed(text: str, task: str = "document") -> np.ndarray:
-    """task must be 'query' or 'document'. nomic-embed-text was trained with
-    these prefixes and gives noticeably worse/unstable similarity without
-    them."""
+def _embed_payload(texts: list[str], task: str) -> dict:
     prefix = "search_query: " if task == "query" else "search_document: "
-    resp = requests.post(
-        f"{OLLAMA_BASE}/api/embeddings",
-        json={"model": EMBED_MODEL, "prompt": prefix + text},
-        timeout=60,
-    )
-    resp.raise_for_status()
-    return np.array(resp.json()["embedding"], dtype="float32")
+    return {"model": EMBED_MODEL, "input": [prefix + t for t in texts]}
 
-def ollama_generate_json(system_prompt: str, user_prompt: str, schema: dict) -> list:
-    """Generic JSON generation with Ollama."""
+def ollama_embed_batch(texts: list[str], task: str = "document") -> list[np.ndarray]:
+    """Batch embedding via Ollama's /api/embed endpoint. task must be 'query'
+    or 'document'; nomic-embed-text was trained with these prefixes and gives
+    noticeably worse/unstable similarity without them."""
+    if not texts:
+        return []
     resp = requests.post(
-        f"{OLLAMA_BASE}/api/generate",
-        json={
-            "model": TAG_MODEL,
-            "system": system_prompt,
-            "prompt": user_prompt,
-            "stream": False,
-            "format": schema,
-            "options": {
-                "temperature": 0.1
-            },
-        },
-        timeout=300,
+        f"{OLLAMA_BASE}/api/embed",
+        json=_embed_payload(texts, task),
+        timeout=120,
     )
     resp.raise_for_status()
-    raw = resp.json()["response"]
-    
+    embeddings = resp.json().get("embeddings", [])
+    if len(embeddings) != len(texts):
+        raise ValueError(f"Ollama embed returned {len(embeddings)} vectors for {len(texts)} inputs")
+    return [np.array(e, dtype="float32") for e in embeddings]
+
+def ollama_embed(text: str, task: str = "document") -> np.ndarray:
+    return ollama_embed_batch([text], task)[0]
+
+def ollama_generate_json(system_prompt: str, user_prompt: str, schema: dict = None) -> list:
+    """JSON generation for KB tagging/aliasing via the shared LLM client
+    (works on any provider; schema is kept for Ollama call-site compatibility
+    but enforcement relies on the prompt). Raises on unparseable output."""
+    from shared.llm import get_llm_client
+    client = get_llm_client()
+    raw = client.generate(
+        prompt=user_prompt,
+        model_name=TAG_MODEL,
+        system=system_prompt,
+        as_json=True,
+    )
     try:
-        result = json.loads(raw)
-        return result
+        return json.loads(raw)
     except json.JSONDecodeError:
         raise ValueError(f"Could not parse response as JSON: {raw[:500]}")
 
@@ -66,7 +69,7 @@ def traverse_page_index(query: str, node: dict, breadcrumb: str = "") -> list:
         title = child.get("title", "Untitled")
         summary = child.get("summary", "No summary available.")
         child_summaries.append(f"[{i}] {title}: {summary}")
-        
+
     system_prompt = (
         "You are an intelligent retrieval agent. You are given a user query and a list of "
         "document sections with their summaries. Your task is to select which sections might "
@@ -74,33 +77,22 @@ def traverse_page_index(query: str, node: dict, breadcrumb: str = "") -> list:
         "Return a JSON array of the integer indices of the sections to explore.\n"
         "Output ONLY the JSON array, e.g., [0, 2]"
     )
-    
+
     user_prompt = f"Query: {query}\n\nSections:\n" + "\n".join(child_summaries)
-    
-    schema = {
-        "type": "array",
-        "items": {"type": "integer"}
-    }
-    
+
+    from shared.llm import get_llm_client
+
     try:
-        resp = requests.post(
-            f"{OLLAMA_BASE}/api/generate",
-            json={
-                "model": PAGEINDEX_MODEL,
-                "system": system_prompt,
-                "prompt": user_prompt,
-                "stream": False,
-                "format": schema,
-                "options": {"temperature": 0.1},
-            },
-            timeout=120,
+        raw = get_llm_client().generate(
+            prompt=user_prompt,
+            model_name=PAGEINDEX_MODEL,
+            system=system_prompt,
+            as_json=True,
         )
-        resp.raise_for_status()
-        raw = resp.json()["response"]
         selected_indices = json.loads(raw)
     except Exception as e:
         print(f"Error traversing tree for query '{query}': {e}")
-        selected_indices = [] # Default to empty if LLM fails
+        selected_indices = []  # Default to empty if LLM fails
         
     results = []
     for idx in selected_indices:

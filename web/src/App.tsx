@@ -7,6 +7,7 @@ import { LandingPage } from './pages/LandingPage';
 import { ConfigPage } from './pages/ConfigPage';
 import { SelectKBPage } from './pages/SelectKBPage';
 import { CreateKBPage } from './pages/CreateKBPage';
+import { KBManagePage } from './pages/KBManagePage';
 import { GuidePage } from './pages/GuidePage';
 import { UploadLecturePage } from './pages/UploadLecturePage';
 import { GeneratePage } from './pages/GeneratePage';
@@ -44,6 +45,7 @@ export const App = () => {
             <Route path="/select-kb" element={<SelectKBPage />} />
             <Route path="/config" element={<ConfigPage />} />
             <Route path="/create-kb" element={<CreateKBPage />} />
+            <Route path="/kb/manage" element={<KBManagePage />} />
             <Route path="/guide" element={<GuidePage />} />
             <Route path="/lecture" element={<UploadLecturePage />} />
             <Route path="/generate" element={<GeneratePage />} />

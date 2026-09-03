@@ -14,30 +14,42 @@ def ingest_pdf_chunking(db_manager, pdf_path: str):
     doc_title = os.path.basename(pdf_path)
     
     # Try to extract text, fallback to a mock if no library
-    text = ""
+    pages_text: list[tuple[int, str]] = []  # (1-based page number, text)
     try:
         import pymupdf
         doc = pymupdf.open(pdf_path)
-        for page in doc:
-            text += page.get_text()
+        for i, page in enumerate(doc):
+            pages_text.append((i + 1, page.get_text()))
     except ImportError:
-        text = f"Mock text for {doc_title} (Install PyMuPDF for real extraction)"
+        pages_text.append((1, f"Mock text for {doc_title} (Install PyMuPDF for real extraction)"))
         print("PyMuPDF (pymupdf) not installed, using mock text.")
 
-    # Simple fixed-size window chunking
+    # Fixed-size window chunking that tracks which pages each chunk came from
     chunk_size = 1000
     overlap = 200
     chunks = []
-    
-    start = 0
-    while start < len(text):
-        end = min(start + chunk_size, len(text))
+
+    buffer = ""
+    buffer_pages: list[int] = []
+    for page_num, page_text in pages_text:
+        page_text = page_text or ""
+        for line in page_text.splitlines(keepends=True):
+            buffer += line
+            buffer_pages.append(page_num)
+            while len(buffer) >= chunk_size:
+                chunks.append({
+                    "text": buffer[:chunk_size],
+                    "heading_path": "General",
+                    "page_range": [buffer_pages[0], buffer_pages[-1]],
+                })
+                buffer = buffer[chunk_size - overlap:]
+                buffer_pages = buffer_pages[chunk_size - overlap:]
+    if buffer.strip():
         chunks.append({
-            "text": text[start:end],
-            "heading_path": "General", # Mock breadcrumb
-            "page_range": [1, 1] # Mock page range
+            "text": buffer,
+            "heading_path": "General",
+            "page_range": [buffer_pages[0], buffer_pages[-1]] if buffer_pages else [1, 1],
         })
-        start += (chunk_size - overlap)
 
     index, meta_json = db_manager.load_faiss_index("documents")
     docs_meta = json.loads(meta_json) if meta_json else []
@@ -74,10 +86,11 @@ def ingest_pdf_page_index(db_manager, pdf_path: str):
     doc_id = str(uuid.uuid4())
     doc_title = os.path.basename(pdf_path)
     
-    from .pageindex import pageindex_main, config
+    from .pageindex.page_index import page_index_main
+    from types import SimpleNamespace
     from .config import PAGEINDEX_MODEL
-    
-    opt = config(
+
+    opt = SimpleNamespace(
         model=PAGEINDEX_MODEL,
         toc_check_page_num=20,
         max_page_num_each_node=10,

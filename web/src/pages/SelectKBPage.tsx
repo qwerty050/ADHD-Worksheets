@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/Button';
 import { useAppContext } from '../context/AppContext';
 
-const API_BASE = 'http://localhost:8000/api';
+import { apiFetch, apiPostForm } from '../api';
 
 export const SelectKBPage: React.FC = () => {
   const navigate = useNavigate();
@@ -11,8 +11,7 @@ export const SelectKBPage: React.FC = () => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const initSession = async () => {
-    const res = await fetch(`${API_BASE}/sessions`, { method: 'POST' });
-    const data = await res.json();
+    const data = await apiFetch('/sessions', { method: 'POST' });
     setSessionId(data.session_id);
     return data.session_id;
   };
@@ -24,13 +23,9 @@ export const SelectKBPage: React.FC = () => {
         const sid = await initSession();
         const formData = new FormData();
         formData.append('file', file);
-        const res = await fetch(`${API_BASE}/sessions/${sid}/kb/upload`, {
-          method: 'POST',
-          body: formData
-        });
-        const data = await res.json();
+        const data = await apiPostForm(`/sessions/${sid}/kb/upload`, formData);
         setKbName(data.kb_name);
-        navigate('/lecture');
+        navigate('/kb/manage');
       } catch (err) {
         console.error(err);
         alert('Failed to upload KB');

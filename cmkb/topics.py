@@ -43,14 +43,22 @@ def build_topic_clusters(db_manager):
     )
     labels = clustering.fit_predict(dist)
 
+    # Snapshot lecture/section links so the rebuild can relink them by canonical
+    # name. Only 'pyq'-source clusters are wiped; 'lecture'-source clusters and
+    # their links survive so regenerating a taxonomy never orphans sections.
+    lecture_links = conn.execute("""
+        SELECT lt.lecture_id, lt.cluster_id, lt.status, tc.canonical_name
+        FROM lecture_topics lt JOIN topic_clusters tc ON tc.cluster_id = lt.cluster_id
+        WHERE tc.source = 'pyq'
+    """).fetchall()
+    section_links = conn.execute("""
+        SELECT st.section_id, st.cluster_id, tc.canonical_name
+        FROM section_topics st JOIN topic_clusters tc ON tc.cluster_id = st.cluster_id
+        WHERE tc.source = 'pyq'
+    """).fetchall()
+
     conn.execute("DELETE FROM question_topics")
-    conn.execute("DELETE FROM topic_clusters WHERE source = 'pyq'") 
-    # Notice: we should probably delete all topic_clusters if rebuilding from scratch, 
-    # but the prompt says to allow incremental growth. If building pyq taxonomy, it overrides pyq sources.
-    # Let's clear all for full cluster rebuild, as per original script.
-    conn.execute("DELETE FROM topic_clusters")
-    conn.execute("DELETE FROM lecture_topics")
-    conn.execute("DELETE FROM section_topics")
+    conn.execute("DELETE FROM topic_clusters WHERE source = 'pyq'")
     conn.commit()
 
     freq = dict(conn.execute(
@@ -88,6 +96,24 @@ def build_topic_clusters(db_manager):
         topic_meta.append({"cluster_id": cluster_id, "canonical_name": canonical,
                             "matched_text": canonical, "member_tags": member_tags})
 
+    conn.commit()
+
+    # Relink lectures/sections to the rebuilt clusters by canonical name.
+    canonical_to_id = {t["canonical_name"]: t["cluster_id"] for t in topic_meta}
+    for link in lecture_links:
+        new_cid = canonical_to_id.get(link["canonical_name"])
+        if new_cid is not None:
+            conn.execute(
+                "INSERT OR IGNORE INTO lecture_topics (lecture_id, cluster_id, status) VALUES (?, ?, ?)",
+                (link["lecture_id"], new_cid, link["status"]),
+            )
+    for link in section_links:
+        new_cid = canonical_to_id.get(link["canonical_name"])
+        if new_cid is not None:
+            conn.execute(
+                "INSERT OR IGNORE INTO section_topics (section_id, cluster_id) VALUES (?, ?)",
+                (link["section_id"], new_cid),
+            )
     conn.commit()
 
     mat = np.vstack(topic_vectors).astype("float32")
@@ -157,7 +183,6 @@ def build_topic_clusters(db_manager):
         index.add(mat)
         db_manager.save_faiss_index("topics", index, json.dumps(topic_meta))
 
-    conn.close()
 
 def _lexical_match_clusters(query: str, topic_meta: list):
     q_norm = query.strip().lower()

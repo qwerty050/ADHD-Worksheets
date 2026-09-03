@@ -47,10 +47,14 @@ def main():
     query_p.add_argument("--topics", required=True)
     query_p.add_argument("--lecture-id")
     query_p.add_argument("-k", type=int, default=8)
+    query_p.add_argument("--no-reuse", action="store_true", help="Exclude PYQs already used in a previous worksheet")
 
     # cluster
     cluster_p = subparsers.add_parser("cluster")
     cluster_p.add_argument("path")
+
+    # stats
+    subparsers.add_parser("stats", help="KB overview counts")
 
     # inspect
     inspect_p = subparsers.add_parser("inspect")
@@ -90,8 +94,12 @@ def main():
     elif args.command == "query":
         kb = KnowledgeBase.load(args.path)
         topics = [t.strip() for t in args.topics.split(",")]
-        res = kb.query(topics, args.lecture_id, args.k)
+        res = kb.query(topics, args.lecture_id, args.k, reuse="never" if args.no_reuse else "prefer")
         print(json.dumps(res, indent=2))
+
+    elif args.command == "stats":
+        kb = KnowledgeBase.load(args.path)
+        print(json.dumps(kb.kb_stats(), indent=2))
 
     elif args.command == "cluster":
         kb = KnowledgeBase.load(args.path)

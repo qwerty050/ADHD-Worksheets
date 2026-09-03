@@ -21,7 +21,6 @@ var/
 *.egg
 
 # Virtual Environment
-.env
 .venv
 venv/
 ENV/
@@ -34,7 +33,7 @@ venv.bak/
 
 # Caching and State
 .pipeline_cache/
-*.cmkb/
+*.cmkb
 
 # IDEs
 .idea/

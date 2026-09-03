@@ -100,6 +100,18 @@ class DBManager:
                 tree_json TEXT
             )
         """)
+        self.conn.execute("""
+            CREATE TABLE IF NOT EXISTS question_usage (
+                question_pk INTEGER,
+                exam TEXT,
+                qid TEXT,
+                lecture_id TEXT,
+                action TEXT, -- 'included' or 'adapted'
+                used_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (question_pk, lecture_id),
+                FOREIGN KEY(question_pk) REFERENCES questions(pk)
+            )
+        """)
         self.conn.commit()
 
     def set_meta(self, key: str, value: str):

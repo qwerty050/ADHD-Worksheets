@@ -1,6 +1,8 @@
 requests
 python-dotenv
 PyMuPDF
+PyPDF2
+pydantic
 faiss-cpu
 numpy
 openai
@@ -10,4 +12,3 @@ fastapi
 uvicorn
 python-multipart
 sse-starlette
-fastapi-cors

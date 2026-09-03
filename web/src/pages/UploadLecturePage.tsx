@@ -4,7 +4,7 @@ import { Button } from '../components/Button';
 import { Dropzone } from '../components/Dropzone';
 import { useAppContext } from '../context/AppContext';
 
-const API_BASE = 'http://localhost:8000/api';
+import { apiPostForm } from '../api';
 
 export const UploadLecturePage: React.FC = () => {
   const navigate = useNavigate();
@@ -36,16 +36,13 @@ export const UploadLecturePage: React.FC = () => {
         formData.append('pdf_file', pdfFile);
       }
 
-      await fetch(`${API_BASE}/sessions/${sessionId}/extract`, {
-        method: 'POST',
-        body: formData
-      });
-      
+      await apiPostForm(`/sessions/${sessionId}/extract`, formData);
+
       setLectureId(localLectureId);
       navigate('/generate');
     } catch (err) {
       console.error(err);
-      alert('Extraction failed');
+      alert('Extraction failed: ' + (err as Error).message);
     } finally {
       setIsProcessing(false);
     }

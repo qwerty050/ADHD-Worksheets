@@ -1,182 +1,172 @@
 import json
+import logging
 from pathlib import Path
-import pymupdf  # PyMuPDF
+from typing import List, Literal, Optional
 
-from shared.llm import get_llm_client
-from shared.config import MODEL_EXTRACTION, MODEL_QUESTION_EXTRACT, MODEL_PEDAGOGY
+import pymupdf  # PyMuPDF
+from pydantic import BaseModel
+
+from shared.config import MODEL_EXTRACTION, MODEL_PEDAGOGY
+from shared.llm import generate_json
 from extraction.prompts import (
-    SYSTEM_PROMPT_GLOBAL_EXTRACTION,
-    SYSTEM_PROMPT_QUESTION_EXTRACTION,
-    SYSTEM_PROMPT_PEDAGOGICAL,
+    SYSTEM_PROMPT_SECTION_MAP,
+    SYSTEM_PROMPT_SECTION_ANNOTATION,
 )
 
+log = logging.getLogger("pipeline")
 
-def read_file_content(path: Path) -> str:
-    """Read text content from a file, handling PDFs gracefully."""
-    if path.suffix.lower() == ".pdf":
-        try:
-            doc = pymupdf.open(path)
-            text = ""
-            for page in doc:
-                text += page.get_text() + "\n"
-            return text
-        except Exception as e:
-            return f"[Failed to read PDF {path.name}: {e}]"
+# Characters per Stage-1 chunk (~75k tokens). Decks larger than this are split
+# into page-range chunks and their section maps concatenated deterministically.
+EXTRACT_BUDGET_CHARS = 300_000
 
+
+# ---------------------------------------------------------------------------
+# Structured outputs
+# ---------------------------------------------------------------------------
+
+class ExtractedSection(BaseModel):
+    section_title: str
+    section_content: str
+    topics: List[str] = []
+    subtopics: List[str] = []
+    dependency_order: int = 0
+
+
+class SectionMapOutput(BaseModel):
+    section_map: List[ExtractedSection]
+
+
+class LectureQuestion(BaseModel):
+    text: str
+    type: Literal["numerical", "conceptual", "derivation", "design", "mcq"] = "conceptual"
+    difficulty: Literal["recall", "understand", "apply", "analyse", "evaluate"] = "understand"
+    assumed_knowledge: List[str] = []
+
+
+class SectionAnnotation(BaseModel):
+    learning_objectives: List[str] = []
+    key_misconceptions: List[str] = []
+    worked_example_spec: str = ""
+    extracted_questions: List[LectureQuestion] = []
+
+
+# ---------------------------------------------------------------------------
+# PDF reading
+# ---------------------------------------------------------------------------
+
+def read_pdf_pages(path: Path) -> list[str]:
+    """Per-page text with page markers. Raises on unreadable PDFs — a corrupt
+    or scanned file must not silently become LLM prompt content."""
+    if not path.exists():
+        raise FileNotFoundError(f"PDF not found: {path}")
+
+    pages = []
     try:
-        with open(path, "r", encoding="utf-8") as f:
-            return f.read()
-    except UnicodeDecodeError:
-        return f"[Cannot decode {path.name} as text.]"
+        doc = pymupdf.open(path)
+        for i, page in enumerate(doc):
+            text = page.get_text().strip()
+            pages.append(f"--- Page {i + 1} ---\n{text}")
+        doc.close()
+    except Exception as e:
+        raise RuntimeError(f"Could not read PDF {path.name}: {e}") from e
+
+    if not any(p.split("\n", 1)[-1].strip() for p in pages):
+        raise RuntimeError(
+            f"PDF {path.name} contains no extractable text (scanned/image-only?). "
+            "OCR is not supported."
+        )
+    return pages
 
 
-def run_extraction(
-    target_slide_path: Path,
-    cache=None,
-) -> dict:
-    """
-    Stage 1: Extract content from a PDF slide into a structured JSON section map.
-    """
-    if not target_slide_path.exists():
-        raise FileNotFoundError(f"Target slide not found: {target_slide_path}")
+# ---------------------------------------------------------------------------
+# Stage 1 — Section Map
+# ---------------------------------------------------------------------------
 
-    # Check cache
+def _extract_chunk(pages_text: str, prior_titles: List[str]) -> SectionMapOutput:
+    prompt = f"LECTURE DECK CONTENT:\n{pages_text}\n"
+    if prior_titles:
+        prompt += (
+            f"\nSections already extracted from earlier pages (do not repeat them, "
+            f"continue the numbering): {json.dumps(prior_titles)}"
+        )
+    return generate_json(
+        prompt=prompt,
+        model_name=MODEL_EXTRACTION,
+        system=SYSTEM_PROMPT_SECTION_MAP,
+        response_model=SectionMapOutput,
+        max_tokens=16384,
+    )
+
+
+def extract_section_map(pdf_path: Path, cache=None) -> List[ExtractedSection]:
     if cache:
         cached = cache.get_extraction()
         if cached:
-            print("Stage 1: Using cached extraction ✓")
-            return cached
+            log.info("Stage 1: Using cached section map")
+            return [ExtractedSection.model_validate(s) for s in cached]
 
-    print("Stage 1: Reading PDF and extracting content...")
+    log.info("Stage 1: Reading PDF and extracting section map...")
+    pages = read_pdf_pages(pdf_path)
 
-    prompt = f"Target Slide Content:\n{read_file_content(target_slide_path)}\n"
+    full_text = "\n\n".join(pages)
+    if len(full_text) <= EXTRACT_BUDGET_CHARS:
+        sections = _extract_chunk(full_text, []).section_map
+    else:
+        log.warning(
+            "Deck is %.0fk chars (> %dk budget) — splitting into page-range chunks.",
+            len(full_text) / 1000, EXTRACT_BUDGET_CHARS / 1000,
+        )
+        sections = []
+        chunk: list[str] = []
+        chunk_chars = 0
+        chunks: list[list[str]] = []
+        for page in pages:
+            if chunk and chunk_chars + len(page) > EXTRACT_BUDGET_CHARS:
+                chunks.append(chunk)
+                chunk, chunk_chars = [], 0
+            chunk.append(page)
+            chunk_chars += len(page)
+        if chunk:
+            chunks.append(chunk)
 
-    response_text = get_llm_client().generate(
+        for chunk_pages in chunks:
+            chunk_map = _extract_chunk("\n\n".join(chunk_pages), [s.section_title for s in sections])
+            sections.extend(chunk_map.section_map)
+
+    # Deterministic renumbering after concatenation
+    for i, s in enumerate(sections):
+        s.dependency_order = i + 1
+
+    if cache:
+        cache.set_extraction([s.model_dump() for s in sections])
+    log.info("Stage 1: %d sections", len(sections))
+    return sections
+
+
+# ---------------------------------------------------------------------------
+# Stage 2 — Per-Section Annotation
+# ---------------------------------------------------------------------------
+
+def annotate_section(section: ExtractedSection, cache=None, section_idx: int = None) -> SectionAnnotation:
+    if cache is not None and section_idx is not None:
+        cached = cache.get_section_step(section_idx, "annotate")
+        if cached:
+            return SectionAnnotation.model_validate_json(cached)
+
+    log.info("Stage 2: Annotating section %d: %s", section_idx + 1 if section_idx is not None else 0, section.section_title)
+    prompt = (
+        f"SECTION TITLE: {section.section_title}\n\n"
+        f"SECTION TOPICS: {', '.join(section.topics + section.subtopics)}\n\n"
+        f"SECTION CONTENT:\n{section.section_content}"
+    )
+    annotation = generate_json(
         prompt=prompt,
-        model_name=MODEL_EXTRACTION,
-        system=SYSTEM_PROMPT_GLOBAL_EXTRACTION,
-        as_json=True,
-    )
-
-    try:
-        extraction_data = json.loads(response_text)
-    except json.JSONDecodeError:
-        print("  Warning: Failed to parse extraction JSON. Using empty map.")
-        extraction_data = {"section_map": [], "extracted_questions": []}
-
-    if cache:
-        cache.set_extraction(extraction_data)
-
-    return extraction_data
-
-
-def run_question_extraction(
-    extraction_data: dict,
-    cache=None,
-) -> dict:
-    """
-    Stage 1.5a: Extract questions embedded in the lecture PDF itself.
-    Uses the cleaned_content from Stage 1 as the source.
-    """
-    if cache:
-        mapped_questions = cache.get_question_extraction()
-        if mapped_questions:
-            print("Stage 1.5a: Using cached question extraction ✓")
-            return mapped_questions
-
-    print("Stage 1.5a: Extracting lecture-internal questions...")
-
-    section_map = extraction_data.get("section_map", [])
-    section_titles_for_mapping = [
-        {
-            "section_title": s.get("section_title", ""),
-            "topics": s.get("topics", []),
-        }
-        for s in section_map
-    ]
-
-    cleaned_content = extraction_data.get("cleaned_content", "")
-    
-    prompt_parts = [
-        "--- LECTURE SLIDE CONTENT ---",
-        cleaned_content,
-        "\n--- SECTION MAP ---",
-        json.dumps(section_titles_for_mapping, indent=2)
-    ]
-
-    question_prompt = "\n".join(prompt_parts)
-
-    question_response = get_llm_client().generate(
-        prompt=question_prompt,
-        model_name=MODEL_QUESTION_EXTRACT,
-        system=SYSTEM_PROMPT_QUESTION_EXTRACTION,
-        as_json=True,
-    )
-
-    try:
-        mapped_questions = json.loads(question_response)
-    except json.JSONDecodeError:
-        print("  Warning: Failed to parse question extraction JSON. Using empty list.")
-        mapped_questions = {"extracted_questions": []}
-
-    if cache:
-        cache.set_question_extraction(mapped_questions)
-    return mapped_questions
-
-
-def run_pedagogical_structuring(
-    extraction_data: dict,
-    extracted_questions: list,
-    cache=None,
-) -> list:
-    """
-    Stage 1.5b: Annotate each section with pedagogical metadata.
-    """
-    if cache:
-        enriched_section_map = cache.get_pedagogical()
-        if enriched_section_map:
-            print("Stage 1.5b: Using cached pedagogical metadata ✓")
-            return enriched_section_map
-
-    print("Stage 1.5b: Generating pedagogical structure...")
-
-    ped_prompt_parts = [
-        "--- STAGE 1 EXTRACTION JSON ---",
-        json.dumps(extraction_data, indent=2),
-        "\n--- MAPPED LECTURE QUESTIONS FROM STAGE 1.5a ---",
-        json.dumps(extracted_questions, indent=2),
-    ]
-
-    ped_prompt = "\n".join(ped_prompt_parts)
-
-    ped_response = get_llm_client().generate(
-        prompt=ped_prompt,
         model_name=MODEL_PEDAGOGY,
-        system=SYSTEM_PROMPT_PEDAGOGICAL,
-        as_json=True,
+        system=SYSTEM_PROMPT_SECTION_ANNOTATION,
+        response_model=SectionAnnotation,
+        max_tokens=8192,
     )
 
-    section_map = extraction_data.get("section_map", [])
-
-    try:
-        enriched_section_map = json.loads(ped_response)
-        if isinstance(enriched_section_map, dict) and "section_map" in enriched_section_map:
-            enriched_section_map = enriched_section_map["section_map"]
-        elif isinstance(enriched_section_map, dict):
-            enriched_section_map = enriched_section_map.get(
-                "section_map",
-                list(enriched_section_map.values())[0] if enriched_section_map else [],
-            )
-    except json.JSONDecodeError:
-        print("  Warning: Failed to parse pedagogical JSON. Falling back to raw section map.")
-        enriched_section_map = section_map
-
-    if not isinstance(enriched_section_map, list):
-        print("  Warning: enriched_section_map is not a list. Falling back.")
-        enriched_section_map = section_map
-
-    if cache:
-        cache.set_pedagogical(enriched_section_map)
-
-    print(f"  Enriched sections: {len(enriched_section_map)}")
-    return enriched_section_map
+    if cache is not None and section_idx is not None:
+        cache.set_section_step(section_idx, "annotate", annotation.model_dump_json())
+    return annotation

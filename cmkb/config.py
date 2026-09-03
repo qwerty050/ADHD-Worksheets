@@ -1,12 +1,10 @@
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-
-OLLAMA_BASE = os.getenv("OLLAMA_BASE", "http://localhost:11434")
-EMBED_MODEL = os.getenv("EMBED_MODEL", "nomic-embed-text")
-TAG_MODEL = os.getenv("TAG_MODEL", "gemma3n:e4b")
-PAGEINDEX_MODEL = os.getenv("PAGEINDEX_MODEL", "gemma4:e4b")
-
-CLUSTER_DISTANCE_THRESHOLD = 0.22
-TOPIC_MATCH_THRESHOLD = 0.35
+# cmkb configuration lives in shared.config — one source of truth for the
+# whole repo (provider, models, embeddings, taxonomy tuning).
+from shared.config import (  # noqa: F401
+    OLLAMA_BASE,
+    EMBED_MODEL,
+    TAG_MODEL,
+    PAGEINDEX_MODEL,
+    CLUSTER_DISTANCE_THRESHOLD,
+    TOPIC_MATCH_THRESHOLD,
+)
