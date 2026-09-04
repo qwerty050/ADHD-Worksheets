@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-09-03 — Typst output (branch `typst`)
+
+The pipeline now generates a `.typ` (Typst) worksheet instead of a `.tex`
+(LaTeX) one. Compile with `typst compile worksheet.typ` or paste into
+<https://typst.app>.
+
+- **Compiler** (`compiler/formatter.py`): document preamble, title block,
+  notation table, question blocks, MCQ option lists and answer key all emit
+  Typst markup (`#table`, `#enum`, `#heading`, `#pagebreak`). Question
+  numbering is plain per-section text. Fixed a blank-page bug inherited from
+  the LaTeX version (a doubled page break between the last practice question
+  and the Past-Year Questions heading).
+- **Sanitiser** (`compiler/sanitisation.py`): Typst is Unicode-native, so the
+  big Unicode→LaTeX replacement map is gone; we now only collapse unusual
+  whitespace and strip invisible/control characters.
+- **Prompts** (`generation/prompts.py`): the Section Writer now writes Typst
+  markup (`===` headings, `$...$` math, `times`/`alpha`/`<=` syntax instead of
+  backslash commands); the Question Set Builder is told to de-LaTeX adapted
+  candidates.
+- **Plumbing**: CLI `--out` takes a `.typ` path, the API download route is
+  `/download/typ` serving `{lecture_id}_output.typ`, the web download button
+  says `.typ`, and `run_generation_pipeline` returns `{"typst": ...}`.
+- **Cache**: version bumped to 3, so all existing pipeline caches are
+  invalidated (they contain compiled LaTeX).
+- The CMKB storage schema still names its stored worksheet column `latex`;
+  it now simply holds Typst markup, which avoids breaking existing stores.
+
 ## 2026-09-03 — Pipeline overhaul: 2-call generation, PYQ memory, multi-provider LLMs
 
 A full revision of the worksheet pipeline. Output structure is preserved

@@ -2,7 +2,7 @@ import hashlib
 import json
 from pathlib import Path
 
-CACHE_VERSION = 2  # bump to invalidate every existing cache file
+CACHE_VERSION = 3  # bump to invalidate every existing cache file (v3: Typst output)
 
 
 class PipelineCache:

@@ -2,7 +2,7 @@
 
 You don't have to run the extraction pipeline locally. If you have access to powerful web-based LLMs like **Claude 3.5 Sonnet**, **ChatGPT (GPT-4o)**, or **Gemini 1.5 Pro**, you can use them to extract the pedagogical JSON directly from your lecture PDFs. 
 
-Once you get the final JSON from the chatbot, you can feed it directly into the `generate` command of this pipeline to produce your LaTeX worksheets with memory integration.
+Once you get the final JSON from the chatbot, you can feed it directly into the `generate` command of this pipeline to produce your Typst worksheets with memory integration.
 
 ## Workflow Overview
 
@@ -142,7 +142,7 @@ OUTPUT: Return the full, finalized JSON object. It must have the `section_map` a
 python main_cli.py generate chatbot_output.json \
     --kb course.cmkb \
     --lecture-id L01 \
-    --out output/worksheet.tex
+    --out output/worksheet.typ
 ```
 
-That's it! The generation pipeline will now build your LaTeX worksheet perfectly using the chatbot-authored pedagogy.
+That's it! The generation pipeline will now build your Typst worksheet perfectly using the chatbot-authored pedagogy.

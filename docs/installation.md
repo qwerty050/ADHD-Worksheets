@@ -6,7 +6,7 @@ This guide covers how to set up the ADHD Worksheets pipeline on your local machi
 
 - **Python 3.10+**
 - **Ollama** installed locally (if you plan to use local models). Alternatively, you can use the Anthropic API.
-- A LaTeX distribution (e.g., MacTeX, TeX Live) installed if you want to compile the resulting `.tex` files into PDFs yourself.
+- Typst installed if you want to compile the resulting `.typ` files into PDFs yourself (`brew install typst`, `cargo install typst-cli`, or <https://typst.app>).
 
 ## 1. Setup the Python Environment
 

@@ -1,7 +1,7 @@
 # Pedagogical JSON Schema (v2)
 
 This document defines the stable public contract for the Pedagogical JSON
-consumed by the generation module to produce the final LaTeX worksheet. It is
+consumed by the generation module to produce the final Typst worksheet. It is
 produced by the extraction pipeline (`extract` / `run` commands, or the web
 upload flow), or authored by an external tool (e.g. Claude, ChatGPT — see the
 in-app AI Guide prompts).

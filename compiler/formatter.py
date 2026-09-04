@@ -1,5 +1,5 @@
 """
-Deterministic LaTeX formatting utilities.
+Deterministic Typst formatting utilities.
 
 Handles markdown artifact stripping, notation table generation, section
 compilation, and full document assembly.  No LLM calls — pure Python.
@@ -8,44 +8,53 @@ compilation, and full document assembly.  No LLM calls — pure Python.
 import re
 from typing import Optional
 
-from compiler.sanitisation import sanitize_latex
+from compiler.sanitisation import sanitize_typst
 
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
+# Characters that start special markup inside Typst content brackets.
+_CONTENT_SPECIALS = "\\#$[]*_`@<>~"
+
+
+def escape_typst_content(text: str) -> str:
+    """Escape characters that would start special markup in a Typst
+    content block, for use on machine-supplied strings (titles, sources)."""
+    out = []
+    for ch in text:
+        if ch in _CONTENT_SPECIALS:
+            out.append("\\" + ch)
+        else:
+            out.append(ch)
+    return "".join(out)
+
+
 def strip_markdown_artifacts(text: str) -> str:
-    """Remove stray markdown formatting that LLMs sometimes inject into LaTeX output."""
-    # Remove markdown code fences (```latex ... ``` or just ``` ... ```)
-    text = re.sub(r'```(?:latex|tex)?\s*\n?', '', text)
+    """Remove stray markdown formatting that LLMs sometimes inject into Typst output."""
+    # Remove markdown code fences (```typ ... ``` or just ``` ... ```)
+    text = re.sub(r'```(?:typ|typst)?\s*\n?', '', text)
 
-    # Remove standalone markdown bold/italic markers only when they wrap text,
-    # but never inside LaTeX commands. A `*` immediately following a word
-    # character is a LaTeX starred command (\subsection*), not emphasis.
-    text = re.sub(r'(?<![\w\\\*])\*\*([^*]+?)\*\*(?![\w*])', r'\1', text)
+    # Markdown bold (`**text**`) is Typst strong-within-strong; collapse it
+    # to a single strong marker.
+    text = re.sub(r'(?<![\w\*])\*\*([^*]+?)\*\*(?![\w*])', r'*\1*', text)
 
-    # Remove markdown italic markers (single *)
-    text = re.sub(r'(?<![\w\\\*])\*([^*]+?)\*(?![\w*])', r'\1', text)
+    # Markdown italic (single `*...*`) means emphasis in Typst, which is
+    # written with underscores instead.
+    text = re.sub(r'(?<![\w\*])\*([^*]+?)\*(?![\w*])', r'_\1_', text)
 
-    # Remove leading "Corrected LaTeX document" or similar LLM preamble lines
+    # Remove leading "Corrected Typst document" or similar LLM preamble lines
     text = re.sub(
-        r'^(?:\*\*)?Corrected LaTeX document(?:\*\*)?\s*\n*',
+        r'^(?:\*\*)?Corrected (?:Typst|LaTeX) document(?:\*\*)?\s*\n*',
         '', text, flags=re.IGNORECASE,
     )
-
-    # Fix double-backslash before LaTeX commands.
-    # LLMs often produce \\section, \\textbf, \\begin, etc.
-    # Collapse \\ followed by a letter into a single \ + letter.
-    # Preserves legitimate \\ (line breaks) since those are followed
-    # by whitespace/newline/[, not a letter.
-    text = re.sub(r'\\\\([a-zA-Z])', r'\\\1', text)
 
     return text.strip()
 
 
 def build_notation_table(notation_list: list[dict]) -> str:
-    """Build a LaTeX notation table from a list of {"symbol": ..., "meaning": ...} dicts.
+    """Build a Typst notation table from a list of {"symbol": ..., "meaning": ...} dicts.
 
     Returns an empty string if the list is empty or None.
     """
@@ -56,19 +65,29 @@ def build_notation_table(notation_list: list[dict]) -> str:
     for entry in notation_list:
         symbol = entry.get("symbol", "")
         meaning = entry.get("meaning", "")
-        if symbol and not symbol.startswith("$"):
-            symbol = f"${symbol}$"
-        rows.append(f"    {symbol} & {meaning} \\\\")
+        if not symbol:
+            continue
+        # The symbol is rendered in math mode; strip markdown-style $ signs
+        # the writer may have carried over.
+        if symbol.startswith("$") and symbol.endswith("$"):
+            symbol = symbol[1:-1]
+        sym_cell = f"${symbol}$"
+        meaning_cell = f"[{escape_typst_content(meaning)}]"
+        rows.append(f"    {sym_cell}, {meaning_cell},")
 
     table_lines = [
-        r"\subsection*{Notation Used in This Section}",
-        r"\begin{tabular}{@{}ll@{}}",
-        r"\toprule",
-        r"Symbol & Meaning \\ \midrule",
+        "#heading(numbering: none)[Notation Used in This Section]",
+        "",
+        "#table(",
+        "  columns: (auto, 1fr),",
+        "  align: (right, left),",
+        "  inset: (x: 1em, y: 0.55em),",
+        "  table.hline(stroke: 0.8pt),",
+        "  table.header([*Symbol*], [*Meaning*]),",
+        "  table.hline(stroke: 0.4pt),",
         *rows,
-        r"\bottomrule",
-        r"\end{tabular}",
-        r"\vspace{1em}",
+        "  table.hline(stroke: 0.8pt),",
+        ")",
         "",
     ]
     return "\n".join(table_lines)
@@ -78,20 +97,21 @@ def build_notation_table(notation_list: list[dict]) -> str:
 # Section compilation (replaces the old LLM-based Stage 2.4)
 # ---------------------------------------------------------------------------
 
-def _render_question(text: str, options: Optional[list[str]] = None, note: Optional[str] = None) -> list[str]:
-    """Render one question environment, optionally with MCQ options and a source note."""
-    lines = ["\\begin{question}"]
-    cleaned_q = strip_markdown_artifacts(text)
-    lines.append(cleaned_q)
+def _render_question(
+    qnum: int,
+    text: str,
+    options: Optional[list[str]] = None,
+    note: Optional[str] = None,
+) -> list[str]:
+    """Render one question block, optionally with MCQ options and a source note."""
+    lines = [f"*Question {qnum}.* {strip_markdown_artifacts(text)}"]
     if options:
-        lines.append(r"\begin{enumerate}[label=\Alph*,itemsep=1pt]")
+        lines.append("#enum(numbering: \"A.\", spacing: 0.9em)")
         for opt in options:
-            lines.append(f"  \\item {strip_markdown_artifacts(str(opt))}")
-        lines.append(r"\end{enumerate}")
-    lines.append("\\end{question}")
-    if note:
-        lines.append(r"\par\smallskip\noindent\textit{" + strip_markdown_artifacts(note) + "}")
+            lines.append(f"  [{strip_markdown_artifacts(str(opt))}]")
         lines.append("")
+    if note:
+        lines.append("#emph[" + strip_markdown_artifacts(note) + "]")
     return lines
 
 
@@ -104,68 +124,70 @@ def compile_section(
     newpage_per_question: bool = True,
 ) -> tuple[str, list[str]]:
     """
-    Deterministically assemble theory and questions into LaTeX for one section.
+    Deterministically assemble theory and questions into Typst for one section.
 
     Each section renders as: Theory, Practice Questions, Past-Year Questions.
-    Also returns the per-section answer-key lines (question numbers follow the
-    LaTeX question counter, which is sequential per section).
+    Also returns the per-section answer-key lines (question numbers follow
+    the per-section question counter).
 
     Args:
-        section_title:        Title for the ``\\section{}`` heading.
-        theory_text:          LaTeX theory from the Section Writer (uses \\subsubsection).
+        section_title:        Title for the ``= `` heading.
+        theory_text:          Typst theory from the Section Writer (uses ``===``).
         practice_questions:   [{level, text, answer, options?}] from the Question Set Builder.
         pyq_questions:        [{text, source, adapted, answer, options?}] curated candidates.
         notation:             [{symbol, meaning}] reported by the writer.
-        newpage_per_question: If True, insert ``\\newpage`` after each question.
+        newpage_per_question: If True, insert a page break after each question.
 
     Returns:
-        (section_latex, answer_key_lines)
+        (section_typ, answer_key_lines)
     """
     parts: list[str] = []
     answer_key: list[str] = []
     qnum = 0
 
     # --- Section heading + Theory ---
-    parts.append(f"\\section{{{section_title}}}")
+    parts.append(f"= {escape_typst_content(section_title)}")
     parts.append("")
-    parts.append("\\subsection{Theory}")
+    parts.append("== Theory")
     parts.append("")
     parts.append(strip_markdown_artifacts(theory_text))
     parts.append("")
 
     # --- Practice Questions ---
     if practice_questions:
-        parts.append("\\newpage")
-        parts.append("\\subsection*{Practice Questions}")
+        parts.append("#pagebreak()")
+        parts.append("#heading(numbering: none)[Practice Questions]")
         parts.append("")
 
     for idx, q in enumerate(practice_questions):
         qnum += 1
         level = str(q.get("level", "")).upper()
-        parts.append(f"% --- {level} ---")
-        parts.extend(_render_question(q.get("text", ""), q.get("options")))
+        parts.append(f"// --- {level} ---")
+        parts.extend(_render_question(qnum, q.get("text", ""), q.get("options")))
         answer_key.append(f"{qnum}. {q.get('answer') or '(see theory)'}")
         parts.append("")
-        if newpage_per_question and idx < len(practice_questions) + len(pyq_questions) - 1:
-            parts.append("\\newpage")
+        # No break after the final practice question: when PYQs follow, the
+        # Past-Year heading below already starts on a fresh page.
+        if newpage_per_question and idx < len(practice_questions) - 1:
+            parts.append("#pagebreak()")
             parts.append("")
 
     # --- Past-Year Questions ---
     if pyq_questions:
         if practice_questions:
-            parts.append("\\newpage")
-        parts.append("\\subsection*{Past-Year Questions}")
+            parts.append("#pagebreak()")
+        parts.append("#heading(numbering: none)[Past-Year Questions]")
         parts.append("")
 
     for idx, q in enumerate(pyq_questions):
         qnum += 1
         source = str(q.get("source") or "past exam")
         note = f"(Adapted from: {source})" if q.get("adapted") else f"(Source: {source})"
-        parts.extend(_render_question(q.get("text", ""), q.get("options"), note=note))
+        parts.extend(_render_question(qnum, q.get("text", ""), q.get("options"), note=note))
         answer_key.append(f"{qnum}. {q.get('answer') or '(see theory)'}")
         parts.append("")
         if newpage_per_question and idx < len(pyq_questions) - 1:
-            parts.append("\\newpage")
+            parts.append("#pagebreak()")
             parts.append("")
 
     return "\n".join(parts), answer_key
@@ -183,106 +205,69 @@ def format_document(
     answer_key_blocks: Optional[list[dict]] = None,
 ) -> str:
     """
-    Assemble a complete, compilable LaTeX document from compiled sections.
+    Assemble a complete, compilable Typst document from compiled sections.
 
     Args:
-        compiled_sections: List of LaTeX strings, one per section.
+        compiled_sections: List of Typst strings, one per section.
         section_titles:    List of section titles, parallel to compiled_sections.
         metadata:          Optional dict with keys 'title', 'author', 'date'.
         notation_data:     Optional list of lists of notation dicts per section.
         answer_key_blocks: Optional list of {"section_title", "answers": [str]}.
 
     Returns:
-        A single string containing the full LaTeX document.
+        A single string containing the full Typst document.
     """
     if metadata is None:
         metadata = {}
 
     title = metadata.get("title", "Learning Module")
     author = metadata.get("author", "")
-    date = metadata.get("date", r"\today")
+    date = metadata.get("date")  # None or "\today" -> render today's date
 
     # --- PREAMBLE ---
-    preamble = r"""\documentclass[12pt, a4paper]{article}
+    doc_meta = f'#set document(\n  title: "{_escape_string(title)}",\n'
+    if author:
+        doc_meta += f'  author: ({_escape_string(author)},),\n'
+    doc_meta += ")\n"
 
-% --- Encoding & Fonts ---
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{lmodern}
-
-% --- Mathematics ---
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{amsthm}
-\usepackage{mathtools}
-\newcounter{question}[section]
-\renewcommand{\thequestion}{\thesection.\arabic{question}}
-
-\newenvironment{question}
-  {\refstepcounter{question}\par\noindent\textbf{Question \thequestion:}}
-  {\par}
-
-% --- Layout ---
-\usepackage[margin=1in]{geometry}
-
-% --- Lists ---
-\usepackage{enumitem}
-
-% --- Tables ---
-\usepackage{booktabs}
-\usepackage{array}
-
-% --- Graphics ---
-\usepackage{graphicx}
-
-% --- Headers / Footers ---
-\usepackage{fancyhdr}
-\pagestyle{fancy}
-\fancyhf{}
-\fancyhead[L]{\leftmark}
-\fancyhead[R]{\thepage}
-\renewcommand{\headrulewidth}{0.4pt}
-
-% --- Hyperlinks & Cross-references ---
-\usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
-
-% --- Misc ---
-\usepackage{xcolor}
-
-% --- Custom commands (safety definitions) ---
-\providecommand{\operatorname}[1]{\mathop{\mathrm{#1}}\nolimits}
+    preamble = doc_meta + """
+#set page(paper: "a4", margin: 2.5cm, numbering: "1")
+#set text(font: ("Libertinus Serif", "New Computer Modern"), size: 12pt, lang: "en")
+#set heading(numbering: "1.1.1")
+#set par(justify: true)
+#set enum(spacing: 1.2em)
 """
 
     # --- TITLE ---
-    title_block = f"\\title{{{sanitize_latex(title)}}}\n"
-    if author:
-        title_block += f"\\author{{{sanitize_latex(author)}}}\n"
+    title_block = "#align(center)[\n"
+    title_block += f"  #text(size: 20pt, weight: \"bold\")[{escape_typst_content(title)}]\n"
+    title_block += "\n  #v(0.3em)\n"
+    if date and date not in (r"\today", ""):
+        title_block += f"  {escape_typst_content(date)}\n"
     else:
-        title_block += "\\author{}\n"
-    title_block += f"\\date{{{date}}}\n"
+        title_block += '  #text(size: 12pt)[#datetime.today().display("[month repr:long] [day], [year]")]\n'
+    title_block += "]\n"
+    if author:
+        title_block += f"\n#align(center)[{escape_typst_content(author)}]\n"
 
     # --- BEGIN DOCUMENT ---
     body_parts = []
-    body_parts.append(r"\begin{document}")
     body_parts.append("")
-    body_parts.append(r"\maketitle")
-    body_parts.append(r"\thispagestyle{empty}")
-    body_parts.append(r"\newpage")
-    body_parts.append("")
-    body_parts.append(r"\tableofcontents")
-    body_parts.append(r"\newpage")
+    body_parts.append("#v(1em)")
+    body_parts.append("#outline(title: [Contents])")
+    body_parts.append("#pagebreak()")
     body_parts.append("")
 
     # --- SECTIONS ---
-    for i, (section_latex, sec_title) in enumerate(
+    for i, (section_typ, sec_title) in enumerate(
         zip(compiled_sections, section_titles)
     ):
-        cleaned = strip_markdown_artifacts(section_latex)
-        if i > 0:
-            body_parts.append(r"\newpage")
-        body_parts.append(f"% {'=' * 60}")
-        body_parts.append(f"% SECTION  {sec_title}")
-        body_parts.append(f"% {'=' * 60}")
+        # Sections were stripped piecewise in compile_section; stripping again
+        # here would corrupt markup produced by the markdown-conversion rules.
+        cleaned = section_typ
+        body_parts.append(f"// {'=' * 60}")
+        body_parts.append(f"// SECTION  {sec_title}")
+        body_parts.append(f"// {'=' * 60}")
         body_parts.append("")
 
         # Insert notation table if data is available for this section
@@ -298,27 +283,21 @@ def format_document(
     if answer_key_blocks:
         has_answers = any(block.get("answers") for block in answer_key_blocks)
         if has_answers:
-            body_parts.append(r"\newpage")
-            body_parts.append(r"\section*{Answer Key}")
+            body_parts.append("#pagebreak()")
+            body_parts.append("#heading(numbering: none)[Answer Key]")
             body_parts.append("")
             for block in answer_key_blocks:
                 if not block.get("answers"):
                     continue
-                body_parts.append(f"\\textbf{{{sanitize_latex(block['section_title'])}}}")
-                body_parts.append(r"\begin{itemize}[itemsep=0pt]")
+                body_parts.append(f"*{escape_typst_content(block['section_title'])}*")
+                body_parts.append("#list(spacing: 0.6em)")
                 for answer in block["answers"]:
-                    body_parts.append(f"  \\item {strip_markdown_artifacts(str(answer))}")
-                body_parts.append(r"\end{itemize}")
+                    body_parts.append(f"  [{strip_markdown_artifacts(str(answer))}]")
                 body_parts.append("")
 
-    # --- END DOCUMENT ---
-    body_parts.append(r"\end{document}")
-
     # Assemble and sanitize
-    full_document = (
-        preamble + "\n" + title_block + "\n" + "\n".join(body_parts) + "\n"
-    )
-    full_document = sanitize_latex(full_document)
+    full_document = preamble + title_block + "\n" + "\n".join(body_parts) + "\n"
+    full_document = sanitize_typst(full_document)
 
     return full_document
 
@@ -326,3 +305,7 @@ def format_document(
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
+
+def _escape_string(text: str) -> str:
+    """Escape a Python string for use inside a Typst string literal."""
+    return text.replace("\\", "\\\\").replace('"', '\\"')

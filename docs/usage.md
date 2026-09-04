@@ -18,13 +18,13 @@ The CLI provides commands for both the generation pipeline (Extract -> Generate)
 
 ## End-to-End Generation
 
-The easiest way to generate a worksheet is to use the `run` command, which automatically handles PDF extraction and subsequent LaTeX generation.
+The easiest way to generate a worksheet is to use the `run` command, which automatically handles PDF extraction and subsequent Typst generation.
 
 ```bash
 python main_cli.py run path/to/lecture.pdf \
     --kb course.cmkb \
     --lecture-id L01 \
-    --out output/worksheet.tex
+    --out output/worksheet.typ
 ```
 
 **Options for `run` and `generate`:**
@@ -51,13 +51,13 @@ python main_cli.py extract path/to/lecture.pdf --out output/pedagogy.json
 *Tip: You can also use powerful external LLMs (like Claude or ChatGPT) to perform this extraction manually using our pre-written prompts. See the [Chatbot Extraction Workflow](chatbot_workflow.md) for details.*
 
 ### Step 2: Generation
-Takes the (potentially hand-edited) pedagogical JSON, queries the memory store for PYQs and book context, and generates the LaTeX worksheet.
+Takes the (potentially hand-edited) pedagogical JSON, queries the memory store for PYQs and book context, and generates the Typst worksheet.
 
 ```bash
 python main_cli.py generate output/pedagogy.json \
     --kb course.cmkb \
     --lecture-id L01 \
-    --out output/worksheet.tex
+    --out output/worksheet.typ
 ```
 
 ---

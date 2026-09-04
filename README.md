@@ -34,7 +34,7 @@ By combining the core material from a lecture with relevant context from referen
 - **No More Context Switching**: Students no longer have to consult multiple books, repos, or AI chatbots to understand a topic. Everything is contextualized and presented sequentially.
 - **Learn by Applying**: The worksheets are predominantly question-based, actively scaffolding the student's understanding from basic recall to complex application. This drastically helps students who learn better by *applying* rather than rote learning.
 - **Neurodivergent Friendly**: Designed with ADHD in mind, the format breaks down intimidating walls of text into digestible, structured blocks with clear learning objectives, everyday analogies, and proactive misconception handling.
-- **Tablet Ready**: The output is compiled into a clean, well-spaced LaTeX PDF format, perfectly optimized for use on iPads and tablets with digital pencils.
+- **Tablet Ready**: The output is compiled into a clean, well-spaced Typst PDF format, perfectly optimized for use on iPads and tablets with digital pencils.
 
 ---
 

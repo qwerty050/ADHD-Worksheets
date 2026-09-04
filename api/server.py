@@ -258,7 +258,7 @@ def generate_lecture(
     if not _GENERATION_LOCK.acquire(blocking=False):
         raise HTTPException(status_code=409, detail="Another generation is already running")
 
-    out_tex_path = session["dir"] / f"{session['lecture_id']}_output.tex"
+    out_typ_path = session["dir"] / f"{session['lecture_id']}_output.typ"
 
     with open(session["pedagogical_json_path"], "r", encoding="utf-8") as f:
         pedagogical_json = json.load(f)
@@ -279,7 +279,7 @@ def generate_lecture(
                 pedagogical_json=pedagogical_json,
                 kb=session["kb"],
                 lecture_id=session["lecture_id"],
-                output_tex_path=out_tex_path,
+                output_typ_path=out_typ_path,
                 cache=cache,
                 update_memory=update_memory,
                 is_objective=objective,
@@ -319,11 +319,11 @@ def download_file(session_id: str, file_type: str):
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    if file_type == "tex":
+    if file_type == "typ":
         if not session.get("lecture_id"):
             raise HTTPException(status_code=404, detail="No generated worksheet in this session")
-        path = session["dir"] / f"{session['lecture_id']}_output.tex"
-        filename = f"{session['lecture_id']}_output.tex"
+        path = session["dir"] / f"{session['lecture_id']}_output.typ"
+        filename = f"{session['lecture_id']}_output.typ"
     elif file_type == "cmkb":
         path = session["kb_path"]
         filename = path.name if path else "kb.cmkb"

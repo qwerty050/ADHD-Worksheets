@@ -106,7 +106,7 @@ def run_generation_pipeline(
     pedagogical_json: list,
     kb,
     lecture_id: str,
-    output_tex_path: Path,
+    output_typ_path: Path,
     cache: PipelineCache,
     update_memory: bool = True,
     is_objective: bool = False,
@@ -260,22 +260,21 @@ def run_generation_pipeline(
     # =================================================================
     log.info("Stage 3: Formatting document (deterministic)...")
 
-    module_name = output_tex_path.stem.replace("_", " ").replace("-", " ").title()
+    module_name = output_typ_path.stem.replace("_", " ").replace("-", " ").title()
     metadata = {
         "title": f"Learning Module: {module_name}",
         "author": "",
-        "date": r"\today",
     }
 
-    latex = format_document(
+    typst = format_document(
         compiled_sections, section_titles, metadata,
         notation_data=notation_data_list,
         answer_key_blocks=answer_key_blocks,
     )
 
-    output_tex_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_tex_path, "w", encoding="utf-8") as f:
-        f.write(latex)
+    output_typ_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(output_typ_path, "w", encoding="utf-8") as f:
+        f.write(typst)
 
-    log.info("Generation complete! LaTeX saved to: %s", output_tex_path)
-    return {"latex": latex, "summaries": run_summaries}
+    log.info("Generation complete! Typst saved to: %s", output_typ_path)
+    return {"typst": typst, "summaries": run_summaries}

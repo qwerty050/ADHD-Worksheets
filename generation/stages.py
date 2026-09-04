@@ -21,7 +21,7 @@ class NotationItem(BaseModel):
 
 
 class WriterOutput(BaseModel):
-    """Call A result: theory LaTeX, the symbols actually used, and a section
+    """Call A result: theory Typst markup, the symbols actually used, and a section
     summary (reused as the rolling-context entry and the memory-commit summary)."""
     theory: str
     notation: List[NotationItem] = []

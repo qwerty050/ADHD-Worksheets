@@ -1,6 +1,6 @@
 # Pipeline Overview
 
-Lecture PDF + Knowledge Base (PYQs + reference books) -> self-study worksheet (.tex).
+Lecture PDF + Knowledge Base (PYQs + reference books) -> self-study worksheet (.typ).
 
 ```
 +-------------+   +----------------------------+   +-----------------------------+
@@ -9,7 +9,7 @@ Lecture PDF + Knowledge Base (PYQs + reference books) -> self-study worksheet (.
                   | 2. annotate (per section) |                |
                   +----------------------------+                v
 +-------------+   +----------------------------+   +-----------------------------+
-|  .cmkb KB   |-->| Generation (2 calls/sec)  |-->| worksheet.tex               |
+|  .cmkb KB   |-->| Generation (2 calls/sec)  |-->| worksheet.typ               |
 | PYQs+books  |   | A. section writer         |   | theory + practice + PYQs    |
 +-------------+   | B. question set builder   |   | + answer key                |
                   +----------------------------+   +-----------------------------+
@@ -32,7 +32,7 @@ PyMuPDF.
 
 Per section, exactly **two** LLM calls:
 
-1. **Call A - Section Writer** (`write_section`): theory LaTeX
+1. **Call A - Section Writer** (`write_section`): theory Typst markup
    (Motivation -> Intuition -> Formal Content -> Worked Example -> Key
    Takeaway), the notation it actually used, and a 3-4 sentence summary.
    Inputs: section content, book context, the student profile (one merged

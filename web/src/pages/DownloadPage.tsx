@@ -10,7 +10,7 @@ export const DownloadPage: React.FC = () => {
   const navigate = useNavigate();
   const { sessionId } = useAppContext();
 
-  const downloadFile = async (type: 'tex' | 'cmkb') => {
+  const downloadFile = async (type: 'typ' | 'cmkb') => {
     if (!sessionId) return;
     window.open(`${API_BASE}/sessions/${sessionId}/download/${type}`, '_blank');
   };
@@ -35,12 +35,12 @@ export const DownloadPage: React.FC = () => {
         </p>
 
         <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <Button onClick={() => downloadFile('tex')}>Download .tex File</Button>
+          <Button onClick={() => downloadFile('typ')}>Download .typ File</Button>
           <Button variant="accent" onClick={() => downloadFile('cmkb')}>Download KB</Button>
         </div>
 
         <p style={{ marginTop: '2rem', fontSize: '0.9rem', fontWeight: 'bold', borderTop: '2px solid black', paddingTop: '1rem' }}>
-          In the meantime, you can paste that raw .tex file into Overleaf or run it through pdflatex to actually turn it into a beautiful PDF. We clearly couldn't afford the server costs to compile it for you.
+          In the meantime, you can paste that raw .typ file into the Typst Web App or run it through `typst compile` to actually turn it into a beautiful PDF. We clearly couldn't afford the server costs to compile it for you.
         </p>
       </div>
 
