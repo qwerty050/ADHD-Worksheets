@@ -1,56 +1,21 @@
 """
 Deterministic Typst formatting utilities.
 
-Handles markdown artifact stripping, notation table generation, section
-compilation, and full document assembly.  No LLM calls — pure Python.
+Handles notation table generation, section compilation, and full document
+assembly.  Markup normalisation and LaTeX->Typst math conversion live in
+formatter_math.  No LLM calls — pure Python.
 """
 
-import re
 from typing import Optional
 
 from compiler.sanitisation import sanitize_typst
-
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-# Characters that start special markup inside Typst content brackets.
-_CONTENT_SPECIALS = "\\#$[]*_`@<>~"
-
-
-def escape_typst_content(text: str) -> str:
-    """Escape characters that would start special markup in a Typst
-    content block, for use on machine-supplied strings (titles, sources)."""
-    out = []
-    for ch in text:
-        if ch in _CONTENT_SPECIALS:
-            out.append("\\" + ch)
-        else:
-            out.append(ch)
-    return "".join(out)
-
-
-def strip_markdown_artifacts(text: str) -> str:
-    """Remove stray markdown formatting that LLMs sometimes inject into Typst output."""
-    # Remove markdown code fences (```typ ... ``` or just ``` ... ```)
-    text = re.sub(r'```(?:typ|typst)?\s*\n?', '', text)
-
-    # Markdown bold (`**text**`) is Typst strong-within-strong; collapse it
-    # to a single strong marker.
-    text = re.sub(r'(?<![\w\*])\*\*([^*]+?)\*\*(?![\w*])', r'*\1*', text)
-
-    # Markdown italic (single `*...*`) means emphasis in Typst, which is
-    # written with underscores instead.
-    text = re.sub(r'(?<![\w\*])\*([^*]+?)\*(?![\w*])', r'_\1_', text)
-
-    # Remove leading "Corrected Typst document" or similar LLM preamble lines
-    text = re.sub(
-        r'^(?:\*\*)?Corrected (?:Typst|LaTeX) document(?:\*\*)?\s*\n*',
-        '', text, flags=re.IGNORECASE,
-    )
-
-    return text.strip()
+from compiler.formatter_math import (
+    convert_math_segment,
+    _is_suspect_math,
+    _raw_literal,
+    strip_markdown_artifacts,
+    escape_typst_content,
+)
 
 
 def build_notation_table(notation_list: list[dict]) -> str:
@@ -68,10 +33,14 @@ def build_notation_table(notation_list: list[dict]) -> str:
         if not symbol:
             continue
         # The symbol is rendered in math mode; strip markdown-style $ signs
-        # the writer may have carried over.
+        # the writer may have carried over, then convert LaTeX leftovers.
         if symbol.startswith("$") and symbol.endswith("$"):
             symbol = symbol[1:-1]
-        sym_cell = f"${symbol}$"
+        converted = convert_math_segment(symbol)
+        if _is_suspect_math(converted):
+            sym_cell = _raw_literal(symbol, code=True)
+        else:
+            sym_cell = f"${converted}$"
         meaning_cell = f"[{escape_typst_content(meaning)}]"
         rows.append(f"    {sym_cell}, {meaning_cell},")
 

@@ -188,6 +188,19 @@ def run_generation_pipeline(
             )
             cache.set_section_step(i, "questions", question_set.model_dump_json())
 
+        # The builder sometimes echoes only a candidate's id and drops the
+        # original text/options, leaving a stemless MCQ in the worksheet.
+        # Backfill deterministically from the KB candidate it included.
+        cand_by_id = {c["id"]: c for c in candidates}
+        for p in question_set.pyq:
+            src = cand_by_id.get(p.id or "")
+            if not src:
+                continue
+            if not (p.text or "").strip():
+                p.text = src["text"]
+            if not p.options and src.get("options"):
+                p.options = list(src["options"])
+
         # Bookkeeping: included PYQs are consumed for the rest of this run.
         included_pyqs = [p for p in question_set.pyq if p.id and p.id.startswith("kb:")]
         for p in included_pyqs:
@@ -197,22 +210,17 @@ def run_generation_pipeline(
         deferred_questions = [d.model_dump() for d in question_set.deferred]
 
         # ----- Deterministic compilation -----
-        compiled_text = cache.get_section_step(i, "compiled")
-        if compiled_text:
-            log.info("  Compiled section cached")
-            answer_key = cache.get_section_step(i, "answer_key") or []
-        else:
-            log.info("  Compiling section...")
-            compiled_text, answer_key = compile_section(
-                section_title=section_title,
-                theory_text=writer_output.theory,
-                practice_questions=[q.model_dump() for q in question_set.practice],
-                pyq_questions=[q.model_dump() for q in question_set.pyq],
-                notation=[n.model_dump() for n in writer_output.notation],
-                newpage_per_question=newpage_per_question,
-            )
-            cache.set_section_step(i, "compiled", compiled_text)
-            cache.set_section_step(i, "answer_key", answer_key)
+        # Not cached: compilation is pure Python and instant, and caching it
+        # would serve stale markup whenever the formatter improves.
+        log.info("  Compiling section...")
+        compiled_text, answer_key = compile_section(
+            section_title=section_title,
+            theory_text=writer_output.theory,
+            practice_questions=[q.model_dump() for q in question_set.practice],
+            pyq_questions=[q.model_dump() for q in question_set.pyq],
+            notation=[n.model_dump() for n in writer_output.notation],
+            newpage_per_question=newpage_per_question,
+        )
 
         compiled_sections.append(compiled_text)
         section_titles.append(section_title)
