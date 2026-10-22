@@ -7,14 +7,16 @@ This document explains how to integrate the programmatic `KnowledgeBase` API dir
 ## 1. Setup & Initialization
 
 ### Environment Variables
-Ensure a `.env` file exists at the root of your working directory where the process is launched. It must specify the Ollama connection and the models to use:
+cmkb reads its settings from `shared/config.py`, which loads the `.env` file in the repository root (see [docs/installation.md](../docs/installation.md) for every variable). The memory-related ones and their defaults:
 
 ```env
 OLLAMA_BASE=http://localhost:11434
 EMBED_MODEL=nomic-embed-text
 TAG_MODEL=gemma3n:e4b
-PAGEINDEX_MODEL=gemma4:e4b
+PAGEINDEX_MODEL=gemma3n:e4b
 ```
+
+Embeddings (`EMBED_MODEL`) always go to Ollama. `TAG_MODEL` (question tagging, topic aliases) and `PAGEINDEX_MODEL` (PageIndex retrieval) go through the shared client selected by `LLM_PROVIDER`, so set them to model names your provider accepts.
 
 ### Loading the Knowledge Base
 Inside your generation pipeline, initialize the `KnowledgeBase` instance using the single-file `.cmkb` database.
@@ -22,7 +24,8 @@ Inside your generation pipeline, initialize the `KnowledgeBase` instance using t
 ```python
 from cmkb import KnowledgeBase
 
-# If the file doesn't exist, create it first:
+# If the file doesn't exist, create it first
+# (optional: pdf_mode="chunking"|"page_index", embed_model=EMBED_MODEL, embed_dim=768):
 # kb = KnowledgeBase.create("course_data.cmkb", name="Machine Learning")
 
 # To load an existing KB:
@@ -47,15 +50,19 @@ kb.cluster()
 # Standard chunking approach
 kb.ingest_pdf("path/to/textbook.pdf", mode="chunking")
 
-# Advanced LLM-driven PageIndex tree approach (requires PageIndex dependencies)
+# Advanced LLM-driven PageIndex tree approach
 kb.ingest_pdf("path/to/textbook.pdf", mode="page_index")
+
+# mode=None (the default) uses the KB's pdf_mode from create()
 ```
+*Known issue: `mode="page_index"` currently fails with a `NameError` in `cmkb/ingest_pdf.py`. Use `chunking`.*
 
 ### Ingesting Lecture Data
 When a new lecture occurs, feed the extracted lecture JSON into the KB to register its topics against the taxonomy. Unmatched topics are automatically added as new canonical concepts.
 ```python
 kb.ingest_lecture("path/to/extracted_lecture.json", lecture_id="L01")
 ```
+*`ingest_lecture` reads `data["section_map"]`, so it needs the `{"section_map": [...]}` envelope; the bare list written by `extract` currently fails. The generation pipeline does not call it.*
 
 ---
 
@@ -70,13 +77,15 @@ Call `kb.query()` with the intended topics to retrieve context and check for ove
 ```python
 topics_to_cover = ["Support Vector Machines", "Kernel Trick"]
 
-context = kb.query(topics=topics_to_cover, lecture_id="L01", k=5)
+context = kb.query(topics=topics_to_cover, lecture_id="L01", k=5, reuse="prefer")
 ```
 
+`k` (default 8) is the number of book chunks per topic. `reuse="prefer"` (default) serves never-used PYQs first and falls back to already-used ones (flagged `repeat: true`) when a topic's pool is empty; `reuse="never"` excludes used PYQs entirely.
+
 The returned `context` dictionary contains three crucial lists:
-1. **`questions`**: All canonical questions matching the topics exactly. Use these as practice problems in the worksheet.
+1. **`questions`**: One entry per matched topic cluster, `{"cluster_id", "canonical_topic", "matches": [...]}`, where each match has `pk`, `source`, `qid`, `question`, `answer`, `options`, `used` and `repeat`. Topics that match no cluster appear as `{"topic", "status": "no_cluster_match"}`. Use the matches as practice problems in the worksheet.
 2. **`book_context`**: Reference snippets from the textbook PDFs to ground the LLM's explanations.
-3. **`already_covered`**: **CRITICAL**. This lists any previously generated worksheet sections that share a high semantic similarity with these topics. If this list is **not empty**, your generation module should alter its behavior (e.g., skip the topic, or write a "Review" section instead of an "Introduction").
+3. **`already_covered`**: **CRITICAL**. This lists previously generated worksheet sections from *other* lectures (sections of `lecture_id` are excluded) whose summaries are semantically similar to these topics. If this list is **not empty**, your generation module should alter its behavior (e.g., skip the topic, or write a "Review" section instead of an "Introduction").
 
 ### Step 3b: Update the KB (After Generating)
 
@@ -99,12 +108,23 @@ new_section_id = kb.update(
 This `update` call accomplishes several things:
 1. Links the generated LaTeX to the requested topics.
 2. Embeds the `summary` into the `summaries` FAISS index. 
-3. Ensures that future `kb.query()` calls for "Kernel Trick" will populate the `already_covered` list with this exact summary, preventing duplicate worksheet content!
+3. Ensures that future `kb.query()` calls for "Kernel Trick" from a different lecture will populate the `already_covered` list with this exact summary, preventing duplicate worksheet content!
+
+If the section used PYQs from `context["questions"]`, record that too, so `reuse` can avoid repeating them (idempotent per question and lecture):
+
+```python
+kb.mark_questions_used(
+    [{"pk": 12, "exam": "Endsem Monsoon 2023", "qid": "3", "action": "included"}],  # or "adapted"
+    lecture_id="L01",
+)
+```
+
+`kb.kb_stats()` and `kb.usage_stats()` return overview counts (questions, used questions, clusters, sections, lectures, document chunks).
 
 ## FAQ
 
 **Q: Can I use the CLI instead of Python code?**
-Yes. Every python method has a 1:1 mapping in the `cmkb_cli.py` wrapper, which is useful for debugging, inspecting the state of the KB, or doing bulk background ingestions via bash scripts.
+Yes, for most of it. `python main_cli.py memory <command>` (the same CLI as `python -m cmkb.cli`, defined in `cmkb/cli.py`) covers create, ingest (questions, pdf, lecture, section), cluster, query, inspect and debug-topic, which is useful for debugging, inspecting the state of the KB, or doing bulk background ingestions via bash scripts. `mark_questions_used` has no CLI command. See [docs/usage.md](../docs/usage.md).
 
 **Q: Does it use an LLM during the query phase?**
-No, unless the PDF was ingested using `page_index` mode. `chunking` mode and Question retrieval use pure vector similarity (FAISS) and lexical matching, making them extremely fast and deterministic.
+No, unless the PDF was ingested using `page_index` mode. `chunking` mode and Question retrieval use pure vector similarity (FAISS, with query embeddings from Ollama) and lexical matching, making them extremely fast and deterministic. Ingestion does use an LLM: `ingest_questions` tags questions and `cluster` generates topic aliases (`TAG_MODEL`).

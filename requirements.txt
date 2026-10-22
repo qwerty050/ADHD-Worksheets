@@ -2,6 +2,7 @@ requests
 python-dotenv
 PyMuPDF
 PyPDF2
+PyYAML
 pydantic
 faiss-cpu
 numpy
@@ -12,3 +13,4 @@ fastapi
 uvicorn
 python-multipart
 sse-starlette
+# Optional: tiktoken (exact token counts in the vendored PageIndex code when LLM_PROVIDER=openai)

@@ -1,8 +1,8 @@
 # Extracting PYQs using Chatbots (Claude / ChatGPT / Gemini)
 
-In addition to extracting lecture structure, you can use web-based LLMs (like **Claude 3.5 Sonnet**, **ChatGPT (GPT-4o)**, or **Gemini 1.5 Pro**) to rapidly digitize Past Year Questions (PYQs), quizzes, or practice tests into the exact JSON format required by the Course Memory Knowledge Base (CMKB).
+In addition to extracting lecture structure, you can use a strong LLM chatbot (for example Claude, ChatGPT or Gemini) to rapidly digitize Past Year Questions (PYQs), quizzes, or practice tests into the exact JSON format required by the Course Memory Knowledge Base (CMKB).
 
-Once you have this JSON, you can easily ingest it using the `memory ingest questions` CLI command.
+Once you have this JSON, you can easily ingest it using the `memory ingest questions` CLI command, or upload it in the web app (Create Knowledge Base / KB management pages). The same prompt is shown in the web app's **AI Guide** page ("Make Questions" tab).
 
 ## Workflow
 
@@ -71,7 +71,9 @@ Run the following command:
 python main_cli.py memory ingest questions course.cmkb exams.json
 ```
 
-After ingestion, you should run the cluster command to ensure these new questions are semantically indexed and ready for retrieval:
+Ingestion embeds each question (Ollama, `EMBED_MODEL`) and tags it with topic labels (`TAG_MODEL`, via `LLM_PROVIDER`). Re-ingesting the same file is safe: questions are skipped per (exam, id).
+
+After ingestion, you should run the cluster command to group the topic tags into the canonical topic taxonomy that retrieval matches against:
 
 ```bash
 python main_cli.py memory cluster course.cmkb

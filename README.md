@@ -33,8 +33,8 @@ By combining the core material from a lecture with relevant context from referen
 - **Self-Sufficient Modules**: The student only has to complete the generated worksheet. The topic will be thoroughly covered, integrating both the slide content and the broader context from reference books, alongside relevant PYQs for the specific topic.
 - **No More Context Switching**: Students no longer have to consult multiple books, repos, or AI chatbots to understand a topic. Everything is contextualized and presented sequentially.
 - **Learn by Applying**: The worksheets are predominantly question-based, actively scaffolding the student's understanding from basic recall to complex application. This drastically helps students who learn better by *applying* rather than rote learning.
-- **Neurodivergent Friendly**: Designed with ADHD in mind, the format breaks down intimidating walls of text into digestible, structured blocks with clear learning objectives, everyday analogies, and proactive misconception handling.
-- **Tablet Ready**: The output is compiled into a clean, well-spaced LaTeX PDF format, perfectly optimized for use on iPads and tablets with digital pencils.
+- **Neurodivergent Friendly**: Designed with ADHD in mind, the format breaks down intimidating walls of text into digestible, structured blocks with clear learning objectives, plain-English intuition before the maths, and proactive misconception handling.
+- **Tablet Ready**: The output is a clean, well-spaced LaTeX (`.tex`) worksheet; compile it to PDF (e.g. with `pdflatex` or Overleaf) for use on iPads and tablets with digital pencils.
 
 ---
 
@@ -43,13 +43,13 @@ By combining the core material from a lecture with relevant context from referen
 The pipeline operates in three main steps:
 
 ### Extraction (Understanding the Lecture)
-The application reads your provided lecture slides (PDF) and breaks the content down into logical sections. It identifies the core topics, extracts any practice questions already embedded in the slides, and determines the best "pedagogical approach" (e.g., using an everyday analogy before showing a complex formula).
+The application reads your provided lecture slides (PDF) and breaks the content down into logical sections. It identifies the core topics, extracts any practice questions already embedded in the slides, and annotates each section with learning objectives, common misconceptions and what a worked example should show.
 
 ### Memory Integration (Connecting the Dots)
 Behind the scenes, a **Course Memory** database stores all your textbook chapters and past exam questions. As the application builds the worksheet, it queries this memory to pull in extra context from textbooks and relevant past questions (PYQs) that specifically match the current section. 
 
 ### Generation (Building the Worksheet)
-The application acts as a curriculum designer. For each section, it generates a structured theory breakdown (Motivation ➔ Intuition ➔ Formal Definition ➔ Worked Example) and a "ladder" of questions (Recall ➔ Understand ➔ Apply ➔ Analyse ➔ Evaluate). It then compiles this beautifully into a clean, tablet-ready PDF worksheet.
+The application acts as a curriculum designer. For each section, it generates a structured theory breakdown (Motivation ➔ Intuition ➔ Formal Content ➔ Worked Example ➔ Key Takeaway) and a "ladder" of questions (Recall ➔ Understand ➔ Apply ➔ Analyse ➔ Evaluate). It then assembles this into a clean LaTeX worksheet (`.tex`) with an answer key at the end, ready to compile into a tablet-friendly PDF.
 
 ---
 
@@ -61,30 +61,36 @@ Here is how a student typically uses the pipeline over the course of a semester.
 2. **Digitize Questions**: Using web chatbots (like Claude or ChatGPT) and our pre-written prompts, quickly convert raw PDFs of old exams into structured JSON files.
 3. **Build the Knowledge Base**: Create your Course Memory (`course.cmkb`) and ingest the textbooks and structured PYQ files into it.
 4. **Weekly Generation**: Every week, when a new lecture is released, run the lecture PDF through the generator (via CLI or the Web App UI) alongside your Knowledge Base.
-5. **Continuous Learning**: The pipeline produces that week's worksheet (pulling in relevant textbook excerpts and PYQs) and *automatically updates the Knowledge Base* with your progress. Next week's worksheet will organically remember what was already covered!
+5. **Continuous Learning**: The pipeline produces that week's worksheet (pulling in relevant textbook excerpts and PYQs) and *automatically updates the Knowledge Base* with your progress (in the Web App, download the updated KB at the end). Next week's worksheet will organically remember what was already covered!
 
 ---
 
 ## How to Run
 
+You need Python 3.10+, [Ollama](https://ollama.com), and Node.js `^20.19` or `>=22.12` (for the Web App). Run all commands from the repo root (the folder containing `main_cli.py`).
+
 ### 1. Backend Setup
-Create a virtual environment and install the required dependencies:
+Create a virtual environment, install the required dependencies, and create your config file:
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+cp .env.example .env
 ```
 
 
 ### 2. Ollama Setup
-This project uses **Ollama** to run large language models locally. This ensures maximum privacy and zero API costs.
-By default, the backend expects Ollama to be running on your machine (port `11434`) and uses models like `llama3`.
+This project talks to **Ollama** on your machine (port `11434`). Ollama is always needed: knowledge-base embeddings run locally through it, whatever LLM provider you choose.
+By default, the LLM steps use `gpt-oss:120b-cloud`, an Ollama *cloud* model (it runs on ollama.com and needs an ollama.com account), and knowledge-base tagging uses the local `gemma3n:e4b`.
 
-Make sure to install Ollama and pull the required models:
+Make sure Ollama is running, then pull the required models:
 ```bash
-ollama pull llama3
+ollama pull nomic-embed-text
+ollama pull gemma3n:e4b
+ollama signin
+ollama pull gpt-oss:120b-cloud
 ```
-*Note: You are completely welcome to change the code (e.g., in `shared/config.py`) to use other models or switch to external APIs (like OpenAI) if you prefer!*
+*Note: models and providers are configured in `.env`, with no code changes. Set the `MODEL_*` variables to local models for fully local inference, or set `LLM_PROVIDER` to `anthropic`, `openai` or `gemini` with the matching API key and that provider's model names. See the [Installation Guide](docs/installation.md) for every setting.*
 
 ### 3. Start the Application
 This project includes a fully-featured local Web App (React + FastAPI) that provides a user-friendly GUI to manage your workflow.
@@ -116,6 +122,10 @@ For technical details, setup instructions, and CLI usage, refer to the documenta
 * **[Pedagogical Schema](docs/PEDAGOGICAL_JSON_SCHEMA.md)**: The underlying JSON contract used to structure the teaching modules.
 * **[Chatbot Lecture Extraction](docs/chatbot_workflow.md)**: How to use external LLMs to extract pedagogical JSON from lectures.
 * **[Chatbot PYQ Extraction](docs/pyq_chatbot_workflow.md)**: How to use external LLMs to extract and format Past Year Questions for memory ingestion.
+* **[CMKB Integration Guide](cmkb/README.md)**: The programmatic `KnowledgeBase` API of the memory module.
+* **[Web App](web/README.md)**: Running the React frontend and how it talks to the API.
+
+The `example/` folder holds a sample lecture (`example/L01.pdf`), a question file (`example/questionsCMM.json`), a pedagogical JSON in the older v1 layout (`example/lec01.json`, still accepted by `generate`), and a worksheet produced by an earlier version of the pipeline (`example/L01.tex`).
 
 ---
 

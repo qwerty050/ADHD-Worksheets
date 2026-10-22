@@ -1,5 +1,69 @@
 # Changelog
 
+## 2026-10-21 — Docs and config housekeeping
+
+Docs and non-behavioural config only. No code, prompt, schema, cache-version,
+default-model, CLI or API changes.
+
+### Corrected
+
+- **README.md**: setup now says `cp .env.example .env` and lists the real
+  default models (`nomic-embed-text`, `gemma3n:e4b`, `gpt-oss:120b-cloud`)
+  instead of `ollama pull llama3`. It also explains that `-cloud` models need
+  `ollama signin`, that models are switched through `.env` (not by editing
+  code), and gives the Node.js version Vite 8 needs. Output is described as
+  `.tex` (the app does not compile PDFs). The theory structure matches the
+  writer prompt, and the "everyday analogy" claims (removed in v2) are gone.
+  Added links to `cmkb/README.md`, `web/README.md` and a note on `example/`.
+- **docs/installation.md**: replaced the retired `MODEL_THEORY`,
+  `MODEL_QUESTION_EXTRACT`, `MODEL_QUESTION_FILTER`, `MODEL_CONTEXT_SUMMARY`
+  and `MODEL_REVIEW` knobs with the real variables. Added a table of every
+  environment variable the code reads, with its default. Noted that Ollama is
+  always required (for embeddings), that switching provider means renaming
+  every model variable, and that `memory create` records `nomic-embed-text`
+  unless you pass `--embed-model`. Added the Ollama pull steps and the web app
+  install.
+- **docs/usage.md**: removed the non-existent `--no-review` flag. Documented
+  `--no-reuse`, `--fresh`, `--kb`/`--lecture-id`/`--out`, that `run` writes
+  the JSON next to the `.tex`, that `--kb` updates the KB in place, and the
+  `memory` subcommands that were missing (`query`, `debug-topic`,
+  `ingest lecture`, `ingest section`, `stats`). Added the HTTP API routes and
+  the web app's session-copy behaviour.
+- **docs/chatbot_workflow.md**: rewritten to the v2 two-prompt flow, word for
+  word the same as the in-app AI Guide (`web/src/pages/GuidePage.tsx`). The old
+  three-step v1 flow is gone. Model versions are replaced by generic wording.
+- **docs/pyq_chatbot_workflow.md**: versioned model names replaced by generic
+  wording; ingest/cluster behaviour clarified.
+- **docs/pipeline.md**: Stage 1 call count (one call per page-range chunk
+  for decks over 300k chars, not "+1"). Added the model variable and output
+  limit per stage, the 15-candidate and 600-word caps, cache step names, which
+  commands honour `--fresh`, and how KB/PageIndex LLM calls are routed.
+- **docs/PEDAGOGICAL_JSON_SCHEMA.md**: `dependency_order` is re-assigned only
+  by extraction; added a link to the chatbot workflow.
+- **cmkb/README.md**: `PAGEINDEX_MODEL` default is `gemma3n:e4b` (was
+  `gemma4:e4b`). The CLI is `main_cli.py memory` / `cmkb/cli.py` (there is no
+  `cmkb_cli.py`). Documented `query(..., reuse=)`, the real shape of
+  `questions`, `mark_questions_used`, `kb_stats`/`usage_stats`, and that
+  `already_covered` excludes the current lecture.
+- **web/README.md**: replaced the Vite template README with a project one
+  (how to run it, `src/api.ts`, `VITE_API_URL`).
+- **requirements.txt**: added `PyYAML` (`cmkb/pageindex/utils.py` imports
+  `yaml`; the 2026-09-03 entry said it was added, but it was not). Noted
+  `tiktoken` as optional.
+- **.env.example**: documented `OLLAMA_API_URL`, `CHATGPT_API_KEY`
+  (`Ollama_API_KEY`), `OLLAMA_MODEL` and `VITE_API_URL` as commented
+  optional entries. Added notes on cloud models and on switching provider.
+  The active values are unchanged.
+
+### Known issues now documented (not fixed here)
+
+- `memory ingest pdf --mode page_index` (and the web "Detailed indexing"
+  option) fails with a `NameError` in `cmkb/ingest_pdf.py`. The 2026-09-03
+  entry's "correct `page_index_main` entry point" fixed the import but not
+  the call.
+- `memory stats` has no KB path argument and cannot run.
+- `memory ingest lecture` fails on the bare-list JSON that `extract` writes.
+
 ## 2026-09-03 — Pipeline overhaul: 2-call generation, PYQ memory, multi-provider LLMs
 
 A full revision of the worksheet pipeline. Output structure is preserved

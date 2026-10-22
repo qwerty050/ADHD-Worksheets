@@ -1,32 +1,37 @@
-# React + TypeScript + Vite
+# ADHD Worksheets: Web App
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+The browser front end for ADHD Worksheets (React 19, TypeScript, Vite). With it you can create or upload a Course Memory knowledge base (`.cmkb`), add question JSON files and reference PDFs, upload a lecture (as a PDF, or as pedagogical JSON pasted from a chatbot), generate the worksheet with live progress, and then download the `.tex` worksheet and the updated KB. It also has a Config page for the backend `.env` and an AI Guide with copy-paste chatbot prompts.
 
-Currently, two official plugins are available:
+It is only a UI. Every bit of work (extraction, generation, memory) happens in the FastAPI backend (`api/server.py`).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Run it
 
-## React Compiler
+Requires Node.js `^20.19` or `>=22.12`.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. Start the backend from the repo root (see the [main README](../README.md) for the Python and Ollama setup):
+   ```bash
+   uvicorn api.server:app --reload --port 8000
+   ```
+2. Start the dev server:
+   ```bash
+   cd web
+   npm install
+   npm run dev
+   ```
+3. Open `http://localhost:5173`.
 
-## Expanding the Oxlint configuration
+Other scripts: `npm run build` (type-check with `tsc -b`, then build to `dist/`), `npm run preview` (serve the build), `npm run lint` (oxlint).
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## How it talks to the API
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+`src/api.ts` is the single API client. Every request goes to `API_BASE`, which is `VITE_API_URL` or, if that is not set, `http://localhost:8000/api`. Generation progress is read from a Server-Sent Events stream (`GET /sessions/{id}/generate`). The routes are listed in [docs/usage.md](../docs/usage.md#http-api).
+
+To point the UI at another backend, create `web/.env.local`:
+
+```env
+VITE_API_URL=http://my-host:8000/api
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+The value must include the `/api` suffix. Vite reads it at dev-server start and at build time, so restart `npm run dev` (or rebuild) after you change it. The backend allows CORS from any origin.
+
+The backend keeps each browser session's KB and lecture in a temporary folder, and memory updates go to that copy. Download the KB at the end if you want to keep them. Sessions are lost when the backend restarts.

@@ -4,7 +4,7 @@ This document defines the stable public contract for the Pedagogical JSON
 consumed by the generation module to produce the final LaTeX worksheet. It is
 produced by the extraction pipeline (`extract` / `run` commands, or the web
 upload flow), or authored by an external tool (e.g. Claude, ChatGPT — see the
-in-app AI Guide prompts).
+in-app AI Guide prompts and [chatbot_workflow.md](chatbot_workflow.md)).
 
 ## High-Level Structure
 
@@ -42,7 +42,7 @@ are generated per section, in order).
   descriptions) for this section. The Section Writer's primary input.
 - `topics` *(list of strings)*: High-level topics (drive memory/PYQ retrieval).
 - `subtopics` *(list of strings)*: More specific subtopics (also used for retrieval).
-- `dependency_order` *(integer)*: Sequential ordering (re-assigned deterministically by the pipeline).
+- `dependency_order` *(integer)*: Sequential ordering (re-assigned deterministically by the extraction pipeline; generation processes sections in list order).
 
 ### Annotation fields
 - `learning_objectives` *(list of strings)*: 2-4 statements beginning with "Student can...".
