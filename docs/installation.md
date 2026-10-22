@@ -17,8 +17,8 @@ It is highly recommended to use a virtual environment to manage dependencies.
 # Clone the repository and change into the repo root (the folder that contains main_cli.py)
 cd ADHD-Worksheets
 
-# Create a virtual environment
-python -m venv .venv
+# Create a virtual environment (on Windows, use `python` instead of `python3`)
+python3 -m venv .venv
 
 # Activate the virtual environment
 # On Mac/Linux:
@@ -29,6 +29,8 @@ source .venv/bin/activate
 # Install the required dependencies
 pip install -r requirements.txt
 ```
+
+On Debian/Ubuntu, if `python3 -m venv` fails with an `ensurepip` error, install the venv package first (`sudo apt install python3-venv`), then re-run it. Inside the activated environment, `python` and `pip` work on every OS; the rest of this guide uses them.
 
 Run every command in this guide (CLI and `uvicorn`) from the repo root: the web Config page reads and writes `./.env`, and the pipeline cache is created in `./.pipeline_cache/`.
 

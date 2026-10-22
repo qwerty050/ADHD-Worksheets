@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-10-22 — Setup note for Debian/Ubuntu
+
+Docs only. No code or config changes.
+
+### Corrected
+
+- **README.md**, **docs/installation.md**: the venv step now uses `python3`
+  (with `python` for Windows), because many Linux and macOS machines have no
+  `python` command outside a virtual environment. Added a note that on
+  Debian/Ubuntu `python3 -m venv` needs the `python3-venv` package.
+
 ## 2026-10-21 — Docs and config housekeeping
 
 Docs and non-behavioural config only. No code, prompt, schema, cache-version,

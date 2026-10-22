@@ -72,11 +72,12 @@ You need Python 3.10+, [Ollama](https://ollama.com), and Node.js `^20.19` or `>=
 ### 1. Backend Setup
 Create a virtual environment, install the required dependencies, and create your config file:
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
 ```
+On Debian/Ubuntu, if `python3 -m venv` fails with an `ensurepip` error, install the venv package first (`sudo apt install python3-venv`). On Windows, use `python` instead of `python3` and activate with `.venv\Scripts\activate`. Inside the activated environment, `python` and `pip` work on every OS; the rest of the docs use them.
 
 
 ### 2. Ollama Setup
