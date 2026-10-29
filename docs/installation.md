@@ -7,7 +7,7 @@ This guide covers how to set up the ADHD Worksheets pipeline on your local machi
 - **Python 3.10+**
 - **Ollama** installed and running locally (`http://localhost:11434` by default). It is required whatever LLM provider you choose, because embeddings for the Course Memory always run locally through Ollama (`EMBED_MODEL`). The LLM calls themselves can go to Ollama (the default), Anthropic, OpenAI or Gemini (`LLM_PROVIDER`).
 - **Node.js** `^20.19` or `>=22.12` (only for the web app; required by Vite 8).
-- A LaTeX distribution (e.g., MacTeX, TeX Live) or Overleaf if you want to compile the resulting `.tex` files into PDFs yourself. The app itself only writes `.tex`.
+- Nothing for formatting: the app writes worksheet JSON ([WORKSHEET_JSON_SCHEMA.md](WORKSHEET_JSON_SCHEMA.md)), not `.tex` or PDF. A LaTeX distribution (e.g., MacTeX, TeX Live) or Overleaf is only needed once you format that JSON into LaTeX yourself.
 
 ## 1. Setup the Python Environment
 

@@ -1,6 +1,9 @@
 # Pipeline Overview
 
-Lecture PDF + Knowledge Base (PYQs + reference books) -> self-study worksheet (.tex).
+Lecture PDF + Knowledge Base (PYQs + reference books) -> self-study worksheet
+(worksheet JSON, [WORKSHEET_JSON_SCHEMA.md](WORKSHEET_JSON_SCHEMA.md)).
+Formatting the JSON into LaTeX/PDF is a separate step that the app does not
+run.
 
 ```
 +-------------+   +----------------------------+   +-----------------------------+
@@ -9,9 +12,9 @@ Lecture PDF + Knowledge Base (PYQs + reference books) -> self-study worksheet (.
                   | 2. annotate (per section) |                |
                   +----------------------------+                v
 +-------------+   +----------------------------+   +-----------------------------+
-|  .cmkb KB   |-->| Generation (2 calls/sec)  |-->| worksheet.tex               |
+|  .cmkb KB   |-->| Generation (2 calls/sec)  |-->| worksheet.json (schema v1)  |
 | PYQs+books  |   | A. section writer         |   | theory + practice + PYQs    |
-+-------------+   | B. question set builder   |   | + answer key                |
++-------------+   | B. question set builder   |   | + answers, no formatting    |
                   +----------------------------+   +-----------------------------+
 ```
 
@@ -33,9 +36,12 @@ PyMuPDF.
 Per section, exactly **two** LLM calls:
 
 1. **Call A - Section Writer** (`write_section`, `MODEL_WRITER`, max 16384
-   output tokens): theory LaTeX
-   (Motivation -> Intuition -> Formal Content -> Worked Example -> Key
-   Takeaway), the notation it actually used, and a 3-4 sentence summary.
+   output tokens): structured theory (`motivation`, `intuition`,
+   `formal_content`, `worked_example` {problem, steps, answer, insight} or
+   null, `key_takeaway`) in Markdown with TeX math, the notation it actually
+   used, and a 3-4 sentence summary. LaTeX sectioning commands and
+   unescaped backslashes (form-feed/backspace characters) in the text fail
+   validation and go through the repair retries.
    Inputs: section content, book context, the student profile (one merged
    block: past-lecture summaries + this run's summaries, capped at the most
    recent 600 words), the questions to
@@ -52,10 +58,14 @@ Per section, exactly **two** LLM calls:
 Everything else is deterministic:
 
 - **Rolling context** = append of Call-A summaries (no LLM call).
-- **Compile** (`compile_section`): `\subsection{Theory}`,
-  `\subsection*{Practice Questions}`, `\subsection*{Past-Year Questions}`,
-  per-section notation tables, document-end **Answer Key**.
-- **Memory commit**: `kb.update` (section + summary embedding) and
+- **Assemble** (`generation/worksheet.py`: `build_section`,
+  `build_worksheet`): one section record per pedagogical section (title,
+  topics, objectives, notation, theory, numbered practice and past-year
+  questions with their answers, summary), plus the questions every section
+  deferred. Written as JSON to `--out`. No formatting happens here.
+  `compiler/` (the old LaTeX formatter) is no longer called by the pipeline.
+- **Memory commit**: `kb.update` (section + summary embedding; the
+  `sections.latex` column now stores the section's worksheet JSON) and
   `kb.mark_questions_used` (PYQ usage tracking), idempotent via the
   `memory_updated` cache guard on resume.
 - Deferred questions that no section claims are logged at the end of the run
@@ -83,8 +93,8 @@ kb/lecture suffix + cache version (`CACHE_VERSION`), so changed inputs or
 pipeline upgrades never serve stale results. `--fresh` (`run`, `generate`)
 ignores the cache for a run; `extract` and the web API always use it. Only
 validated LLM output is ever cached. Per section the cache holds the steps
-`annotate`, `writer`, `questions`, `compiled`, `answer_key` and
-`memory_updated`.
+`annotate`, `writer`, `questions` and `memory_updated`. `CACHE_VERSION` 3
+(structured writer output) ignores every older cache file.
 
 ## Providers
 

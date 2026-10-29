@@ -10,7 +10,7 @@ export const DownloadPage: React.FC = () => {
   const navigate = useNavigate();
   const { sessionId } = useAppContext();
 
-  const downloadFile = async (type: 'tex' | 'cmkb') => {
+  const downloadFile = async (type: 'worksheet' | 'cmkb') => {
     if (!sessionId) return;
     window.open(`${API_BASE}/sessions/${sessionId}/download/${type}`, '_blank');
   };
@@ -31,16 +31,16 @@ export const DownloadPage: React.FC = () => {
         <ExcuseBanner role="The team responsible for generating the PDF and storing your data" />
         
         <p style={{ marginBottom: '1rem' }}>
-          Here is your generated worksheet and updated memory. Since we don't have a backend to store your memory or a compiler to build your PDF, please download them below and keep them safe!
+          Here is your generated worksheet and updated memory. Since we don't have a backend to store your memory or a formatter to build your PDF, please download them below and keep them safe!
         </p>
 
         <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <Button onClick={() => downloadFile('tex')}>Download .tex File</Button>
+          <Button onClick={() => downloadFile('worksheet')}>Download Worksheet (.json)</Button>
           <Button variant="accent" onClick={() => downloadFile('cmkb')}>Download KB</Button>
         </div>
 
         <p style={{ marginTop: '2rem', fontSize: '0.9rem', fontWeight: 'bold', borderTop: '2px solid black', paddingTop: '1rem' }}>
-          In the meantime, you can paste that raw .tex file into Overleaf or run it through pdflatex to actually turn it into a beautiful PDF. We clearly couldn't afford the server costs to compile it for you.
+          The worksheet is structured JSON: every section's theory, questions and answers, with no formatting applied yet. Turning it into a printable LaTeX/PDF worksheet is a separate formatting step that this app does not run yet.
         </p>
       </div>
 

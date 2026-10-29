@@ -1,8 +1,9 @@
 import json
 import logging
+import re
 from typing import List, Literal, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 
 from shared.config import MODEL_WRITER, MODEL_QUESTIONS
 from shared.llm import generate_json
@@ -20,12 +21,87 @@ class NotationItem(BaseModel):
     meaning: str
 
 
+# Structural formatting belongs to the renderer, not to the content. Text
+# fields are Markdown with TeX math; document-level LaTeX structure and
+# unescaped backslashes are rejected so the model is asked to repair them
+# (generate_json repair retries).
+_STRUCTURAL_LATEX_RE = re.compile(
+    r"\\(?:(?:sub)*section|chapter|part|documentclass)\b\*?|\\begin\{document\}"
+)
+
+
+def _check_markup(value: str) -> str:
+    # "\frac" or "\beta" with a single backslash in JSON decodes to a
+    # form-feed / backspace character: the LaTeX is silently corrupted.
+    if "\f" in (value or "") or "\b" in (value or ""):
+        raise ValueError(
+            "contains a form-feed/backspace character: a backslash was not escaped "
+            "(write \\\\frac, not \\frac, inside JSON strings)"
+        )
+    m = _STRUCTURAL_LATEX_RE.search(value or "")
+    if m:
+        raise ValueError(
+            f"contains the LaTeX structure command '{m.group(0)}'; write Markdown "
+            f"with TeX math only (headings come from the JSON fields)"
+        )
+    return value
+
+
+class WorkedExample(BaseModel):
+    problem: str = Field(min_length=1)
+    steps: List[str] = Field(min_length=1)
+    answer: str = Field(min_length=1)
+    insight: str = Field(min_length=1)  # one sentence: what the example demonstrates
+
+    @field_validator("problem", "answer", "insight")
+    @classmethod
+    def _check_text(cls, v: str) -> str:
+        return _check_markup(v)
+
+    @field_validator("steps")
+    @classmethod
+    def _check_steps(cls, v: List[str]) -> List[str]:
+        return [_check_markup(s) for s in v]
+
+
+class Theory(BaseModel):
+    """The five theory parts, in reading order. Markdown with TeX math."""
+    motivation: str = Field(min_length=1)
+    intuition: str = Field(min_length=1)
+    formal_content: str = Field(min_length=1)
+    worked_example: Optional[WorkedExample] = None  # only for numeric/procedural content
+    key_takeaway: str = Field(min_length=1)
+
+    @field_validator("motivation", "intuition", "formal_content", "key_takeaway")
+    @classmethod
+    def _check_text(cls, v: str) -> str:
+        return _check_markup(v)
+
+
 class WriterOutput(BaseModel):
-    """Call A result: theory LaTeX, the symbols actually used, and a section
+    """Call A result: structured theory, the symbols actually used, and a section
     summary (reused as the rolling-context entry and the memory-commit summary)."""
-    theory: str
+    theory: Theory
     notation: List[NotationItem] = []
-    summary: str
+    summary: str = Field(min_length=1)
+
+
+def theory_as_text(theory: Theory) -> str:
+    """Plain reading-order text of the theory, used as Call B's ground truth."""
+    parts = [
+        f"## Motivation\n{theory.motivation}",
+        f"## Intuition\n{theory.intuition}",
+        f"## Formal Content\n{theory.formal_content}",
+    ]
+    we = theory.worked_example
+    if we:
+        steps = "\n".join(f"{n}. {step}" for n, step in enumerate(we.steps, 1))
+        parts.append(
+            f"## Worked Example\nProblem: {we.problem}\n{steps}\n"
+            f"Answer: {we.answer}\n{we.insight}"
+        )
+    parts.append(f"## Key Takeaway\n{theory.key_takeaway}")
+    return "\n\n".join(parts)
 
 
 class PracticeQuestion(BaseModel):

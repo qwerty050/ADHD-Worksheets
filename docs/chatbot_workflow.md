@@ -2,7 +2,7 @@
 
 You don't have to run the extraction pipeline locally. If you have access to a strong LLM chatbot (for example Claude, ChatGPT or Gemini) that accepts PDF uploads, you can use it to produce the pedagogical JSON (schema v2, see [PEDAGOGICAL_JSON_SCHEMA.md](PEDAGOGICAL_JSON_SCHEMA.md)) directly from your lecture PDF.
 
-These are the same two prompts shown in the web app's **AI Guide** page (`/guide`, "Extract Lecture" tab). Once you have the final JSON, feed it to the `generate` command (or paste it into the web app's lecture upload page) to produce your LaTeX worksheet with memory integration.
+These are the same two prompts shown in the web app's **AI Guide** page (`/guide`, "Extract Lecture" tab). Once you have the final JSON, feed it to the `generate` command (or paste it into the web app's lecture upload page) to produce your worksheet JSON with memory integration.
 
 ## Workflow Overview
 
@@ -78,11 +78,11 @@ The result is a JSON **array** with one object per section, containing both the 
 python main_cli.py generate chatbot_output.json \
     --kb course.cmkb \
     --lecture-id L01 \
-    --out output/worksheet.tex
+    --out output/worksheet.json
 ```
 
 With `--kb`, this run writes to `course.cmkb` (section summaries + PYQ usage). Add `--no-memory-update` for a dry run, or work on a copy of the KB.
 
 Alternatively, in the web app, paste the JSON into the text box on the **Upload Lecture** page instead of uploading a PDF.
 
-That's it! The generation pipeline will now build your LaTeX worksheet (`.tex`) using the chatbot-authored pedagogy. Compile it to PDF yourself (for example with `pdflatex` or Overleaf).
+That's it! The generation pipeline will now build your worksheet JSON ([WORKSHEET_JSON_SCHEMA.md](WORKSHEET_JSON_SCHEMA.md)) using the chatbot-authored pedagogy. Formatting it into LaTeX/PDF is a separate step that the app does not run.

@@ -1,6 +1,6 @@
 # ADHD Worksheets: Web App
 
-The browser front end for ADHD Worksheets (React 19, TypeScript, Vite). With it you can create or upload a Course Memory knowledge base (`.cmkb`), add question JSON files and reference PDFs, upload a lecture (as a PDF, or as pedagogical JSON pasted from a chatbot), generate the worksheet with live progress, and then download the `.tex` worksheet and the updated KB. It also has a Config page for the backend `.env` and an AI Guide with copy-paste chatbot prompts.
+The browser front end for ADHD Worksheets (React 19, TypeScript, Vite). With it you can create or upload a Course Memory knowledge base (`.cmkb`), add question JSON files and reference PDFs, upload a lecture (as a PDF, or as pedagogical JSON pasted from a chatbot), generate the worksheet with live progress, and then download the worksheet JSON and the updated KB. It also has a Config page for the backend `.env` and an AI Guide with copy-paste chatbot prompts.
 
 It is only a UI. Every bit of work (extraction, generation, memory) happens in the FastAPI backend (`api/server.py`).
 
