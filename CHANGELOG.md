@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-11-01 — OpenAI-compatible base URL; SSE progress logging fix
+
+Config and logging only. No prompt, schema, cache-version or default-model
+changes.
+
+### Added
+
+- **`OPENAI_BASE_URL`** (default `https://api.openai.com/v1`): with
+  `LLM_PROVIDER=openai`, send requests to any OpenAI-compatible API (for
+  example OpenRouter). The vendored PageIndex tree builder ignores it.
+  Documented in `.env.example` and docs/installation.md.
+
+### Fixed
+
+- **api/server.py**: the `pipeline` logger is set to INFO, so progress events
+  reach the SSE stream even when the host has configured the root logger
+  (as pytest does; `logging.basicConfig` is then a no-op).
+
 ## 2026-10-29 — Worksheet JSON output (formatting split from generation)
 
 Generation now writes a structured **worksheet JSON** instead of a `.tex`
