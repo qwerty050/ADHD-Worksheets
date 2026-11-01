@@ -2,7 +2,7 @@ import hashlib
 import json
 from pathlib import Path
 
-CACHE_VERSION = 2  # bump to invalidate every existing cache file
+CACHE_VERSION = 3  # bump to invalidate every existing cache file (v3: structured writer output)
 
 
 class PipelineCache:
@@ -54,7 +54,7 @@ class PipelineCache:
         self.data["extraction"] = data
         self.save()
 
-    # --- Per-section steps: annotate / writer / questions / compiled / memory_updated ---
+    # --- Per-section steps: annotate / writer / questions / memory_updated ---
     def get_section_step(self, section_idx: int, step: str):
         sec_idx_str = str(section_idx)
         if sec_idx_str in self.data["sections"]:

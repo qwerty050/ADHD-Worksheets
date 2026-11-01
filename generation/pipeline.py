@@ -3,13 +3,14 @@ import logging
 from pathlib import Path
 
 from shared.cache import PipelineCache
-from compiler.formatter import compile_section, format_document
 from generation.stages import (
     write_section,
     build_question_set,
+    theory_as_text,
     WriterOutput,
     QuestionSet,
 )
+from generation.worksheet import build_section, build_worksheet
 
 log = logging.getLogger("pipeline")
 
@@ -106,7 +107,7 @@ def run_generation_pipeline(
     pedagogical_json: list,
     kb,
     lecture_id: str,
-    output_tex_path: Path,
+    output_path: Path,
     cache: PipelineCache,
     update_memory: bool = True,
     is_objective: bool = False,
@@ -116,16 +117,14 @@ def run_generation_pipeline(
     """
     Two LLM calls per section: the Section Writer (theory, notation, summary)
     and the Question Set Builder (practice ladder + PYQ curation + deferral).
-    Everything else — rolling context, compilation, the answer key, memory
-    commits — is deterministic.
+    Everything else — rolling context, worksheet assembly, memory commits — is
+    deterministic. Writes the worksheet JSON (docs/WORKSHEET_JSON_SCHEMA.md) to
+    output_path; formatting (LaTeX etc.) is a separate step.
     """
     if isinstance(pedagogical_json, dict):
         pedagogical_json = pedagogical_json.get("section_map", [])
 
-    compiled_sections = []
-    section_titles = []
-    notation_data_list = []
-    answer_key_blocks = []
+    worksheet_sections = []
     run_summaries: list[str] = []
     deferred_questions: list = []
     seen_keys: set = set()
@@ -181,7 +180,7 @@ def run_generation_pipeline(
             question_set = QuestionSet.model_validate_json(questions_cached)
         else:
             question_set = build_question_set(
-                section_theory=writer_output.theory,
+                section_theory=theory_as_text(writer_output.theory),
                 candidates=candidates,
                 student_profile=_build_student_profile(already_covered, run_summaries),
                 is_objective=is_objective,
@@ -196,28 +195,9 @@ def run_generation_pipeline(
                 seen_keys.add((info.get("exam"), str(info.get("qid"))))
         deferred_questions = [d.model_dump() for d in question_set.deferred]
 
-        # ----- Deterministic compilation -----
-        compiled_text = cache.get_section_step(i, "compiled")
-        if compiled_text:
-            log.info("  Compiled section cached")
-            answer_key = cache.get_section_step(i, "answer_key") or []
-        else:
-            log.info("  Compiling section...")
-            compiled_text, answer_key = compile_section(
-                section_title=section_title,
-                theory_text=writer_output.theory,
-                practice_questions=[q.model_dump() for q in question_set.practice],
-                pyq_questions=[q.model_dump() for q in question_set.pyq],
-                notation=[n.model_dump() for n in writer_output.notation],
-                newpage_per_question=newpage_per_question,
-            )
-            cache.set_section_step(i, "compiled", compiled_text)
-            cache.set_section_step(i, "answer_key", answer_key)
-
-        compiled_sections.append(compiled_text)
-        section_titles.append(section_title)
-        notation_data_list.append([n.model_dump() for n in writer_output.notation])
-        answer_key_blocks.append({"section_title": section_title, "answers": answer_key})
+        # ----- Deterministic assembly (content only, no formatting) -----
+        worksheet_section = build_section(i + 1, section, writer_output, question_set)
+        worksheet_sections.append(worksheet_section)
 
         # ----- Rolling context: deterministic append of writer summaries -----
         run_summaries.append(writer_output.summary)
@@ -232,7 +212,9 @@ def run_generation_pipeline(
                     lecture_id=lecture_id,
                     section_json=section,
                     summary=writer_output.summary,
-                    latex=compiled_text,
+                    # The KB column is named "latex"; it now stores the
+                    # section's worksheet JSON (nothing reads it back).
+                    latex=worksheet_section.model_dump_json(),
                     topics=topics + subtopics,
                 )
                 if included_pyqs:
@@ -256,26 +238,22 @@ def run_generation_pipeline(
             log.warning("  - [%s] %s — reason: %s", d.get("source", "?"), d.get("text", "")[:100], d.get("reason", ""))
 
     # =================================================================
-    # STAGE 3: DETERMINISTIC FORMATTING
+    # STAGE 3: WORKSHEET JSON (formatting is a separate step)
     # =================================================================
-    log.info("Stage 3: Formatting document (deterministic)...")
-
-    module_name = output_tex_path.stem.replace("_", " ").replace("-", " ").title()
-    metadata = {
-        "title": f"Learning Module: {module_name}",
-        "author": "",
-        "date": r"\today",
-    }
-
-    latex = format_document(
-        compiled_sections, section_titles, metadata,
-        notation_data=notation_data_list,
-        answer_key_blocks=answer_key_blocks,
+    module_name = output_path.name.split(".")[0].replace("_", " ").replace("-", " ").title()
+    worksheet = build_worksheet(
+        title=module_name,
+        lecture_id=lecture_id,
+        sections=worksheet_sections,
+        unplaced=deferred_questions,
+        is_objective=is_objective,
+        newpage_per_question=newpage_per_question,
     )
+    worksheet_json = worksheet.model_dump_json(indent=2)
 
-    output_tex_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_tex_path, "w", encoding="utf-8") as f:
-        f.write(latex)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(output_path, "w", encoding="utf-8", newline="\n") as f:
+        f.write(worksheet_json + "\n")
 
-    log.info("Generation complete! LaTeX saved to: %s", output_tex_path)
-    return {"latex": latex, "summaries": run_summaries}
+    log.info("Generation complete! Worksheet JSON saved to: %s", output_path)
+    return {"worksheet": json.loads(worksheet_json), "summaries": run_summaries}

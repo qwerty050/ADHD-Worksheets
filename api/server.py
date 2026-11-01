@@ -33,6 +33,7 @@ app.add_middleware(
 )
 
 log = logging.getLogger("pipeline")
+log.setLevel(logging.INFO)
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 # In-memory session store: session_id -> dict of session data
@@ -51,6 +52,11 @@ def _safe_name(filename: Optional[str]) -> str:
     name = Path(filename or "upload").name
     cleaned = _SAFE_NAME_RE.sub("_", name).strip() or "upload"
     return cleaned
+
+
+def _worksheet_path(session: dict) -> Path:
+    """The session's generated worksheet JSON (docs/WORKSHEET_JSON_SCHEMA.md)."""
+    return session["dir"] / f"{session['lecture_id']}_worksheet.json"
 
 
 class ConfigUpdate(BaseModel):
@@ -258,7 +264,7 @@ def generate_lecture(
     if not _GENERATION_LOCK.acquire(blocking=False):
         raise HTTPException(status_code=409, detail="Another generation is already running")
 
-    out_tex_path = session["dir"] / f"{session['lecture_id']}_output.tex"
+    out_path = _worksheet_path(session)
 
     with open(session["pedagogical_json_path"], "r", encoding="utf-8") as f:
         pedagogical_json = json.load(f)
@@ -279,7 +285,7 @@ def generate_lecture(
                 pedagogical_json=pedagogical_json,
                 kb=session["kb"],
                 lecture_id=session["lecture_id"],
-                output_tex_path=out_tex_path,
+                output_path=out_path,
                 cache=cache,
                 update_memory=update_memory,
                 is_objective=objective,
@@ -319,11 +325,11 @@ def download_file(session_id: str, file_type: str):
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    if file_type == "tex":
+    if file_type == "worksheet":
         if not session.get("lecture_id"):
             raise HTTPException(status_code=404, detail="No generated worksheet in this session")
-        path = session["dir"] / f"{session['lecture_id']}_output.tex"
-        filename = f"{session['lecture_id']}_output.tex"
+        path = _worksheet_path(session)
+        filename = path.name
     elif file_type == "cmkb":
         path = session["kb_path"]
         filename = path.name if path else "kb.cmkb"

@@ -20,24 +20,24 @@ The CLI provides commands for both the generation pipeline (Extract -> Generate)
 
 ## End-to-End Generation
 
-The easiest way to generate a worksheet is to use the `run` command, which automatically handles PDF extraction and subsequent LaTeX generation.
+The easiest way to generate a worksheet is to use the `run` command, which automatically handles PDF extraction and subsequent worksheet generation. The worksheet is a JSON file holding each section's content (theory, questions, answers) with no formatting; its format is described in [WORKSHEET_JSON_SCHEMA.md](WORKSHEET_JSON_SCHEMA.md). Turning it into LaTeX/PDF is a separate step that the app does not run.
 
 ```bash
 python main_cli.py run path/to/lecture.pdf \
     --kb course.cmkb \
     --lecture-id L01 \
-    --out output/worksheet.tex
+    --out output/worksheet.json
 ```
 
-`run` also writes the extracted pedagogical JSON next to the worksheet (here `output/worksheet.json`).
+`run` also writes the extracted pedagogical JSON next to the worksheet (here `output/worksheet.pedagogy.json`).
 
 **Options for `run` and `generate`:**
-- `--out` (required): Output `.tex` path.
+- `--out` (required): Output worksheet path; must end in `.json` (for `generate`, it must differ from the input file).
 - `--kb`: Path to the `.cmkb` knowledge base. Optional; without it, no PYQs, book context or memory are used.
 - `--lecture-id`: Lecture ID recorded with the memory update and used to exclude this lecture's own sections from "already covered". Set it whenever you pass `--kb`.
 - `--no-memory-update`: Generates the worksheet but skips committing the results back into the memory store. Useful for dry runs.
 - `--objective`: Converts the generated questions (Recall -> Evaluate) into 4-option Multiple Choice Questions (MCQs).
-- `--no-newpage`: Prevents the compiler from adding a `\newpage` between every single generated question.
+- `--no-newpage`: Records `render_hints.newpage_per_question: false` in the worksheet JSON, asking a formatter not to start a new page for every question. The content is the same either way.
 - `--no-reuse`: Never serve PYQs that a previous worksheet already used (default: prefer unused ones, fall back to used ones when a topic runs dry).
 - `--fresh`: Ignore any cached progress in `.pipeline_cache/` for this run.
 
@@ -61,13 +61,13 @@ python main_cli.py extract path/to/lecture.pdf --out output/pedagogy.json
 *Tip: You can also use a strong LLM chatbot (like Claude or ChatGPT) to perform this extraction manually using our pre-written prompts. See the [Chatbot Extraction Workflow](chatbot_workflow.md) for details.*
 
 ### Step 2: Generation
-Takes the (potentially hand-edited) pedagogical JSON, queries the memory store for PYQs and book context, and generates the LaTeX worksheet. `generate` accepts the same options as `run`.
+Takes the (potentially hand-edited) pedagogical JSON, queries the memory store for PYQs and book context, and generates the worksheet JSON. `generate` accepts the same options as `run`.
 
 ```bash
 python main_cli.py generate output/pedagogy.json \
     --kb course.cmkb \
     --lecture-id L01 \
-    --out output/worksheet.tex
+    --out output/worksheet.json
 ```
 
 ---
@@ -143,5 +143,5 @@ Run `python main_cli.py memory <command> -h` for the full argument list.
 | `POST /api/sessions/{id}/kb/cluster` | Rebuild the topic taxonomy. |
 | `POST /api/sessions/{id}/extract` | Set the lecture: form `lecture_id` plus one of `json_file`, `json_text` or `pdf_file` (checked in that order; a PDF runs the extraction pipeline). |
 | `GET /api/sessions/{id}/generate` | Run generation and stream progress as Server-Sent Events. Query: `objective`, `newpage_per_question`, `update_memory`, `reuse=prefer\|never`. Log lines arrive as events, failures as `ERROR: ...`, and the stream ends with `None`. Returns 409 if another generation is running. |
-| `GET /api/sessions/{id}/download/{tex\|cmkb}` | Download the worksheet or the session's KB. |
+| `GET /api/sessions/{id}/download/{worksheet\|cmkb}` | Download the worksheet JSON (`<lecture_id>_worksheet.json`) or the session's KB. |
 | `DELETE /api/sessions/{id}` | Delete the session and its folder. |

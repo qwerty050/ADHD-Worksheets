@@ -16,19 +16,24 @@ section. The student will attempt them right after reading your theory.
 5. OBJECTIVES & MISCONCEPTIONS — what this section must achieve and what \
 students typically get wrong.
 
-TASK — write the theory in LaTeX with exactly these subsubsections, in order:
+TASK — write the theory as five parts, in this order:
 
-\\subsubsection{Motivation} — why the concept exists, what problem it solves. \
-2-4 sentences, no formulas.
-\\subsubsection{Intuition} — the core idea in plain English before any \
-mathematics.
-\\subsubsection{Formal Content} — definitions and formulas. Define every \
-symbol inline at first use. NEVER write "it can be shown that...". Write in a \
-way that preempts the listed misconceptions without naming them.
-\\subsubsection{Worked Example} — only if the content is numeric or \
-procedural: problem statement, then every step shown with no skipped \
-arithmetic, final answer, and one sentence on what it demonstrates.
-\\subsubsection{Key Takeaway} — 1-2 sentences: the one thing to remember.
+motivation — why the concept exists, what problem it solves. 2-4 sentences, \
+no formulas.
+intuition — the core idea in plain English before any mathematics.
+formal_content — definitions and formulas. Define every symbol inline at \
+first use. NEVER write "it can be shown that...". Write in a way that \
+preempts the listed misconceptions without naming them.
+worked_example — only if the content is numeric or procedural, otherwise \
+null: the problem statement, every step shown with no skipped arithmetic \
+(one step per list item), the final answer, and one sentence (insight) on \
+what it demonstrates.
+key_takeaway — 1-2 sentences: the one thing to remember.
+
+TEXT FORMAT (every text field): Markdown with LaTeX math. Inline math in \
+$...$, display math in $$...$$. Use Markdown for emphasis, lists and tables. \
+No LaTeX outside math: no \\section-style headings, no \\textbf, no \\begin{itemize}. \
+The JSON fields are the headings; do not repeat them in the text.
 
 RULES:
 - Ground the theory in the source content; use book context as supporting \
@@ -42,10 +47,15 @@ into your worked example. Teach the method, not their answers.
 defined at first use.
 
 OUTPUT — a single JSON object:
-{"theory": "<the LaTeX theory>", \
+{"theory": {"motivation": "...", "intuition": "...", "formal_content": "...", \
+"worked_example": {"problem": "...", "steps": ["...", "..."], "answer": "...", \
+"insight": "..."}, "key_takeaway": "..."}, \
 "notation": [{"symbol": "...", "meaning": "..."}], \
 "summary": "<3-4 sentences: exactly what this section taught>"}
-The notation list must contain every symbol you actually introduced, no more. \
+"worked_example" is null when the content is not numeric or procedural. \
+The notation list must contain every symbol you actually introduced, no more; \
+"symbol" is LaTeX math without $ delimiters (e.g. \\mathbf{w}). \
+In the JSON, double every backslash (write "\\\\frac", not "\\frac"). \
 The summary must describe only this section. Return valid JSON only.
 """
 
@@ -57,8 +67,8 @@ SYSTEM_PROMPT_QUESTION_BUILDER = """\
 You build the question set for one section of a self-study worksheet.
 
 INPUTS YOU WILL RECEIVE:
-1. SECTION THEORY — the LaTeX theory the student just read. This is the \
-ground truth for what is answerable.
+1. SECTION THEORY — the theory the student just read. This is the ground \
+truth for what is answerable.
 2. CANDIDATES — questions from past exams (each with a source), questions \
 found in the lecture, and deferred items from the previous section. Each \
 candidate has an "id".
@@ -94,6 +104,9 @@ concise answer; for numerical questions, the worked result.
 options (plain option texts, no letter prefixes; wrong options must encode \
 realistic misconceptions, not random distractors) and "answer" is the correct \
 option letter (A, B, C or D).
+
+TEXT FORMAT — write question, option and answer text in Markdown with LaTeX \
+math ($...$ inline, $$...$$ display). No LaTeX outside math.
 
 OUTPUT — a single JSON object:
 {"practice": [{"level": "recall|understand|apply|analyse|evaluate", "text": "...", \

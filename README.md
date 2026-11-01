@@ -34,7 +34,7 @@ By combining the core material from a lecture with relevant context from referen
 - **No More Context Switching**: Students no longer have to consult multiple books, repos, or AI chatbots to understand a topic. Everything is contextualized and presented sequentially.
 - **Learn by Applying**: The worksheets are predominantly question-based, actively scaffolding the student's understanding from basic recall to complex application. This drastically helps students who learn better by *applying* rather than rote learning.
 - **Neurodivergent Friendly**: Designed with ADHD in mind, the format breaks down intimidating walls of text into digestible, structured blocks with clear learning objectives, plain-English intuition before the maths, and proactive misconception handling.
-- **Tablet Ready**: The output is a clean, well-spaced LaTeX (`.tex`) worksheet; compile it to PDF (e.g. with `pdflatex` or Overleaf) for use on iPads and tablets with digital pencils.
+- **Content First**: The output is a structured worksheet JSON ([schema](docs/WORKSHEET_JSON_SCHEMA.md)) holding each section's content with no formatting, so it can be turned into a tablet-ready LaTeX/PDF worksheet (or any other layout) in a separate formatting step. The app does not run that step yet.
 
 ---
 
@@ -49,7 +49,7 @@ The application reads your provided lecture slides (PDF) and breaks the content 
 Behind the scenes, a **Course Memory** database stores all your textbook chapters and past exam questions. As the application builds the worksheet, it queries this memory to pull in extra context from textbooks and relevant past questions (PYQs) that specifically match the current section. 
 
 ### Generation (Building the Worksheet)
-The application acts as a curriculum designer. For each section, it generates a structured theory breakdown (Motivation ➔ Intuition ➔ Formal Content ➔ Worked Example ➔ Key Takeaway) and a "ladder" of questions (Recall ➔ Understand ➔ Apply ➔ Analyse ➔ Evaluate). It then assembles this into a clean LaTeX worksheet (`.tex`) with an answer key at the end, ready to compile into a tablet-friendly PDF.
+The application acts as a curriculum designer. For each section, it generates a structured theory breakdown (Motivation ➔ Intuition ➔ Formal Content ➔ Worked Example ➔ Key Takeaway) and a "ladder" of questions (Recall ➔ Understand ➔ Apply ➔ Analyse ➔ Evaluate). It then assembles this, with the answer to every question, into a structured worksheet JSON file. Formatting that JSON into a printable worksheet is a separate step.
 
 ---
 
@@ -121,12 +121,13 @@ For technical details, setup instructions, and CLI usage, refer to the documenta
 * **[Usage Guide](docs/usage.md)**: How to use the CLI to generate worksheets and manage the memory store.
 * **[Pipeline Architecture](docs/pipeline.md)**: A deeper dive into the technical stages of extraction and generation.
 * **[Pedagogical Schema](docs/PEDAGOGICAL_JSON_SCHEMA.md)**: The underlying JSON contract used to structure the teaching modules.
+* **[Worksheet Schema](docs/WORKSHEET_JSON_SCHEMA.md)**: The JSON the generator outputs: each section's content, with no formatting.
 * **[Chatbot Lecture Extraction](docs/chatbot_workflow.md)**: How to use external LLMs to extract pedagogical JSON from lectures.
 * **[Chatbot PYQ Extraction](docs/pyq_chatbot_workflow.md)**: How to use external LLMs to extract and format Past Year Questions for memory ingestion.
 * **[CMKB Integration Guide](cmkb/README.md)**: The programmatic `KnowledgeBase` API of the memory module.
 * **[Web App](web/README.md)**: Running the React frontend and how it talks to the API.
 
-The `example/` folder holds a sample lecture (`example/L01.pdf`), a question file (`example/questionsCMM.json`), a pedagogical JSON in the older v1 layout (`example/lec01.json`, still accepted by `generate`), and a worksheet produced by an earlier version of the pipeline (`example/L01.tex`).
+The `example/` folder holds a sample lecture (`example/L01.pdf`), a question file (`example/questionsCMM.json`), a pedagogical JSON in the older v1 layout (`example/lec01.json`, still accepted by `generate`), and a LaTeX worksheet produced by an earlier version of the pipeline (`example/L01.tex`; the pipeline now writes worksheet JSON instead).
 
 ---
 

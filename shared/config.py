@@ -9,6 +9,7 @@ OLLAMA_API_URL = os.getenv("OLLAMA_API_URL", f"{OLLAMA_BASE}/api/generate")
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "ollama").lower()
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 ANTHROPIC_MAX_TOKENS = int(os.getenv("ANTHROPIC_MAX_TOKENS", "16384"))
 

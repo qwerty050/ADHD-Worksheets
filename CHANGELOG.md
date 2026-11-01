@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-10-29 — Worksheet JSON output (formatting split from generation)
+
+Generation now writes a structured **worksheet JSON** instead of a `.tex`
+file. The JSON holds each section's content and no formatting; turning it
+into LaTeX/PDF is a separate step (not part of the app yet). Contract:
+[docs/WORKSHEET_JSON_SCHEMA.md](docs/WORKSHEET_JSON_SCHEMA.md), models in
+`generation/worksheet.py`.
+
+### Changed
+
+- **Writer (Call A)** returns structured theory: `motivation`, `intuition`,
+  `formal_content`, `worked_example` (`{problem, steps, answer, insight}` or
+  null), `key_takeaway`. Text is Markdown with TeX math instead of LaTeX with
+  `\subsubsection` headings. Empty parts, LaTeX sectioning commands and
+  unescaped backslashes (`"\frac"` decoding to a form feed) fail validation
+  (repair retries, then raise). Notation symbols are stored without
+  `$` delimiters. Call B receives the theory as plain text and writes
+  question/answer text in the same markup.
+- **Output**: `generate`/`run` `--out` must end in `.json`. `run` now writes the
+  extracted pedagogical JSON to `<out stem>.pedagogy.json` (was
+  `<out>.json`, which would collide with the worksheet). `--no-newpage` is
+  recorded as `render_hints.newpage_per_question`. Answers sit with their
+  questions; the answer key is left to the formatter.
+- **API**: the session worksheet is `<lecture_id>_worksheet.json`; the download
+  route is `GET /api/sessions/{id}/download/worksheet` (`tex` is gone). The web
+  Download page uses it.
+- **Memory**: `kb.update` stores the section's worksheet JSON in the
+  `sections.latex` column (no CMKB schema change; nothing reads the column).
+- **Cache**: `CACHE_VERSION` 2 -> 3. Old cache files (including extraction
+  results) are ignored, so the first run per input re-runs every LLM call.
+  The `compiled` and `answer_key` cache steps are no longer written.
+- `compiler/` (LaTeX formatter) is no longer called by the pipeline. It is
+  kept as the starting point for the JSON -> LaTeX formatter.
+- Added hermetic tests under `tests/` (fake LLM client, no network). Run with
+  `pytest` (not in `requirements.txt`; install it separately).
+
 ## 2026-10-22 — Setup note for Debian/Ubuntu
 
 Docs only. No code or config changes.

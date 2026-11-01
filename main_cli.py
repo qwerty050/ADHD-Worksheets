@@ -10,6 +10,11 @@ from shared.cache import PipelineCache
 from cmkb.kb import KnowledgeBase
 
 
+def pedagogy_json_path(out: Path) -> Path:
+    """Where `run` writes the extracted pedagogical JSON: next to the worksheet."""
+    return out.with_name(f"{out.stem}.pedagogy.json")
+
+
 def main():
     if len(sys.argv) > 1 and sys.argv[1] == "memory":
         # Pass through to cmkb CLI
@@ -33,7 +38,7 @@ def main():
     gen_p.add_argument("json_file", type=Path, help="Pedagogical JSON from extract")
     gen_p.add_argument("--kb", type=Path, help="Path to CMKB store (optional)")
     gen_p.add_argument("--lecture-id", help="Lecture ID for memory context (optional)")
-    gen_p.add_argument("--out", type=Path, required=True, help="Output .tex file path")
+    gen_p.add_argument("--out", type=Path, required=True, help="Output worksheet .json path")
     gen_p.add_argument("--no-memory-update", action="store_true", help="Skip updating memory store")
     gen_p.add_argument("--objective", action="store_true", help="Generate MCQs")
     gen_p.add_argument("--no-newpage", action="store_true", help="Skip newpage per question")
@@ -45,7 +50,7 @@ def main():
     run_p.add_argument("pdf_file", type=Path, help="Path to the lecture PDF")
     run_p.add_argument("--kb", type=Path, help="Path to CMKB store (optional)")
     run_p.add_argument("--lecture-id", help="Lecture ID for memory context (optional)")
-    run_p.add_argument("--out", type=Path, required=True, help="Output .tex file path")
+    run_p.add_argument("--out", type=Path, required=True, help="Output worksheet .json path")
     run_p.add_argument("--no-memory-update", action="store_true", help="Skip updating memory store")
     run_p.add_argument("--objective", action="store_true", help="Generate MCQs")
     run_p.add_argument("--no-newpage", action="store_true", help="Skip newpage per question")
@@ -53,6 +58,14 @@ def main():
     run_p.add_argument("--fresh", action="store_true", help="Ignore any cached pipeline progress")
 
     args = parser.parse_args()
+
+    if args.command in ("generate", "run") and args.out.suffix.lower() != ".json":
+        parser.error(
+            f"--out must end in .json (got '{args.out}'): the worksheet is written "
+            f"as JSON, see docs/WORKSHEET_JSON_SCHEMA.md"
+        )
+    if args.command == "generate" and args.out.resolve() == args.json_file.resolve():
+        parser.error("--out must differ from the input pedagogical JSON")
 
     if args.command == "extract":
         run_extraction_pipeline(args.pdf_file, args.out)
@@ -73,7 +86,7 @@ def main():
             pedagogical_json=pedagogical_json,
             kb=kb,
             lecture_id=args.lecture_id,
-            output_tex_path=args.out,
+            output_path=args.out,
             cache=cache,
             update_memory=not args.no_memory_update,
             is_objective=args.objective,
@@ -92,7 +105,7 @@ def main():
 
         extraction_data = run_extraction_pipeline(
             pdf_path=args.pdf_file,
-            output_json_path=args.out.with_suffix('.json'),
+            output_json_path=pedagogy_json_path(args.out),
             cache=cache,
         )
 
@@ -102,7 +115,7 @@ def main():
             pedagogical_json=extraction_data,
             kb=kb,
             lecture_id=args.lecture_id,
-            output_tex_path=args.out,
+            output_path=args.out,
             cache=cache,
             update_memory=not args.no_memory_update,
             is_objective=args.objective,
