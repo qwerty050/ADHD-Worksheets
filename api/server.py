@@ -33,6 +33,7 @@ app.add_middleware(
 )
 
 log = logging.getLogger("pipeline")
+log.setLevel(logging.INFO)
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 # In-memory session store: session_id -> dict of session data

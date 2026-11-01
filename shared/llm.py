@@ -9,6 +9,7 @@ from shared.config import (
     OLLAMA_API_URL,
     ANTHROPIC_API_KEY,
     OPENAI_API_KEY,
+    OPENAI_BASE_URL,
     GEMINI_API_KEY,
     ANTHROPIC_MAX_TOKENS,
     LLM_PROVIDER,
@@ -150,7 +151,7 @@ class OpenAIClient:
         if not self.api_key:
             raise ValueError("OPENAI_API_KEY environment variable must be set to use OpenAI.")
 
-        self.api_url = "https://api.openai.com/v1/chat/completions"
+        self.api_url = f"{OPENAI_BASE_URL.rstrip('/')}/chat/completions"
 
     def generate(
         self,
