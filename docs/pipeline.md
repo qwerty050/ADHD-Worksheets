@@ -108,7 +108,8 @@ reply fails validation instead. Embeddings always run locally via Ollama
 The KB's own LLM calls (question tagging and topic aliases with `TAG_MODEL`,
 PageIndex traversal with `PAGEINDEX_MODEL`) use the same provider client.
 PageIndex tree building at ingest uses the vendored client in
-`cmkb/pageindex/utils.py`, which only supports `ollama` and `openai` (OpenAI
+`cmkb/pageindex/utils.py`, which only supports `ollama` and `openai` and
+ignores `OPENAI_BASE_URL` (OpenAI
 key from `CHATGPT_API_KEY`).
 
 ## Memory loop

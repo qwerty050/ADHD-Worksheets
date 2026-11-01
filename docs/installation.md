@@ -82,6 +82,7 @@ PAGEINDEX_MODEL=gemma3n:e4b
 | `OLLAMA_API_URL` | `$OLLAMA_BASE/api/generate` | Optional override of the generate endpoint used by the shared Ollama client. Rarely needed. |
 | `ANTHROPIC_API_KEY` | (none) | Required when `LLM_PROVIDER=anthropic`. |
 | `OPENAI_API_KEY` | (none) | Required when `LLM_PROVIDER=openai`. |
+| `OPENAI_BASE_URL` | `https://api.openai.com/v1` | `LLM_PROVIDER=openai` only: base URL of an OpenAI-compatible API (e.g. `https://openrouter.ai/api/v1`); `/chat/completions` is appended. Use that service's model names in every model variable. The vendored PageIndex tree building ignores it and always calls OpenAI. Not saved by the web Config page. |
 | `GEMINI_API_KEY` | (none) | Required when `LLM_PROVIDER=gemini`. |
 | `ANTHROPIC_MAX_TOKENS` | `16384` | Output-token limit for Anthropic calls that do not set their own limit (KB tagging, alias generation, PageIndex retrieval). Extraction and generation calls use fixed per-stage limits (see [pipeline.md](pipeline.md)). |
 | `MODEL_EXTRACTION` | `gpt-oss:120b-cloud` | Extraction Stage 1 (deck to section map). |

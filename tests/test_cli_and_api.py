@@ -71,3 +71,11 @@ def test_api_generate_and_download_worksheet(in_tmp, monkeypatch):
         assert client.get(f"/api/sessions/{sid}/download/tex").status_code == 400
     finally:
         client.delete(f"/api/sessions/{sid}")
+
+
+def test_openai_base_url_is_used(monkeypatch):
+    import shared.llm as llm
+
+    monkeypatch.setattr(llm, "OPENAI_API_KEY", "test-key")
+    monkeypatch.setattr(llm, "OPENAI_BASE_URL", "https://openrouter.example/api/v1/")
+    assert llm.OpenAIClient().api_url == "https://openrouter.example/api/v1/chat/completions"
